@@ -11,6 +11,11 @@ export default function Home() {
       <Navigation/>
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         
+        <table className="mainpic">
+          <th>
+            <h1>Cleo Med</h1>
+        </th>
+        </table>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <a
