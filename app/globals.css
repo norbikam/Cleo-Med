@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #aa4f4f;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #4e2121;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: lighter;
+}
+
+.navbartable{
+  width: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: rgb(134, 59, 59);
+  /*box-shadow: rgb(17, 17, 17) 5px 5px 15px;*/
+  border-bottom: 1px solid #a75e5e;
+  font-weight: lighter;
+}
+
+.navbartable th{
+  padding: 10px 10px 10px 10px;
+}
+
+.navbuttons{
+  display: flex;
+}
+
+.navbuttons li{
+  padding: 0 30px 0 30px;
+  transition: 0.3s;
+}
+
+.navbuttons li:hover{
+  color: white;
+  font-weight: 300;
+}
+
+.navbartable-left{
+  width: 50%;
+  left: 10px;
+  text-align: left;
+  padding-left: 10px;
+  font-weight: lighter;
+  font-size: 150%;
+}
+
+.navbartable-left h1{
+  transition: 0.3s;
+  letter-spacing: 0.5;
+}
+
+.navbartable-left h1:hover{
+  font-weight: 400;
+  color: white;
+  letter-spacing: normal;
+}
+
+.navbartable-right{
+  justify-items: right;
+  text-align: right;
+  width: 50%;
+  right: 100%;
+  font-weight: lighter;
+}
