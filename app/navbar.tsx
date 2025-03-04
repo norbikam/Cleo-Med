@@ -4,10 +4,25 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+type NavItem = {
+  href: string;
+  label: string;
+};
+
+const navItems: NavItem[] = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "O Nas" },
+  { href: "/services", label: "Zabiegi" },
+  { href: "/contact", label: "Kontakt" },
+];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +31,8 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const isActive = (href: string) => pathname === href;
 
   return (
     <header>
@@ -27,6 +44,7 @@ export default function Navbar() {
         animate={{ opacity: 1 }}
       >
         {/* Top row with social icons and contact info (hidden on mobile) */}
+        {!scrolled && (
         <div className="hidden md:block px-6 md:px-12 py-2 bg-gray-100">
           <div className="flex justify-between items-center">
             <div className="flex space-x-3 text-gray-700">
@@ -53,12 +71,13 @@ export default function Navbar() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Main navigation row */}
         <div className="flex items-center justify-between max-w-6xl mx-auto px-6 md:px-12">
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
           {!scrolled && (
-            <div className="hidden md:flex space-x-4 text-xl">
+            <div className="hidden md:flex space-x-20 text-xl">
               <a href="/" className="text-gray-700 hover:text-gray-900">
                 Home
               </a>
@@ -79,7 +98,7 @@ export default function Navbar() {
 
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
           {!scrolled && (
-            <div className="hidden md:flex space-x-4 text-xl">
+            <div className="hidden md:flex space-x-20 text-xl">
               <a href="/services" className="text-gray-700 hover:text-gray-900">
                 Services
               </a>

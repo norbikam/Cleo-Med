@@ -1,6 +1,6 @@
 "use client"; // Only needed in Next.js 13 app directory for client components
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Replace these with your own images or slide content
@@ -32,12 +32,21 @@ const swipePower = (offset: number, velocity: number) =>
 
 export default function Slideshow() {
   const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(0);
+  const [direction, setDirection] = useState(1);
 
   const paginate = (newDirection: number) => {
     setDirection(newDirection);
     setCurrent((prev) => (prev + newDirection + slides.length) % slides.length);
   };
+
+  // Auto-pagination effect
+  useEffect(() => {
+    const interval = setTimeout(() => {
+      paginate(1); // Moves to the next slide
+    }, 5000); // 5 seconds
+
+    return () => clearTimeout(interval); // Clears timeout on unmount or user interaction
+  }, [current]); // Resets timer on slide change
 
   return (
     <motion.div
