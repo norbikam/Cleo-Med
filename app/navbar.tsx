@@ -1,24 +1,153 @@
-import { Button } from "react-bootstrap";
+"use client"; // Only needed in Next.js 13 app directory for client components
 
-function Navigation() {
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaFacebookF, FaInstagram } from "react-icons/fa";
+import { HiMenu, HiX } from "react-icons/hi";
+
+export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div>
-    <table className="navbartable">
-      <thead>
-      <th className="navbartable-left">
-      <a href="#"><h1>Cleo Med</h1></a>
-      </th>
-      <th className="navbartable-right">
-      <ul className="navbuttons">
-        <a href="#"><li>Button1</li></a>
-        <a href="#"><li>Button1</li></a>
-        <a href="#"><li>Button1</li></a>
-      </ul>
-      </th>
-      </thead>
-    </table>
-    </div>
+    <header>
+      <motion.nav
+        className={`fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-all duration-300 ${
+          scrolled ? "py-2" : "py-6"
+        }`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        {/* Top row with social icons and contact info (hidden on mobile) */}
+        <div className="hidden md:block px-6 md:px-12 py-2 bg-gray-100">
+          <div className="flex justify-between items-center">
+            <div className="flex space-x-3 text-gray-700">
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-blue-600"
+              >
+                <FaFacebookF />
+              </a>
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-pink-600"
+              >
+                <FaInstagram />
+              </a>
+            </div>
+            <div className="flex space-x-4 text-gray-700 text-sm text-right">
+              <p>Phone: +123 456 789</p>
+              <p>Email: example@email.com</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Main navigation row */}
+        <div className="flex items-center justify-between max-w-6xl mx-auto px-6 md:px-12">
+          {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
+          {!scrolled && (
+            <div className="hidden md:flex space-x-4 text-xl">
+              <a href="/" className="text-gray-700 hover:text-gray-900">
+                Home
+              </a>
+              <a href="/about" className="text-gray-700 hover:text-gray-900">
+                About
+              </a>
+            </div>
+          )}
+
+          {/* Center Logo */}
+          <motion.div
+            className={`font-bold transition-all duration-300 ${
+              scrolled ? "text-lg" : "text-3xl"
+            }`}
+          >
+            LOGO
+          </motion.div>
+
+          {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
+          {!scrolled && (
+            <div className="hidden md:flex space-x-4 text-xl">
+              <a href="/services" className="text-gray-700 hover:text-gray-900">
+                Services
+              </a>
+              <a href="/contact" className="text-gray-700 hover:text-gray-900">
+                Contact
+              </a>
+            </div>
+          )}
+
+          {/* Mobile Hamburger Menu (visible on mobile only) */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-gray-700 focus:outline-none"
+            >
+              {menuOpen ? (
+                <HiX className="h-6 w-6" />
+              ) : (
+                <HiMenu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
+        </div>
+      </motion.nav>
+
+      {/* Mobile Navigation Menu (animated expandable list) */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            className="md:hidden fixed top-20 left-0 w-full bg-white shadow-md z-[60]"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex flex-col space-y-2 px-6 py-4 text-xl">
+              <a
+                href="/"
+                className="text-gray-700 hover:text-gray-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                Home
+              </a>
+              <a
+                href="/about"
+                className="text-gray-700 hover:text-gray-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                About
+              </a>
+              <a
+                href="/services"
+                className="text-gray-700 hover:text-gray-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                Services
+              </a>
+              <a
+                href="/contact"
+                className="text-gray-700 hover:text-gray-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                Contact
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
   );
 }
-
-export default Navigation;

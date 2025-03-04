@@ -9,7 +9,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #4e2121;
+    --background: #dad5d5;
     --foreground: #ededed;
   }
 }
@@ -19,6 +19,7 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
   font-weight: lighter;
+  margin: 0;
 }
 
 .navbartable{
@@ -94,12 +95,12 @@ body {
 }
 
 .mainpic th{
-  padding: 10vh;
+  padding: 10rem;
 }
 
 .mainpic h1{
   font-size: 10vh;
   font-weight: 200;
   letter-spacing: 2;
-  background-color: #171717 #ffffff00 10;
+  background-color: #171717 #ffffff00 ;
 }
