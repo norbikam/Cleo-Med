@@ -16,8 +16,6 @@ export default function Home() {
           <Slideshow/>
           <ProceduresGrid/>
         </main>
-
-      
       <Footer />
     </div>
   );

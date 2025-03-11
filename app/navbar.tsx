@@ -37,7 +37,7 @@ export default function Navbar() {
   return (
     <header>
       <motion.nav
-        className={`fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-all duration-700 ${
           scrolled ? "py-2" : "py-6"
         }`}
         initial={{ opacity: 0 }}
@@ -45,7 +45,7 @@ export default function Navbar() {
       >
         {/* Top row with social icons and contact info (hidden on mobile) */}
         {!scrolled && (
-        <div className="hidden md:block px-6 md:px-12 py-2 bg-gray-100">
+        <div className="transition duration-1000 hidden md:block px-6 md:px-12 py-2 bg-gray-100">
           <div className="flex justify-between items-center">
             <div className="flex space-x-3 text-gray-700">
               <Link
@@ -76,7 +76,6 @@ export default function Navbar() {
         {/* Main navigation row */}
         <div className="flex items-center justify-between max-w-6xl mx-auto px-6 md:px-12">
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
-          {!scrolled && (
             <div className="hidden md:flex space-x-20 text-xl">
               <Link href="/" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Home
@@ -85,11 +84,10 @@ export default function Navbar() {
                 About
               </a>
             </div>
-          )}
 
           {/* Center Logo */}
           <motion.div
-            className={`font-bold transition-all duration-300 ${
+            className={`font-bold transition-all duration-300 text-black ${
               scrolled ? "text-lg" : "text-3xl"
             }`}
           >
@@ -97,7 +95,6 @@ export default function Navbar() {
           </motion.div>
 
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
-          {!scrolled && (
             <div className="hidden md:flex space-x-20 text-xl">
               <a href="/services" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Services
@@ -106,7 +103,6 @@ export default function Navbar() {
                 Contact
               </a>
             </div>
-          )}
 
           {/* Mobile Hamburger Menu (visible on mobile only) */}
           <div className="md:hidden">
