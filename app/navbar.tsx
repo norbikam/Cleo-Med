@@ -12,12 +12,12 @@ type NavItem = {
   label: string;
 };
 
-const navItems: NavItem[] = [
+/*const navItems: NavItem[] = [
   { href: "/", label: "Home" },
   { href: "/about", label: "O Nas" },
   { href: "/services", label: "Zabiegi" },
   { href: "/contact", label: "Kontakt" },
-];
+];*/
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -32,7 +32,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isActive = (href: string) => pathname === href;
+  /*const isActive = (href: string) => pathname === href;*/
 
   return (
     <header>
