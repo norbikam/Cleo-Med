@@ -3,6 +3,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import tailwindcss from '@tailwindcss/vite'
 
 const procedures = [
   {
@@ -51,9 +52,8 @@ export default function ProceduresGrid() {
               key={procedure.href}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
               whileHover={{ scale: 1.05 }}
-              className="relative group rounded-xl overflow-hidden shadow-lg"
+              className="relative group overflow-hidden shadow-(color:black) shadow-2xl imagebutton"
             >
               <a
                 href={procedure.href}
@@ -69,7 +69,7 @@ export default function ProceduresGrid() {
                     className="object-cover object-center"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
-                  <div className="absolute inset-0 bg-black/30 transition-all duration-300 group-hover:bg-black/20" />
+                  <div className="absolute inset-0 bg-black/30 transition-all duration-300 group-hover:bg-black/20"/>
                 </div>
 
                 {/* Content */}

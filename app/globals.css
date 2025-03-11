@@ -104,3 +104,10 @@ body {
   letter-spacing: 2;
   background-color: #171717 #ffffff00 ;
 }
+.imagebutton{
+  box-shadow: rgba(0, 0, 0, 0.849) -.3rem .3rem 1rem;
+}
+
+.maincomp{
+  margin-top: 5rem;
+}
