@@ -7,12 +7,12 @@ import { HiMenu, HiX } from "react-icons/hi";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-type NavItem = {
+/*type NavItem = {
   href: string;
   label: string;
 };
 
-/*const navItems: NavItem[] = [
+const navItems: NavItem[] = [
   { href: "/", label: "Home" },
   { href: "/about", label: "O Nas" },
   { href: "/services", label: "Zabiegi" },
@@ -22,7 +22,7 @@ type NavItem = {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const pathname = usePathname();
+  /*const pathname = usePathname();*/
 
   useEffect(() => {
     const handleScroll = () => {
