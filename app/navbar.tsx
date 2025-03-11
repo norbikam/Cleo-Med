@@ -35,7 +35,7 @@ export default function Navbar() {
   const isActive = (href: string) => pathname === href;
 
   return (
-    
+    <header>
       <motion.nav
         className={`fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-all duration-300 ${
           scrolled ? "py-2" : "py-6"
@@ -78,12 +78,12 @@ export default function Navbar() {
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
           {!scrolled && (
             <div className="hidden md:flex space-x-20 text-xl">
-              <Link href="/" className="text-gray-700 hover:text-gray-900">
+              <a href="/" className="text-gray-700 hover:text-gray-900">
                 Home
-              </Link
-              <Link href="/about" className="text-gray-700 hover:text-gray-900">
+              </a>
+              <a href="/about" className="text-gray-700 hover:text-gray-900">
                 About
-              </Link>
+              </a>
             </div>
           )}
 
@@ -167,6 +167,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    
+    </header>
   );
 }
