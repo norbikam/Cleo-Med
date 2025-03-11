@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+/*import { usePathname } from "next/navigation";
 
-/*type NavItem = {
+ type NavItem = {
   href: string;
   label: string;
 };
@@ -78,9 +78,9 @@ export default function Navbar() {
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
           {!scrolled && (
             <div className="hidden md:flex space-x-20 text-xl">
-              <a href="/" className="text-gray-700 hover:text-gray-900">
+              <Link href="/" className="text-gray-700 hover:text-gray-900">
                 Home
-              </a>
+              </Link>
               <a href="/about" className="text-gray-700 hover:text-gray-900">
                 About
               </a>
@@ -135,13 +135,13 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
           >
             <div className="flex flex-col space-y-2 px-6 py-4 text-xl">
-              <a
+              <Link
                 href="/"
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
                 Home
-              </a>
+              </Link>
               <a
                 href="/about"
                 className="text-gray-700 hover:text-gray-900"
