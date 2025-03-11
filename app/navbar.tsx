@@ -35,7 +35,7 @@ export default function Navbar() {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <header>
+    
       <motion.nav
         className={`fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-all duration-300 ${
           scrolled ? "py-2" : "py-6"
@@ -167,6 +167,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    
   );
 }
