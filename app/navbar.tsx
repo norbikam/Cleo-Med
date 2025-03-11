@@ -48,22 +48,22 @@ export default function Navbar() {
         <div className="hidden md:block px-6 md:px-12 py-2 bg-gray-100">
           <div className="flex justify-between items-center">
             <div className="flex space-x-3 text-gray-700">
-              <a
+              <Link
                 href="https://www.facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-blue-600"
               >
                 <FaFacebookF />
-              </a>
-              <a
+              </Link>
+              <Link
                 href="https://www.instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-pink-600"
               >
                 <FaInstagram />
-              </a>
+              </Link>
             </div>
             <div className="flex space-x-4 text-gray-700 text-sm text-right">
               <p>Phone: +123 456 789</p>
@@ -78,12 +78,12 @@ export default function Navbar() {
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
           {!scrolled && (
             <div className="hidden md:flex space-x-20 text-xl">
-              <a href="/" className="text-gray-700 hover:text-gray-900">
+              <Link href="/" className="text-gray-700 hover:text-gray-900">
                 Home
-              </a>
-              <a href="/about" className="text-gray-700 hover:text-gray-900">
+              </Link
+              <Link href="/about" className="text-gray-700 hover:text-gray-900">
                 About
-              </a>
+              </Link>
             </div>
           )}
 
