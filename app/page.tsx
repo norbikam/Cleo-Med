@@ -9,11 +9,13 @@ import Footer from "./footer";
 export default function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen gap-16 font-[family-name:var(--font-geist-sans)]">
+      <header>
       <Navigation/>
-      <div className="maincomp w-full">
+      </header>
+      <main className="maincomp w-full">
           <Slideshow/>
           <ProceduresGrid/>
-        </div>
+        </main>
 
       
       <Footer />

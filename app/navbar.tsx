@@ -78,10 +78,10 @@ export default function Navbar() {
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
           {!scrolled && (
             <div className="hidden md:flex space-x-20 text-xl">
-              <Link href="/" className="text-gray-700 hover:text-gray-900">
+              <Link href="/" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Home
               </Link>
-              <a href="/about" className="text-gray-700 hover:text-gray-900">
+              <a href="/about" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 About
               </a>
             </div>
@@ -99,10 +99,10 @@ export default function Navbar() {
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
           {!scrolled && (
             <div className="hidden md:flex space-x-20 text-xl">
-              <a href="/services" className="text-gray-700 hover:text-gray-900">
+              <a href="/services" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Services
               </a>
-              <a href="/contact" className="text-gray-700 hover:text-gray-900">
+              <a href="/contact" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Contact
               </a>
             </div>
