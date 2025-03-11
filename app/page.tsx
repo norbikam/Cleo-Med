@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Navigation from "./navbar";
-import Slideshow from "./slideshow"
+import Slideshow from "./components/slideshow"
 import ProceduresGrid from "./components/ProceduresGrid";
 import Footer from "./footer";
 
