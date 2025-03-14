@@ -5,8 +5,12 @@ import Image from "next/image";
 import * as THREE from "three";
 import BIRDS from "vanta/dist/vanta.birds.min";
 
+interface VantaEffect {
+  destroy: () => void;
+}
+
 export default function OurTeam() {
-  const [vantaEffect, setVantaEffect] = useState<any>(null);
+  const [vantaEffect, setVantaEffect] = useState<VantaEffect | null>(null);
   const vantaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
