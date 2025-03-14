@@ -3,7 +3,6 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import tailwindcss from '@tailwindcss/vite'
 
 const procedures = [
   {
@@ -47,7 +46,7 @@ export default function ProceduresGrid() {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {procedures.map((procedure, index) => (
+          {procedures.map((procedure) => (
             <motion.div
               key={procedure.href}
               initial={{ opacity: 0, y: 20 }}
