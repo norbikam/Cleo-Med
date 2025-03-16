@@ -13,7 +13,7 @@ export default function VoucherInfo() {
       />
       
       {/* Content layer */}
-      <div className="relative max-w-3xl mx-auto text-white text-center">
+      <div className="relative max-w-3xl mx-auto text-whitesmoke text-center">
         <h2 className="bg-white text-black text-2xl">Spraw sobie lub bliskiej osobie oryginalny prezent</h2><br/>
         <h2 className="text-4xl font-bold mb-6">Skorzystaj z VOUCHERA</h2>
         <p className="text-lg mb-4">

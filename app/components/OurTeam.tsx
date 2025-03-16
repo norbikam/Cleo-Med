@@ -14,7 +14,7 @@ export default function OurTeam() {
     <section className="relative flex items-center justify-center px-6 animated-bg py-20">
       <div className="relative z-10 text-white text-center max-w-[80%]">
         <h2 className="text-4xl font-bold mb-4">Poznaj nasz zespół</h2>
-        <p className="text-lg text-gray-100 mb-8">
+        <p className="text-lg text-gray-100 mb-8 font-light">
           Nasz wykwalifikowany zespół tworzy to wyjątkowe miejsce. Każdy z nas jest inny, ale wszyscy działamy z tą samą pasją.
         </p>
 
