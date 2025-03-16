@@ -5,6 +5,8 @@ import Slideshow from "./components/slideshow"
 import ProceduresGrid from "./components/ProceduresGrid";
 import Footer from "./footer";
 import OurTeam from "./components/OurTeam";
+import FourPhotoSlideshow from "./components/FourPhotoSlideshow";
+import VoucherInfo from "./components/VoucherInfo";
 
 export default function Home() {
   return (
@@ -16,6 +18,8 @@ export default function Home() {
           <Slideshow/>
           <ProceduresGrid/>
           <OurTeam/>
+          <FourPhotoSlideshow/>
+          <VoucherInfo />
         </main>
       <Footer />
     </div>
