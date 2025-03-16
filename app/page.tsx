@@ -7,6 +7,12 @@ import Footer from "./footer";
 import OurTeam from "./components/OurTeam";
 import FourPhotoSlideshow from "./components/FourPhotoSlideshow";
 import VoucherInfo from "./components/VoucherInfo";
+import Lenis from 'lenis'
+import 'lenis/dist/lenis.css'
+
+const lenis = new Lenis({
+    autoRaf: true,
+  });
 
 export default function Home() {
   return (
