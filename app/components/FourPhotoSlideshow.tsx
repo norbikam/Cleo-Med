@@ -6,78 +6,50 @@ import Image from "next/image";
 
 export default function InfiniteCarousel() {
   const photos = [
+    "/treatments/prv1.jpg",
+    "/treatments/kosmetyka.jpg",
     "/treatments/diagnosta.jpg",
-    "/treatments/diagnosta.jpg",
-    "/treatments/diagnosta.jpg",
-    "/treatments/diagnosta.jpg",
-    "/treatments/diagnosta.jpg",
-    "/treatments/diagnosta.jpg",
-    "/treatments/diagnosta.jpg",
-    "/treatments/diagnosta.jpg",
+    "/treatments/laseroterapia.jpg",
+    "/treatments/body-contouring.jpg",
+    "/treatments/formy-platnosci.png",
+    "/treatments/trychologia.jpg",
+    "/treatments/medycyna-estetyczna.jpg",
   ];
 
-  // Responsive: 1 visible on mobile, 4 on desktop.
   const [visible, setVisible] = useState(4);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [photoList, setPhotoList] = useState([...photos]); // Początkowa lista
+
   useEffect(() => {
     const updateVisible = () => {
-      if (window.innerWidth < 768) {
-        setVisible(1);
-      } else {
-        setVisible(4);
-      }
+      setVisible(window.innerWidth < 768 ? 1 : 4);
     };
     updateVisible();
     window.addEventListener("resize", updateVisible);
     return () => window.removeEventListener("resize", updateVisible);
   }, []);
 
-  const n = photos.length;
-  // Extend photos three times for seamless looping.
-  const extendedPhotos = [...photos, ...photos, ...photos];
-  // Start in the middle copy.
-  const initialIndex = n;
-  const [currentIndex, setCurrentIndex] = useState(initialIndex);
-
-  // Auto-play: Move one slide every 3 seconds.
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => prev + 1);
+      setCurrentIndex((prevIndex) => {
+        if (prevIndex + 1 >= photoList.length - visible) {
+          // Gdy dojdziemy do końca, dodajemy nową kopię zdjęć
+          setPhotoList((prev) => [...prev, ...photos]);
+        }
+        return prevIndex + 1;
+      });
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
-
-  // When currentIndex moves out of the middle copy, adjust it instantly.
-  useEffect(() => {
-    if (currentIndex >= n * 2) {
-      setCurrentIndex((prev) => prev - n);
-    } else if (currentIndex < n) {
-      setCurrentIndex((prev) => prev + n);
-    }
-  }, [currentIndex, n]);
-
-  // A lower threshold for swipe detection.
-  const swipeConfidenceThreshold = 1000;
-  const swipePower = (offset: number, velocity: number) =>
-    Math.abs(offset) * velocity;
+  }, [photoList, visible]);
 
   return (
     <div className="w-full overflow-hidden">
       <motion.div
         className="flex"
-        drag="x"
-        dragElastic={0.2}
-        onDragEnd={(e, info) => {
-          const swipe = swipePower(info.offset.x, info.velocity.x);
-          if (swipe < -swipeConfidenceThreshold) {
-            setCurrentIndex((prev) => prev + 1);
-          } else if (swipe > swipeConfidenceThreshold) {
-            setCurrentIndex((prev) => prev - 1);
-          }
-        }}
         animate={{ x: `-${currentIndex * (100 / visible)}%` }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        {extendedPhotos.map((src, index) => (
+        {photoList.map((src, index) => (
           <div
             key={index}
             className="flex-shrink-0"
