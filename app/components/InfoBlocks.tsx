@@ -2,7 +2,7 @@
 
 export default function InfoBlocks() {
   return (
-    <div className="infoblocks pb-12 pt-0 font-medium">
+    <div className="infoblocks pb-12 sm:pt-0 font-medium md:pt-12">
       <div className="flex justify-center">
         {/* Responsive container */}
         <div className="flex flex-col md:flex-row w-4/5 bg-white shadow-lg rounded-lg overflow-hidden">
