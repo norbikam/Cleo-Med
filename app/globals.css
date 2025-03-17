@@ -3,15 +3,19 @@
 @tailwind utilities;
 
 :root {
-  --background: #aa4f4f;
+  --background: #E3D3D9;
   --foreground: #171717;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #dad5d5;
+    --background: #E3D3D9;
     --foreground: #ededed;
   }
+}
+
+html{
+  scroll-behavior: smooth;
 }
 
 body {
@@ -21,34 +25,6 @@ body {
   font-weight: lighter;
   margin: 0;
 }
-
-.mainpic{
-  position: fixed;
-  left: 0;
-  top: 6%;
-  width: 100%;
-  background-image: url(https://img.freepik.com/darmowe-zdjecie/piekno-portret-tajemnicza-usmiechnieta-imbirowa-kobieta-z-dlugie-wlosy-pozowac-z-ukosa-i-patrzec_171337-920.jpg?t=st=1740736959~exp=1740740559~hmac=0ed5cc75746b9499eb9b5f6ccbb0de05a3504524734d3a8cb62cd3d7156480f8&w=1060);
-  background-size: cover;
-  background-position-y: center;
-  text-align: right;
-  background-position: 0;
-  z-index: 0;
-}
-
-.mainpic th{
-  padding: 10rem;
-}
-
-.mainpic h1{
-  font-size: 10vh;
-  font-weight: 200;
-  letter-spacing: 2;
-  background-color: #171717 #ffffff00 ;
-}
 .imagebutton{
-  box-shadow: rgba(0, 0, 0, 0.849) -.3rem .3rem 1rem;
-}
-
-.maincomp{
-  margin-top: 5rem;
+  box-shadow: rgba(0, 0, 0, 0.849) -.4rem .4rem 0.6rem;
 }
