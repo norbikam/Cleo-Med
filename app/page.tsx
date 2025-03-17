@@ -8,6 +8,7 @@ import OurTeam from "./components/OurTeam";
 import FourPhotoSlideshow from "./components/FourPhotoSlideshow";
 import VoucherInfo from "./components/VoucherInfo";
 import InfoBlocks from "./components/InfoBlocks";
+import FourPhotoSlideshowGap from "./components/FourPhotoSlideshowGap"
 
 
 export default function Home() {
@@ -24,6 +25,7 @@ export default function Home() {
           <OurTeam/>
           <FourPhotoSlideshow/>
           <VoucherInfo />
+          <FourPhotoSlideshowGap />
           <InfoBlocks/>
         </main>
       <Footer/>
