@@ -5,6 +5,7 @@ import Navigation from "./navbar";
 import Slideshow from "./components/slideshow"
 import ProceduresGrid from "./components/ProceduresGrid";
 import Footer from "./footer";
+import InfoBlocks from "./components/InfoBlocks";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       <main className="maincomp w-full">
           <Slideshow/>
           <ProceduresGrid/>
+          <InfoBlocks/>
         </main>
       <Footer />
     </div>
