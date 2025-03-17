@@ -122,9 +122,52 @@ export default function Navbar() {
 
       {/* Mobile Navigation Menu (animated expandable list) */}
       <AnimatePresence>
-        {menuOpen && (
+        {menuOpen && !scrolled && (
           <motion.div
             className="md:hidden fixed top-20 left-0 w-full bg-white shadow-md z-[60]"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex flex-col space-y-2 px-6 py-4 text-xl">
+              <Link
+                href="/"
+                className="text-gray-700 hover:text-gray-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <a
+                href="/about"
+                className="text-gray-700 hover:text-gray-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                About
+              </a>
+              <a
+                href="/services"
+                className="text-gray-700 hover:text-gray-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                Services
+              </a>
+              <a
+                href="/contact"
+                className="text-gray-700 hover:text-gray-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                Contact
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {menuOpen && scrolled && (
+          <motion.div
+            className="md:hidden fixed top-10 left-0 w-full bg-white shadow-md z-[60]"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
