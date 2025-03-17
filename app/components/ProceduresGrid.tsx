@@ -41,7 +41,7 @@ export default function ProceduresGrid() {
   return (
     <section className="py-16 px-4 sm:px-8 lg:px-16 bg-white">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-gray-800 mb-12 text-center">
+        <h2 className="text-5xl font-light text-gray-800 mb-12 text-center">
           Nasze Zabiegi
         </h2>
         
@@ -51,7 +51,7 @@ export default function ProceduresGrid() {
               key={procedure.href}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.01 }}
               className="relative group overflow-hidden shadow-(color:black) shadow-2xl imagebutton"
             >
               <a
