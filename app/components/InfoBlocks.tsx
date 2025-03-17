@@ -1,11 +1,10 @@
 "use client"
-import { div } from "motion/react-client"
-import Image from "next/image"
+
 
 export default function InfoBlocks(){
     return(
-        <div className=" flex justify-center ">
-<body className="flex justify-center items-center h-screen bg-gray-100  " />
+        <div className="infoblocks py-8">
+        <div className=" flex justify-center">
         <div className="flex w-4/5 bg-white shadow-lg rounded-lg overflow-hidden ">
             <div className="w-1/2 bg-brown-500 text-white p-6 bg-blue-200">
                 <div className="text-2xl text-center mb-4 ">📄</div>
@@ -30,7 +29,7 @@ export default function InfoBlocks(){
                 <p className="mt-4 text-black text-xl">Przy wykonaniu 10 usług w naszym gabinecie, sumujemy wszystkie kwoty wydatkowane na każdą usługę. Z kwoty jaką uzyskamy łącznie odejmujemy 10%, które stanowi rabat na kolejny zabieg.</p>
             </div>
         </div>
-
+        </div>
         </div>
     )
 }

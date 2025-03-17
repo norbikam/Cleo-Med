@@ -28,3 +28,9 @@ body {
 .imagebutton{
   box-shadow: rgba(0, 0, 0, 0.849) -.4rem .4rem 0.6rem;
 }
+
+.infoblocks{
+  width: 100vw;
+  background:
+    linear-gradient(0deg, #825ba3, #ea9be1);
+}

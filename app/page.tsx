@@ -7,6 +7,7 @@ import Footer from "./footer";
 import OurTeam from "./components/OurTeam";
 import FourPhotoSlideshow from "./components/FourPhotoSlideshow";
 import VoucherInfo from "./components/VoucherInfo";
+import InfoBlocks from "./components/InfoBlocks";
 
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
           <OurTeam/>
           <FourPhotoSlideshow/>
           <VoucherInfo />
+          <InfoBlocks/>
         </main>
       <Footer/>
     </div>
