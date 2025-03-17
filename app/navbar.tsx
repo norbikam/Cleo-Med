@@ -65,7 +65,7 @@ export default function Navbar() {
                 <FaInstagram />
               </Link>
             </div>
-            <div className="flex space-x-4 text-gray-700 text-sm text-right">
+            <div className="flex space-x-4 text-gray-700 text-sm text-right font-extralight">
               <p>Phone: +123 456 789</p>
               <p>Email: example@email.com</p>
             </div>
@@ -76,7 +76,7 @@ export default function Navbar() {
         {/* Main navigation row */}
         <div className="flex items-center justify-between max-w-6xl mx-auto px-6 md:px-12">
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
-            <div className="hidden md:flex space-x-20 text-xl">
+            <div className="hidden md:flex space-x-20 text-xl font-extralight">
               <Link href="/" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Home
               </Link>
@@ -95,7 +95,7 @@ export default function Navbar() {
           </motion.div>
 
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
-            <div className="hidden md:flex space-x-20 text-xl">
+            <div className="hidden md:flex space-x-20 text-xl font-extralight">
               <a href="/services" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Services
               </a>
