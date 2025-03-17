@@ -5,7 +5,7 @@ export default function VoucherInfo() {
     <section className="relative min-h-screen flex items-center justify-center px-4 py-12">
       {/* Background layer with fixed attachment for parallax effect */}
       <div
-        className="absolute inset-0 z-[-1] bg-cover bg-center bg-fixed md:bg-scroll"
+        className="absolute inset-0 z-[-1] bg-cover bg-center md:bg-fixed sm:bg-scroll"
         style={{
           backgroundImage:
             "url(https://img.freepik.com/premium-zdjecie/kobieta-z-afro-siedzi-przed-sciana_1292121-2070.jpg?w=1380)",

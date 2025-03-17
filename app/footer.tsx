@@ -5,7 +5,7 @@ import { FaFacebookF, FaInstagram } from "react-icons/fa";
 export default function Footer(){
   return(
     <div>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center align-middle mb-10 text-black">
+      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center align-middle mb-10 text-black bg-pink-100 py-12 font-extralight mt-12" style={{width:"98vw"}}>
         <Link
                 href="https://www.facebook.com"
                 target="_blank"

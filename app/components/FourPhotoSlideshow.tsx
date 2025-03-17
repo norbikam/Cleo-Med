@@ -43,7 +43,7 @@ export default function InfiniteCarousel() {
   }, [photoList, visible]);
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-full overflow-hidden bg-gray-100">
       <motion.div
         className="flex"
         animate={{ x: `-${currentIndex * (100 / visible)}%` }}

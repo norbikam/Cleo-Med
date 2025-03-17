@@ -16,19 +16,21 @@ export default function Home() {
 
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen gap-16 font-[family-name:var(--font-geist-sans)] scroll-smooth">
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen gap-16 font-[family-name:var(--font-geist-sans)]">
       <header>
       <Navigation/>
       </header>
-      <main className="mt-12 w-full">
+      <main style={{maxWidth:"98vw"}} className="overflow-hidden">
           <Slideshow/>
           <ProceduresGrid/>
           <OurTeam/>
           <FourPhotoSlideshow/>
           <VoucherInfo />
           <FourPhotoSlideshowGap />
+          <div className="infomembermerge">
           <MembercardInfo />
           <InfoBlocks/>
+          </div>
         </main>
       <Footer/>
     </div>

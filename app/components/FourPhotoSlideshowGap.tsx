@@ -43,9 +43,9 @@ export default function InfiniteCarouselGap() {
   }, [photoList, visible]);
 
   return (
-    <div className="w-full overflow-hidden bg-white">
+    <div className="w-full overflow-hidden bg-gray-200 p-4">
       <motion.div
-        className="flex gap-4 py-4"
+        className="flex"
         animate={{ x: `-${currentIndex * (100 / visible)}%` }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
@@ -60,7 +60,7 @@ export default function InfiniteCarouselGap() {
               alt={`Slide ${index + 1}`}
               width={500}
               height={300}
-              className="object-cover"
+              className="object-cover p-4"
             />
           </div>
         ))}
