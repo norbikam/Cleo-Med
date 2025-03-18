@@ -38,7 +38,7 @@ export default function Navbar() {
     <header>
       <motion.nav
         className={`fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-all duration-700 ${
-          scrolled ? "py-2 pb-6 opacity-50" : "py-6 pb-4"
+          scrolled ? "py-2 pb-6 bg-gray-100/50" : "py-6 pb-4"
         }`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -73,8 +73,8 @@ export default function Navbar() {
               <Link href="/" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Home
               </Link>
-              <a href="/about" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
-                About
+              <a href="/onas" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
+                O nas
               </a>
             </div>
 
