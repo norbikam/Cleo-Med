@@ -38,43 +38,36 @@ export default function Navbar() {
     <header>
       <motion.nav
         className={`fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-all duration-700 ${
-          scrolled ? "py-2" : "py-6"
+          scrolled ? "py-2 pb-6" : "py-6 pb-4"
         }`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        {/* Top row with social icons and contact info (hidden on mobile) */}
-        {!scrolled && (
-        <div className="transition duration-1000 hidden md:block px-6 md:px-12 py-2 bg-gray-100">
-          <div className="flex justify-between items-center">
-            <div className="flex space-x-3 text-gray-700">
-              <Link
-                href="https://www.facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-blue-600"
-              >
+        {/* Top Row with Socials & Contact (Animated Shrink) */}
+        <motion.div
+          className="hidden md:block bg-gray-100 overflow-hidden"
+          initial={{ height: "auto" }}
+          animate={{ height: scrolled ? 0 : "40px" }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+        >
+          <div className="py-2 md:px-12 flex justify-between items-center text-gray-700">
+            <div className="flex space-x-3">
+              <Link href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
                 <FaFacebookF />
               </Link>
-              <Link
-                href="https://www.instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-pink-600"
-              >
+              <Link href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600">
                 <FaInstagram />
               </Link>
             </div>
-            <div className="flex space-x-4 text-gray-700 text-sm text-right font-extralight">
+            <div className="flex space-x-4 text-sm font-extralight">
               <p>Phone: +123 456 789</p>
               <p>Email: example@email.com</p>
             </div>
           </div>
-        </div>
-        )}
+        </motion.div>
 
         {/* Main navigation row */}
-        <div className="flex items-center justify-between max-w-6xl mx-auto px-6 md:px-12">
+        <div className="flex items-center justify-between max-w-6xl mx-auto px-6 md:px-12 pt-4">
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
             <div className="hidden md:flex space-x-20 text-xl font-extralight">
               <Link href="/" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
@@ -87,7 +80,7 @@ export default function Navbar() {
 
           {/* Center Logo */}
           <motion.div
-            className={`font-bold transition-all duration-300 text-black ${
+            className={`font-bold transition-all duration-500 text-black ${
               scrolled ? "text-lg" : "text-3xl"
             }`}
           >
