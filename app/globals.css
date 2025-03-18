@@ -59,3 +59,7 @@ body {
   z-index: -10; /* Places it behind content */
 }
 }
+
+.splitimagetop, .splitimagebot{
+  background-image: url(../public/treatments/diagnosta.jpg);
+}

@@ -92,8 +92,8 @@ export default function Navbar() {
               <a href="/services" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Services
               </a>
-              <a href="/contact" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
-                Contact
+              <a href="/kontakt" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
+                Kontakt
               </a>
             </div>
 
