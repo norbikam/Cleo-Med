@@ -38,7 +38,7 @@ export default function Navbar() {
     <header>
       <motion.nav
         className={`fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-all duration-700 ${
-          scrolled ? "py-2 pb-6" : "py-6 pb-4"
+          scrolled ? "py-2 pb-6 opacity-50" : "py-6 pb-4"
         }`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -81,7 +81,7 @@ export default function Navbar() {
           {/* Center Logo */}
           <motion.div
             className={`font-bold transition-all duration-500 text-black ${
-              scrolled ? "text-lg" : "text-3xl"
+              scrolled ? "text-lg opacity-50" : "text-3xl"
             }`}
           >
             LOGO
