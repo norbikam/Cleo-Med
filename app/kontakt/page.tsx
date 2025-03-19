@@ -2,7 +2,6 @@
 
 import Navigation from "../navbar";
 import Footer from "../footer";
-import OurTeam from "../components/OurTeam";
 
 export default function Home() {
   return (
