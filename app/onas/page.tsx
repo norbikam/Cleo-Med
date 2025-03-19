@@ -11,12 +11,12 @@ export default function Home() {
         <Navigation />
       </header>
       <main style={{ maxWidth: "98vw" }} className="overflow-hidden pt-20 text-center">
-        <div className="text-black py-20 bg-white">
+        <div className="text-black py-20">
           <h2 className="text-3xl font-medium">O nas</h2>
           <p className="text-xl">Lorem ipsum dolor sit amet, consectetur.</p>
         </div>
         
-        <div className="flex flex-col md:grid md:grid-cols-2 md:gap-8 items-center text-black w-full px-6 md:px-12">
+        <div className="flex flex-col md:grid md:grid-cols-2 md:gap-8 items-center text-black w-full px-6 md:px-12 bg-white w-[98vw]">
           {/* First Section */}
           <div className="splitimagetop w-full h-64 bg-gray-300 md:h-[85vh]"></div>
           <div className="text-left md:w-[30vw] md:pl-20">

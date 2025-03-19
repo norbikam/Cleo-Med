@@ -67,11 +67,11 @@ export default function Navbar() {
         </motion.div>
 
         {/* Main navigation row */}
-        <div className="flex items-center justify-between max-w-6xl mx-auto px-6 md:px-12 pt-4">
+        <div className="flex items-center justify-between max-w-[80vw] mx-auto px-6 md:px-12 pt-4">
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
-            <div className="hidden md:flex space-x-20 text-xl font-extralight">
+            <div className="hidden md:flex space-x-[10vw] text-xl font-extralight">
               <Link href="/" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
-                Home
+                Strona główna
               </Link>
               <a href="/onas" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 O nas
@@ -88,9 +88,9 @@ export default function Navbar() {
           </motion.div>
 
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
-            <div className="hidden md:flex space-x-20 text-xl font-extralight">
-              <a href="/services" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
-                Services
+            <div className="hidden md:flex space-x-[10vw] text-xl font-extralight">
+              <a href="/zabiegi" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
+                Zabiegi
               </a>
               <a href="/kontakt" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Kontakt
