@@ -4,7 +4,6 @@ import "./globals.css";
 
 import { ReactLenis } from 'lenis/react'
 
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +27,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
-      <SpeedInsights/>
       <ReactLenis root>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
