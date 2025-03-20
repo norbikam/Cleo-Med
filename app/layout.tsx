@@ -28,6 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
+      <SpeedInsights/>
       <ReactLenis root>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
