@@ -11,14 +11,14 @@ export default function Home() {
         <Navigation />
       </header>
       <main style={{ maxWidth: "98vw" }} className="overflow-hidden pt-20 text-center w-[98vw] justify-items-center">
-        <h2 className="text-black text-6xl pb-8">Zabiegi na skórę głowy i włosy</h2>
+      <h2 className="text-black text-6xl pb-8">Zabiegi na twarz</h2>
         <div className="flex flex-col container text-black text-2xl w-full text-center justify-items-center border-black border md:grid md:grid-cols-3">
           <div className="col-span-2 align-middle">
-          <h2 className="py-20 text-6xl">Mezoterapia skóry głowy</h2>
-          <p>stymulacja wzrostu włosów poprzez dostarczanie składników odżywczych</p>
+          <h2 className="py-20 text-6xl">Mezoterapia mikroigłowa (Dermapen 4)</h2>
+          <p>poprawa jędrności, redukcja blizn, zmarszczek i rozszerzonych porów</p>
           </div>
           <div className="justify-items-right">
-            <Image src="/treatments/zabieg.jpeg" alt="" width={1000} height={1000}/>
+            <Image src="/pics/p7.jpeg" alt="" width={1000} height={1000}/>
           </div>
         </div>
       </main>
