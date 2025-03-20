@@ -162,7 +162,7 @@ export default function Navbar() {
       <AnimatePresence>
         {menuOpen && scrolled && (
           <motion.div
-            className="md:hidden fixed top-10 left-0 w-full bg-white shadow-md z-[60]"
+            className="md:hidden fixed top-20 left-0 w-full bg-white shadow-md z-[60]"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
