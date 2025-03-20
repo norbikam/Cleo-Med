@@ -11,7 +11,7 @@ export default function Home() {
         <Navigation />
       </header>
       <main style={{ maxWidth: "98vw" }} className="overflow-hidden pt-20 text-center w-[98vw]">
-        <h2 className="text-black text-6xl pb-8">Zabiegi na ciało</h2>
+        <h2 className="text-black text-3xl pb-8">Zabiegi na ciało</h2>
         <CialoGrid />
       </main>
       <Footer />
