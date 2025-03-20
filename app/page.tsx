@@ -18,7 +18,7 @@ export default function Home() {
       <header>
         <Navigation/>
       </header>
-      <main style={{maxWidth:"98vw"}} className="overflow-hidden">
+      <main style={{maxWidth:"98vw"}} className="overflow-hidden pt-14">
           <Slideshow />
           <ProceduresGrid />
           <OurTeam />

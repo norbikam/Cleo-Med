@@ -11,7 +11,7 @@ export default function Home() {
         <Navigation />
       </header>
       <main style={{ maxWidth: "98vw" }} className="overflow-hidden pt-20 text-center w-[98vw] justify-items-center">
-      <h2 className="text-black text-6xl pb-8">Zabiegi na ciało</h2>
+      <h2 className="text-black text-3xl pb-8">Zabiegi na ciało</h2>
         <div className="flex flex-col container text-black text-2xl w-full text-center justify-items-center border-black border md:grid md:grid-cols-3">
           <div className="col-span-2 align-middle">
           <h2 className="py-20 text-6xl">RF mikroigłowy (Morpheus 8 na ciało)</h2>

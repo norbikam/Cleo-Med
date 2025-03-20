@@ -13,9 +13,9 @@ export default function InfoBlocks() {
               Karta stałego klienta
             </h2>
             <ul className="mt-4 space-y-2 text-black text-xl">
-              <li>➜ Karta jest imienna.</li>
-              <li>➜ Karta wydawana jest bezterminowo.</li>
-              <li>➜ Karty nie można sprzedać ani odstępować innej osobie.</li>
+              <li>➜ Karta jest przypisana do konkretnej osoby.</li>
+              <li>➜ Jest wydawana bezterminowo.</li>
+              <li>➜ Nie można jej sprzedać ani przekazać innemu użytkownikowi</li>
             </ul>
             <div className="text-2xl text-center mt-6 mb-4">💳</div>
             <h3 className="text-lg font-bold text-black text-center">
@@ -37,13 +37,10 @@ export default function InfoBlocks() {
               Informacja
             </h2>
             <p className="mt-10 text-black text-xl">
-              Każdy Klient odwiedzający nasz salon, otrzymuje Kartę stałego
-              klienta, przy każdej wizycie karta klienta jest uzupełniana.
+            Każdy Klient odwiedzający nasz salon otrzymuje Kartę Stałego Klienta, która jest uzupełniana przy każdej wizycie.
             </p>
             <p className="mt-4 text-black text-xl">
-              Przy wykonaniu 10 usług w naszym gabinecie, sumujemy wszystkie
-              kwoty wydatkowane na każdą usługę. Z kwoty jaką uzyskamy łącznie
-              odejmujemy 10%, które stanowi rabat na kolejny zabieg.
+            Po skorzystaniu z 10 usług sumujemy ich łączny koszt, a następnie odejmujemy 10% – tę kwotę możesz wykorzystać jako rabat na kolejny zabieg.
             </p>
           </div>
         </div>

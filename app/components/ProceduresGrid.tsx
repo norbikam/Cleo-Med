@@ -21,7 +21,7 @@ const procedures = [
     href: "/zabiegi/zabiegi-na-skore-glowy-i-wlosy",
   },
   {
-    title: "Zabiegi laserowe i inne technologie maszynowe",
+    title: "Zabiegi laserowe i technologiczne",
     image: "/treatments/zabiegilaserowe.jpeg",
     href: "/zabiegi/zabiegi-laserowe",
   }

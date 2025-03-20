@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
 import Link from "next/link";
+import Image from "next/image";
+
 /*import { usePathname } from "next/navigation";
 
  type NavItem = {
@@ -60,8 +62,8 @@ export default function Navbar() {
               </Link>
             </div>
             <div className="flex space-x-4 text-sm font-extralight">
-              <p>Phone: +123 456 789</p>
-              <p>Email: example@email.com</p>
+              <a href="tel:+48696273477"><p>Tel: +48 696 273 477</p></a>
+              <a href="mailto:cleo.estetyka@gmail.com"><p>Email: cleo.estetyka@gmail.com</p></a>
             </div>
           </div>
         </motion.div>
@@ -81,11 +83,11 @@ export default function Navbar() {
           {/* Center Logo */}
           <motion.div
             className={`font-bold transition-all duration-500 text-black ${
-              scrolled ? "text-lg opacity-50" : "text-3xl"
+              scrolled ? "w-50 h-50 opacity-50" : "w-30 h-30 text-3xl"
             }`}
           >
             <Link href="/">
-            LOGO
+            <Image src="/cleologo.png" alt="" width={50} height={50}/>
             </Link>
           </motion.div>
 
@@ -119,7 +121,7 @@ export default function Navbar() {
       <AnimatePresence>
         {menuOpen && !scrolled && (
           <motion.div
-            className="md:hidden fixed top-20 left-0 w-full bg-white shadow-md z-[60]"
+            className="md:hidden fixed top-24 left-0 w-full bg-white shadow-md z-[60]"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}

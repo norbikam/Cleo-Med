@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CleoMed - twój salon kosmeetyczny",
-  description: "Profesjonalne zagiegi i obsługa w CleoMed",
+  title: "CleoMed",
+  description: "Centrum medycyny estetycznej i kosmetologii",
 };
 
 export default function RootLayout({
