@@ -84,7 +84,9 @@ export default function Navbar() {
               scrolled ? "text-lg opacity-50" : "text-3xl"
             }`}
           >
+            <a href="/">
             LOGO
+            </a>
           </motion.div>
 
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
@@ -189,7 +191,7 @@ export default function Navbar() {
                 Zabiegi
               </a>
               <a
-                href="/kontat"
+                href="/kontakt"
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
