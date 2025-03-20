@@ -84,9 +84,9 @@ export default function Navbar() {
               scrolled ? "text-lg opacity-50" : "text-3xl"
             }`}
           >
-            <a href="/">
+            <Link href="/">
             LOGO
-            </a>
+            </Link>
           </motion.div>
 
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
