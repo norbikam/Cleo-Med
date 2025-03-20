@@ -16,8 +16,8 @@ export default function Home() {
           <div className="text-center md:w-full col-span-3 justify-items-center">
             <h2 style={{fontSize:"4rem"}}>CleoMed</h2>
             <p style={{marginTop:"-1.5rem"}}>Gabinet kosmetyczny</p><br />
-            <div className="flex justify-center text-xl w-full md:flex-row sm:flex-col">
-              <div className="flexflex-col md:w-1/2 sm:w-full"><p>ul. Wileńska 39</p><p>76-200 Słupsk</p></div>
+            <div className="flex justify-center text-xl w-full flex-row sm:flex-col">
+              <div className="flex flex-col md:w-1/2 sm:w-full"><p>ul. Wileńska 39</p><p>76-200 Słupsk</p></div>
               <div className="flex flex-col md:w-1/2 sm:w-full md:py-0 sm:py-10"><p>example@email.com</p><p>+48 123 456 789</p></div>
             </div>
             <br />

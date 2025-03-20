@@ -11,7 +11,7 @@ export default function Home() {
         <Navigation />
       </header>
       <main style={{ maxWidth: "98vw" }} className="overflow-hidden pt-20 text-center w-[98vw] justify-items-center">
-        <h2 className="text-black text-[5rem] pb-8">Zabiegi na skórę głowy i włosy</h2>
+        <h2 className="text-black text-6xl pb-8">Zabiegi na skórę głowy i włosy</h2>
         <div className="container text-black text-2xl w-full text-center justify-items-center border-black border flex">
           <div className="w-2/3">
           <h2 className="py-20" style={{fontSize:"4rem"}}>Mezoterapia skóry głowy</h2>
