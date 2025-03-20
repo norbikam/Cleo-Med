@@ -16,7 +16,7 @@ export default function MembercardInfo() {
       <div className="relative max-w-3xl mx-auto text-whitesmoke text-center">
         <h2 className="text-4xl font-bold mb-6">Karta stałego klienta</h2>
         <p className="text-lg mb-4 font-extralight">
-        W PODZIĘKOWANIU ZA ZAUFANIE I PRZYWIĄZANIE, ZOSTAŁY WPROWADZONE KARTY STAŁEGO KLIENTA.</p>
+        W ramach podziękowania za zaufanie i lojalność wprowadziliśmy specjalne karty stałego klienta.</p>
       </div>
     </section>
   );

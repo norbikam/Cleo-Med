@@ -6,28 +6,53 @@ import Image from "next/image";
 
 const procedures = [
   {
-    title: "Zabiegi na twarz",
+    title: "Mezoterapia igłowa",
     image: "/treatments/zabieginatwarz.jpg",
-    href: "/zabiegi/zabiegi-na-twarz",
+    href: "/zabiegi/zabiegi-na-twarz/mezoterapia-iglowa",
   },
   {
-    title: "Zabiegi na ciało",
+    title: "Mezoterapia mikroigłowa (Dermapen 4)",
     image: "/treatments/zabieginacialo.jpg",
-    href: "/zabiegi/zabiegi-na-cialo",
+    href: "/zabiegi/zabiegi-na-twarz/mezoterapia-mikroiglowa",
   },
   {
-    title: "Zabiegi na skórę głowy i włosy",
+    title: "Peelingi chemiczne",
     image: "/treatments/zabieginawlosy.jpeg",
-    href: "/zabiegi/zabiegi-na-skore-glowy-i-wlosy",
+    href: "/zabiegi/zabiegi-na-twarz/peelingi-chemiczne",
   },
   {
-    title: "Zabiegi laserowe i inne technologie maszynowe",
+    title: "Botoks",
     image: "/treatments/zabiegilaserowe.jpeg",
-    href: "/zabiegi/zabiegi-laserowe",
+    href: "/zabiegi/zabiegi-na-twarz/botoks",
+  },
+  {
+    title: "Kwas hialuronowy",
+    image: "/treatments/zabiegilaserowe.jpeg",
+    href: "/zabiegi/zabiegi-na-twarz/kwas-hialuronowy",
+  },
+  {
+    title: "Osocze bogatopłytkowe (PRP, „wampirzy lifting”)",
+    image: "/treatments/zabiegilaserowe.jpeg",
+    href: "/zabiegi/zabiegi-na-twarz/osocze-bogatoplytkowe",
+  },
+  {
+    title: "Nici liftingujące PDO",
+    image: "/treatments/zabiegilaserowe.jpeg",
+    href: "/zabiegi/zabiegi-na-twarz/nici-liftingujace-pdo",
+  },
+  {
+    title: "Lipoliza iniekcyjna",
+    image: "/treatments/zabiegilaserowe.jpeg",
+    href: "/zabiegi/zabiegi-na-twarz/lipoliza-iniekcyjna",
+  },
+  {
+    title: "Wypełnianie doliny łez",
+    image: "/treatments/zabiegilaserowe.jpeg",
+    href: "/zabiegi/zabiegi-na-twarz/wypelnianie-doliny-lez",
   }
 ];
 
-export default function ProceduresGrid() {
+export default function TwarzGrid() {
   return (
     <section className="py-16 px-4 sm:px-8 lg:px-16 bg-white">
       <div className="max-w-7xl mx-auto">
@@ -35,7 +60,7 @@ export default function ProceduresGrid() {
           Nasze Zabiegi
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           {procedures.map((procedure) => (
             <motion.div
               key={procedure.href}

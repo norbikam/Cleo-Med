@@ -6,28 +6,43 @@ import Image from "next/image";
 
 const procedures = [
   {
-    title: "Zabiegi na twarz",
+    title: "Morpheus 8 – RF mikroigłowy",
     image: "/treatments/zabieginatwarz.jpg",
-    href: "/zabiegi/zabiegi-na-twarz",
+    href: "/zabiegi/zabiegi-laserowe/morpheus",
   },
   {
-    title: "Zabiegi na ciało",
-    image: "/treatments/zabieginacialo.jpg",
-    href: "/zabiegi/zabiegi-na-cialo",
+    title: "Dermapen 4 – mezoterapia mikroigłowa",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-laserowe/dermapen",
   },
   {
-    title: "Zabiegi na skórę głowy i włosy",
-    image: "/treatments/zabieginawlosy.jpeg",
-    href: "/zabiegi/zabiegi-na-skore-glowy-i-wlosy",
+    title: "Laser hybrydowy (frakcyjny + Er:YAG)",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-laserowe/laser-hybrydowe",
   },
   {
-    title: "Zabiegi laserowe i inne technologie maszynowe",
-    image: "/treatments/zabiegilaserowe.jpeg",
-    href: "/zabiegi/zabiegi-laserowe",
-  }
+    title: "Laser pikosekundowy",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-laserowe/laser-pikosekundowy",
+  },
+  {
+    title: "Laser diodowy",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-laserowe/laser-diodowy",
+  },
+  {
+    title: "HIFU – ultradźwiękowy lifting skóry",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-laserowe/hifu",
+  },
+  {
+    title: "Hulabo 448k – zaawansowana terapia radiofrekwencyjna",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-laserowe/hulabo",
+  },
 ];
 
-export default function ProceduresGrid() {
+export default function LaserGrid() {
   return (
     <section className="py-16 px-4 sm:px-8 lg:px-16 bg-white">
       <div className="max-w-7xl mx-auto">

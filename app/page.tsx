@@ -27,7 +27,7 @@ export default function Home() {
           <FourPhotoSlideshowGap />
           <div className="infomembermerge">
             <MembercardInfo />
-            <InfoBlocks/>
+            <InfoBlocks />
           </div>
         </main>
       <Footer/>

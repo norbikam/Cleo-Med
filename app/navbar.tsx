@@ -52,7 +52,7 @@ export default function Navbar() {
         >
           <div className="py-2 md:px-12 flex justify-between items-center text-gray-700">
             <div className="flex space-x-3">
-              <Link href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
+              <Link href="https://www.facebook.com/profile.php?id=100051111260227&mibextid=wwXIfr&rdid=vZfqH4cPYbiOzgqR" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
                 <FaFacebookF />
               </Link>
               <Link href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600">

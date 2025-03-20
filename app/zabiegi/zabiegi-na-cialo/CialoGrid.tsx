@@ -6,28 +6,43 @@ import Image from "next/image";
 
 const procedures = [
   {
-    title: "Zabiegi na twarz",
+    title: "Lipoliza iniekcyjna",
     image: "/treatments/zabieginatwarz.jpg",
-    href: "/zabiegi/zabiegi-na-twarz",
+    href: "/zabiegi/zabiegi-na-cialo/lipoliza-iniekcyjna",
   },
   {
-    title: "Zabiegi na ciało",
-    image: "/treatments/zabieginacialo.jpg",
-    href: "/zabiegi/zabiegi-na-cialo",
+    title: "Karboksyterapia",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-na-cialo/karboksyterapia",
   },
   {
-    title: "Zabiegi na skórę głowy i włosy",
-    image: "/treatments/zabieginawlosy.jpeg",
-    href: "/zabiegi/zabiegi-na-skore-glowy-i-wlosy",
+    title: "Endermologia",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-na-cialo/endermologia",
   },
   {
-    title: "Zabiegi laserowe i inne technologie maszynowe",
-    image: "/treatments/zabiegilaserowe.jpeg",
-    href: "/zabiegi/zabiegi-laserowe",
-  }
+    title: "Osocze bogatopłytkowe",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-na-cialo/osocze-bogatoplytkowe",
+  },
+  {
+    title: "Mezoterapia igłowa na ciało",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-na-cialo/mezoterapia-iglowa",
+  },
+  {
+    title: "Modelowanie sylwetki za pomocą kwasu hialuronowego",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-na-cialo/modelowanie-sylwetki",
+  },
+  {
+    title: "RF mikroigłowy",
+    image: "/treatments/zabieginatwarz.jpg",
+    href: "/zabiegi/zabiegi-na-cialo/rf-mikroiglowy",
+  },
 ];
 
-export default function ProceduresGrid() {
+export default function CialoGrid() {
   return (
     <section className="py-16 px-4 sm:px-8 lg:px-16 bg-white">
       <div className="max-w-7xl mx-auto">
