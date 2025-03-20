@@ -52,7 +52,7 @@ body {
   left: 0;
   width: 100%;
   height: 100vh;
-  background-image: url('https://img.freepik.com/darmowe-zdjecie/rozmazana-buzka-kobieta-trzyma-wizytowke_23-2149343413.jpg?t=st=1742240040~exp=1742243640~hmac=a17e3cfebc8740be914aebc395871b36d583ef845c0a2623613545e2fd07b104&w=2000');
+  background-image: url('/membercardinfobg.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

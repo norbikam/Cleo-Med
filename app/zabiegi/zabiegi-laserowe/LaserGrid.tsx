@@ -7,37 +7,37 @@ import Image from "next/image";
 const procedures = [
   {
     title: "Morpheus 8 – RF mikroigłowy",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/maszyny/morpheus.jpeg",
     href: "/zabiegi/zabiegi-laserowe/morpheus",
   },
   {
     title: "Dermapen 4 – mezoterapia mikroigłowa",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/maszyny/dermapen.jpeg",
     href: "/zabiegi/zabiegi-laserowe/dermapen",
   },
   {
     title: "Laser hybrydowy (frakcyjny + Er:YAG)",
-    image: "/treatments/zabieginatwarz.jpg",
-    href: "/zabiegi/zabiegi-laserowe/laser-hybrydowe",
+    image: "/treatments/maszyny/laser-hybrydowy.jpeg",
+    href: "/zabiegi/zabiegi-laserowe/laser-hybrydowy",
   },
   {
     title: "Laser pikosekundowy",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/maszyny/laser-pikosekundowy.jpeg",
     href: "/zabiegi/zabiegi-laserowe/laser-pikosekundowy",
   },
   {
     title: "Laser diodowy",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/maszyny/laser-diodowy.jpeg",
     href: "/zabiegi/zabiegi-laserowe/laser-diodowy",
   },
   {
     title: "HIFU – ultradźwiękowy lifting skóry",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/maszyny/hifu.jpeg",
     href: "/zabiegi/zabiegi-laserowe/hifu",
   },
   {
     title: "Hulabo 448k – zaawansowana terapia radiofrekwencyjna",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/maszyny/hulabo.jpeg",
     href: "/zabiegi/zabiegi-laserowe/hulabo",
   },
 ];

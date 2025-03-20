@@ -8,7 +8,7 @@ export default function MembercardInfo() {
         className="absolute inset-0 z-[-1] bg-cover bg-center md:bg-fixed bg-no-repeat sm:bg-scroll"
         style={{
           backgroundImage:
-            "url(https://img.freepik.com/darmowe-zdjecie/rozmazana-buzka-kobieta-trzyma-wizytowke_23-2149343413.jpg?t=st=1742240040~exp=1742243640~hmac=a17e3cfebc8740be914aebc395871b36d583ef845c0a2623613545e2fd07b104&w=2000)",
+            "url(/membercardinfobg.jpeg)",
         }}
       />
       

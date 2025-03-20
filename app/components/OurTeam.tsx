@@ -44,8 +44,8 @@ export default function OurTeam() {
         .animated-bg {
           background: linear-gradient(
             45deg,
-            rgb(163, 163, 163),
-            rgb(150, 137, 137),
+            rgb(122, 108, 44),
+            rgb(192, 173, 5),
             rgb(214, 185, 185),
             rgb(214, 158, 158)
           );
