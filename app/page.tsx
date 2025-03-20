@@ -10,6 +10,7 @@ import VoucherInfo from "./components/VoucherInfo";
 import InfoBlocks from "./components/InfoBlocks";
 import FourPhotoSlideshowGap from "./components/FourPhotoSlideshowGap"
 import MembercardInfo from "./components/MembercardInfo";
+import Partner from "./components/Partner";
 
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
       <main style={{maxWidth:"98vw"}} className="overflow-hidden pt-14">
           <Slideshow />
           <ProceduresGrid />
+          <Partner />
           <OurTeam />
           <FourPhotoSlideshow />
           <VoucherInfo />
