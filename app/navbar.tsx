@@ -129,28 +129,28 @@ export default function Navbar() {
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
-                Home
+                Strona Główna
               </Link>
               <a
-                href="/about"
+                href="/onas"
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
-                About
+                O nas
               </a>
               <a
-                href="/services"
+                href="/zabiegi"
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
-                Services
+                Zabiegi
               </a>
               <a
-                href="/contact"
+                href="/kontakt"
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
-                Contact
+                Kontakt
               </a>
             </div>
           </motion.div>
@@ -172,28 +172,28 @@ export default function Navbar() {
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
-                Home
+                Strona Główna
               </Link>
               <a
-                href="/about"
+                href="/onas"
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
-                About
+                O nas
               </a>
               <a
-                href="/services"
+                href="/zabiegi"
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
-                Services
+                Zabiegi
               </a>
               <a
-                href="/contact"
+                href="/kontat"
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
-                Contact
+                Kontakt
               </a>
             </div>
           </motion.div>

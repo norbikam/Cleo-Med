@@ -2,7 +2,7 @@
 
 import Navigation from "@/app/navbar";
 import Footer from "@/app/footer";
-import TwarzGrid from "./TwarzGrid.tsx";
+import TwarzGrid from "./TwarzGrid";
 
 export default function Home() {
   return (
