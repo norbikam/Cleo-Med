@@ -7,47 +7,47 @@ import Image from "next/image";
 const procedures = [
   {
     title: "Mezoterapia igłowa",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/twarz/mezoterapia-iglowa.jpeg",
     href: "/zabiegi/zabiegi-na-twarz/mezoterapia-iglowa",
   },
   {
     title: "Mezoterapia mikroigłowa (Dermapen 4)",
-    image: "/treatments/zabieginacialo.jpg",
+    image: "/treatments/twarz/dermapen.jpeg",
     href: "/zabiegi/zabiegi-na-twarz/mezoterapia-mikroiglowa",
   },
   {
     title: "Peelingi chemiczne",
-    image: "/treatments/zabieginawlosy.jpeg",
+    image: "/treatments/twarz/peeling-chemiczny.jpeg",
     href: "/zabiegi/zabiegi-na-twarz/peelingi-chemiczne",
   },
   {
     title: "Botoks",
-    image: "/treatments/zabiegilaserowe.jpeg",
+    image: "/treatments/twarz/botoks.jpeg",
     href: "/zabiegi/zabiegi-na-twarz/botoks",
   },
   {
     title: "Kwas hialuronowy",
-    image: "/treatments/zabiegilaserowe.jpeg",
+    image: "/treatments/twarz/kwas-hialuronowy.jpeg",
     href: "/zabiegi/zabiegi-na-twarz/kwas-hialuronowy",
   },
   {
     title: "Osocze bogatopłytkowe (PRP, „wampirzy lifting”)",
-    image: "/treatments/zabiegilaserowe.jpeg",
+    image: "/treatments/twarz/osocze-bogatoplytkowe.jpeg",
     href: "/zabiegi/zabiegi-na-twarz/osocze-bogatoplytkowe",
   },
   {
     title: "Nici liftingujące PDO",
-    image: "/treatments/zabiegilaserowe.jpeg",
+    image: "/treatments/twarz/nici-liftingujace.jpeg",
     href: "/zabiegi/zabiegi-na-twarz/nici-liftingujace-pdo",
   },
   {
     title: "Lipoliza iniekcyjna",
-    image: "/treatments/zabiegilaserowe.jpeg",
+    image: "/treatments/twarz/lipoliza-iniekcyjna.jpeg",
     href: "/zabiegi/zabiegi-na-twarz/lipoliza-iniekcyjna",
   },
   {
     title: "Wypełnianie doliny łez",
-    image: "/treatments/zabiegilaserowe.jpeg",
+    image: "/treatments/twarz/dolina-lez.jpeg",
     href: "/zabiegi/zabiegi-na-twarz/wypelnianie-doliny-lez",
   }
 ];

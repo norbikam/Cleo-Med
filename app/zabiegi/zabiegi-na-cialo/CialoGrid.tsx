@@ -7,37 +7,37 @@ import Image from "next/image";
 const procedures = [
   {
     title: "Lipoliza iniekcyjna",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/cialo/lipoliza-iniekcyjna.jpeg",
     href: "/zabiegi/zabiegi-na-cialo/lipoliza-iniekcyjna",
   },
   {
     title: "Karboksyterapia",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/cialo/karboksyterapia.jpeg",
     href: "/zabiegi/zabiegi-na-cialo/karboksyterapia",
   },
   {
     title: "Endermologia",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/cialo/endermologia.jpeg",
     href: "/zabiegi/zabiegi-na-cialo/endermologia",
   },
   {
     title: "Osocze bogatopłytkowe",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/cialo/osocze-bogatoplytkowe.jpeg",
     href: "/zabiegi/zabiegi-na-cialo/osocze-bogatoplytkowe",
   },
   {
     title: "Mezoterapia igłowa na ciało",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/cialo/mezoterapia-iglowa.jpeg",
     href: "/zabiegi/zabiegi-na-cialo/mezoterapia-iglowa",
   },
   {
     title: "Modelowanie sylwetki za pomocą kwasu hialuronowego",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/cialo/kwas-hialuronowy.jpeg",
     href: "/zabiegi/zabiegi-na-cialo/modelowanie-sylwetki",
   },
   {
     title: "RF mikroigłowy",
-    image: "/treatments/zabieginatwarz.jpg",
+    image: "/treatments/cialo/rf-mikroiglowy.jpeg",
     href: "/zabiegi/zabiegi-na-cialo/rf-mikroiglowy",
   },
 ];
