@@ -20,9 +20,9 @@ export default function Home() {
           {/* First Section */}
           <div className="splitimagetop w-full h-64 bg-gray-300 md:h-[85vh]"></div>
           <div className="text-left md:w-[30vw] md:pl-20">
-            <p>Jesteśmy zespołem z ponad dziesięcioletnim doświadczeniem w branży kosmetologii i medycyny estetycznej. Naszym celem jest dostarczanie najwyższej jakości usług, które podkreślają naturalne piękno i dbają o zdrowie skóry.</p>
+            <p>Z ponad 15-letnim doświadczeniem w branży kosmetologii i medycyny estetycznej, specjalizujemy się w dostarczaniu zaawansowanych rozwiązań poprawiających wygląd i kondycję skóry. Naszym priorytetem jest skuteczność, bezpieczeństwo oraz naturalne efekty, osiągane dzięki wykorzystaniu innowacyjnych technologii i najwyższej jakości preparatów.</p>            
             <br />
-            <p>Wykonujemy szereg zabiegów z wykorzystaniem najnowszych technik oraz najlepszej jakości toksyn, stymulatorów i nici PDO, które pozwalają uzyskać naturalne i długotrwałe efekty odmładzające, liftingujące i regenerujące.</p>
+            <p>Oferujemy szeroki wachlarz zabiegów, obejmujących pielęgnację i regenerację skóry, modelowanie sylwetki oraz nowoczesne terapie laserowe. Pracujemy wyłącznie na sprawdzonych produktach, w tym toksynach, stymulatorach tkankowych i niciach PDO, które pozwalają uzyskać długotrwałe i naturalne rezultaty.</p>
             <br />
             <p>W naszej ofercie znajdą Państwo szeroką gamę zabiegów, w tym:</p>
               <ul className="list-disc pl-8 pr-8">
@@ -39,25 +39,18 @@ export default function Home() {
           <div className="text-left md:text-right md:w-[30vw] md:pr-20 order-2 md:order-1">
             <h2 className="text-xl font-medium">Szkolenia</h2>
             <br/>
-            <p>Oprócz profesjonalnych usług kosmetologicznych i estetycznych, oferujemy również szkolenia dla osób, które chcą poszerzyć swoją wiedzę i umiejętności w zakresie nowoczesnych technik kosmetologicznych.</p>
+            <p>Oprócz profesjonalnych usług oferujemy również specjalistyczne szkolenia dla kosmetologów i lekarzy medycyny estetycznej. Programy szkoleniowe obejmują zarówno techniki manualne, jak i obsługę zaawansowanych urządzeń, takich jak:</p>
             <br />
-            <p>Prowadzimy zarówno tradycyjne szkolenia teoretyczno-praktyczne, obejmujące techniki pielęgnacyjne, zabiegi odmładzające i modelujące, jak i specjalistyczne kursy z obsługi zaawansowanych urządzeń, takich jak:</p>
             <ul className="list-disc pl-8 pr-8">
-              <li>Lasery do usuwania owłosienia i przebarwień,
-              </li>
-              <li>Urządzenia do modelowania sylwetki i redukcji cellulitu,
-              </li>
-              <li>Aparaty do terapii anti-aging i stymulacji kolagenu,
-              </li>
-              <li>Technologie do liftingu i ujędrniania skóry,
-              </li>
-              <li>Lasery do usuwania tatuaży – nowoczesne metody skutecznego eliminowania pigmentu z minimalnym ryzykiem uszkodzeń skóry.
-              </li>
+              <li>Systemy laserowe do terapii skóry</li>
+              <li>Technologie modelowania sylwetki</li>
+              <li>Urządzenia do zabiegów odmładzających i liftingujących</li>
+              <li>Nowoczesne metody usuwania tatuaży</li>
             </ul>
             <br />
-            <p>Nasze szkolenia są prowadzone przez doświadczonych specjalistów i zakończone certyfikatem, który potwierdza zdobyte kwalifikacje.</p>
+            <p>Szkolenia prowadzone są przez doświadczonych specjalistów i zakończone certyfikacją, potwierdzającą zdobyte kwalifikacje.</p>
             <br />
-            <p>Zapraszamy do skorzystania z naszych usług i szkoleń – gwarantujemy profesjonalizm, indywidualne podejście oraz nowoczesne technologie na najwyższym poziomie!</p>
+            <p>Zapraszamy do skorzystania z naszej oferty – łączymy profesjonalizm z indywidualnym podejściem, aby zapewnić najwyższy poziom usług i satysfakcję naszych klientów.</p>
           </div>
           <div className="splitimagebot w-full h-64 bg-gray-300 md:h-[85vh] order-1 md:order-2"></div>
         </div>

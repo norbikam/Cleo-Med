@@ -75,8 +75,8 @@ export default function Navbar() {
               <Link href="/" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Strona główna
               </Link>
-              <a href="/onas" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
-                O nas
+              <a href="/zabiegi" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
+                Zabiegi
               </a>
             </div>
 
@@ -93,8 +93,8 @@ export default function Navbar() {
 
           {/* Desktop Navigation Links (visible on md and up when not scrolled) */}
             <div className="hidden md:flex space-x-[10vw] text-xl font-extralight">
-              <a href="/zabiegi" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
-                Zabiegi
+            <a href="/onas" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
+                O nas
               </a>
               <a href="/kontakt" className="transition duration-500 text-gray-700 border-t-transparent hover:text-gray-900 border-t hover:border-black">
                 Kontakt
@@ -136,19 +136,20 @@ export default function Navbar() {
                 Strona Główna
               </Link>
               <a
-                href="/onas"
-                className="text-gray-700 hover:text-gray-900"
-                onClick={() => setMenuOpen(false)}
-              >
-                O nas
-              </a>
-              <a
                 href="/zabiegi"
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
                 Zabiegi
               </a>
+              <a
+                href="/onas"
+                className="text-gray-700 hover:text-gray-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                O nas
+              </a>
+              
               <a
                 href="/kontakt"
                 className="text-gray-700 hover:text-gray-900"
@@ -179,19 +180,20 @@ export default function Navbar() {
                 Strona Główna
               </Link>
               <a
-                href="/onas"
-                className="text-gray-700 hover:text-gray-900"
-                onClick={() => setMenuOpen(false)}
-              >
-                O nas
-              </a>
-              <a
                 href="/zabiegi"
                 className="text-gray-700 hover:text-gray-900"
                 onClick={() => setMenuOpen(false)}
               >
                 Zabiegi
               </a>
+              <a
+                href="/onas"
+                className="text-gray-700 hover:text-gray-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                O nas
+              </a>
+              
               <a
                 href="/kontakt"
                 className="text-gray-700 hover:text-gray-900"
