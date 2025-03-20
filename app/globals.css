@@ -60,6 +60,11 @@ body {
 }
 }
 
-.splitimagetop, .splitimagebot{
-  background-image: url(../public/treatments/diagnosta.jpg);
+.splitimagetop{
+  background-image: url(../public/pics/p12.jpeg);
+  background-position: center;
+}
+.splitimagebot{
+  background-image: url(../public/pics/p15.jpeg);
+  background-position: center;
 }
