@@ -1,6 +1,4 @@
 "use client"
-import Link from "next/link"
-import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { Facebook, Instagram, WhatsApp } from "./components/Social";
 
 export default function Footer(){
