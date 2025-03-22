@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 // Replace these with your own images or slide content
 const slides = [
-  "/cleobanner.png"
+  "/slideshow/Cleobanner.png"
 ];
 
 // Variants for slide transitions
