@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaFacebookF, FaInstagram } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
 import Link from "next/link";
 import Image from "next/image";
+import { Facebook, FacebookColor, Instagram, InstagramColor, WhatsApp, WhatsAppColor } from "./components/Social";
 
 /*import { usePathname } from "next/navigation";
 
@@ -53,17 +54,14 @@ export default function Navbar() {
           transition={{ duration: 0.6, ease: "easeInOut" }}
         >
           <div className="py-2 md:px-12 flex justify-between items-center text-gray-700">
-            <div className="flex space-x-3">
-              <Link href="https://www.facebook.com/profile.php?id=100051111260227&mibextid=wwXIfr&rdid=vZfqH4cPYbiOzgqR" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
-                <FaFacebookF />
-              </Link>
-              <Link href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600">
-                <FaInstagram />
-              </Link>
+            <div className="flex space-x-3 gap-8">
+              <Facebook/>
+              <Instagram/>
+              <WhatsApp/>
             </div>
             <div className="flex space-x-4 text-sm font-extralight">
               <a href="tel:+48696273477"><p>Tel: +48 696 273 477</p></a>
-              <a href="mailto:cleo.estetyka@gmail.com"><p>Email: cleo.estetyka@gmail.com</p></a>
+              <a href="mailto:edytacleo@gmail.com"><p>Email: edytacleo@gmail.com</p></a>
             </div>
           </div>
         </motion.div>
@@ -128,6 +126,11 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
           >
             <div className="flex flex-col space-y-2 px-6 py-4 text-xl">
+            <div className="social flex place-content-around">
+              <FacebookColor/>
+              <InstagramColor/>
+              <WhatsAppColor/>
+              </div>
               <Link
                 href="/"
                 className="text-gray-700 hover:text-gray-900"
@@ -172,6 +175,11 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
           >
             <div className="flex flex-col space-y-2 px-6 py-4 text-xl">
+            <div className="social flex place-content-around">
+              <FacebookColor/>
+              <InstagramColor/>
+              <WhatsAppColor/>
+              </div>
               <Link
                 href="/"
                 className="text-gray-700 hover:text-gray-900"

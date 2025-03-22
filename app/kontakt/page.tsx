@@ -18,7 +18,7 @@ export default function Home() {
             <p style={{marginTop:"-1.5rem"}}>Gabinet kosmetyczny</p><br />
             <div className="flex flex-col justify-center text-xl w-full md:grid md:grid-cols-2 md:text-center">
               <div className="flex flex-col sm:w-full"><p>ul. Wileńska 39 box 113</p><p>76-200 Słupsk</p></div>
-              <div className="flex flex-col sm:w-full md:py-0 sm:py-10"><a href="mailto:cleo.estetyka@gmail.com"><p>cleo.estetyka@gmail.com</p></a><a href="tel:+48696273477"><p>+48 696 273 477</p></a></div>
+              <div className="flex flex-col sm:w-full md:py-0 sm:py-10"><a href="mailto:edytacleo@gmail.com"><p>edytacleo@gmail.com</p></a><a href="tel:+48696273477"><p>+48 696 273 477</p></a></div>
             </div>
             <br />
             <iframe className="justify-self-center" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2318.3073038303396!2d17.0172382770225!3d54.46498239043967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46fe10a824f679b9%3A0xef089efff4316619!2sC.H.%20Manhatan!5e0!3m2!1spl!2spl!4v1742386425730!5m2!1spl!2spl" width="800" height="450" loading="lazy"></iframe>
