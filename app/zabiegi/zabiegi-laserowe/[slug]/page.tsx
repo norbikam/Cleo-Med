@@ -3,7 +3,9 @@ import Footer from "@/app/footer";
 import Image from "next/image";
 import BooksyWidget from "@/app/components/BooksyWidget";
 import { notFound } from "next/navigation";
+import type { Metadata, ResolvingMetadata } from "next";
 
+// Define treatment type and data
 type Treatment = {
   title: string;
   description: string[];
@@ -115,14 +117,28 @@ const treatments: Record<string, Treatment> = {
   },
 };
 
-export default async function TreatmentPage({
-  params: rawParams,
-}: {
-  params: { slug: string };
-}) {
-  // Awaiting params to satisfy the expected Promise type
-  const params = await Promise.resolve(rawParams);
-  const treatment = treatments[params.slug];
+// Define Props with asynchronous params & searchParams for metadata
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+// Generate metadata for this page based on treatment data
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { slug } = await params;
+  const treatment = treatments[slug];
+  return {
+    title: treatment ? treatment.title : "Zabieg nie znaleziony",
+  };
+}
+
+// The page component
+export default async function TreatmentPage({ params }: Props) {
+  const { slug } = await params;
+  const treatment = treatments[slug];
 
   if (!treatment) {
     return notFound();
