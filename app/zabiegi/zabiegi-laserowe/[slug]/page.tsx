@@ -4,12 +4,6 @@ import Image from "next/image";
 import BooksyWidget from "@/app/components/BooksyWidget";
 import { notFound } from "next/navigation";
 
-interface PageProps {
-  params: {
-    slug: string;
-  };
-}
-
 type Treatment = {
   title: string;
   description: string[];
@@ -121,7 +115,13 @@ const treatments: Record<string, Treatment> = {
   },
 };
 
-export default async function TreatmentPage({ params }: PageProps) {
+export default async function TreatmentPage({
+  params: rawParams,
+}: {
+  params: { slug: string };
+}) {
+  // Awaiting params to satisfy the expected Promise type
+  const params = await Promise.resolve(rawParams);
   const treatment = treatments[params.slug];
 
   if (!treatment) {
@@ -133,8 +133,13 @@ export default async function TreatmentPage({ params }: PageProps) {
       <header>
         <Navigation />
       </header>
-      <main style={{ maxWidth: "98vw" }} className="overflow-hidden pt-20 text-center w-[98vw] justify-items-center">
-        <h2 className="text-black text-3xl pb-8">Zabieg z użyciem urządzenia</h2>
+      <main
+        style={{ maxWidth: "98vw" }}
+        className="overflow-hidden pt-20 text-center w-[98vw] justify-items-center"
+      >
+        <h2 className="text-black text-3xl pb-8">
+          Zabieg z użyciem urządzenia
+        </h2>
         <div className="treatmentcon flex flex-col container text-black text-2xl w-full text-center justify-items-center border border-black md:grid md:grid-cols-3 pl-6">
           <div className="col-span-2 align-middle pl-6">
             <h2 className="py-20 text-6xl">{treatment.title}</h2>
@@ -162,7 +167,12 @@ export default async function TreatmentPage({ params }: PageProps) {
             <BooksyWidget />
           </div>
           <div className="justify-items-right">
-            <Image src={treatment.image} alt={treatment.title} width={1000} height={1000} />
+            <Image
+              src={treatment.image}
+              alt={treatment.title}
+              width={1000}
+              height={1000}
+            />
           </div>
         </div>
       </main>
