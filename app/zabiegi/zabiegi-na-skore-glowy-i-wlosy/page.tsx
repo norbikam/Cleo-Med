@@ -3,6 +3,7 @@
 import Navigation from "@/app/navbar";
 import Footer from "@/app/footer";
 import Image from "next/image";
+import BooksyWidget from "@/app/components/BooksyWidget";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
           <div className="col-span-2 align-middle">
           <h2 className="py-20 text-6xl">Mezoterapia skóry głowy</h2>
           <p>stymulacja wzrostu włosów poprzez dostarczanie składników odżywczych</p>
+          <BooksyWidget/>
           </div>
           <div className="justify-items-right">
             <Image src="/treatments/zabieg.jpeg" alt="" width={1000} height={1000}/>

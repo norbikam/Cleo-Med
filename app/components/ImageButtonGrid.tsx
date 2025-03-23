@@ -43,23 +43,23 @@ const treatments = [
 const training = [
   {
     title: "Systemy laserowe do terapii skóry",
-    image: "",
-    href: ""
+    image: "/pics/p1.jpeg",
+    href: "/szkolenia/systemy-laserowe-do-terapii-skory"
   },
   {
     title: "Technologie modelowania sylwetki",
-    image: "",
-    href: ""
+    image: "/pics/p2.jpeg",
+    href: "/szkolenia/modelowanie-sylwetki"
   },
   {
     title: "Urządzenia do zabiegów odmładzających i liftingujących",
-    image: "",
-    href: ""
+    image: "/pics/p3.jpeg",
+    href: "/szkolenia/odmladzanie-i-lifting"
   },
   {
     title: "Nowoczesne metody usuwania tatuaży",
-    image: "",
-    href: ""
+    image: "/pics/p4.jpeg",
+    href: "/szkolenia/usuwanie-tatuazy"
   },
 ]
 

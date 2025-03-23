@@ -3,6 +3,7 @@
 import Navigation from "@/app/navbar";
 import Footer from "@/app/footer";
 import Image from "next/image";
+import BooksyWidget from "@/app/components/BooksyWidget";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
           <div className="justify-items-right">
             <Image src="/pics/p4.jpeg" alt="" width={1000} height={1000}/>
           </div>
+          <BooksyWidget/>
         </div>
       </main>
       <Footer />

@@ -3,6 +3,7 @@
 import Navigation from "@/app/navbar";
 import Footer from "@/app/footer";
 import Image from "next/image";
+import BooksyWidget from "@/app/components/BooksyWidget";
 
 export default function Home() {
   return (
@@ -13,7 +14,7 @@ export default function Home() {
       <main style={{ maxWidth: "98vw" }} className="overflow-hidden pt-20 text-center w-[98vw] justify-items-center">
         <h2 className="text-black text-3xl pb-8">Zabieg z użyciem urządzenia</h2>
         <div className="treatmentcon flex flex-col container text-black text-2xl w-full text-center justify-items-center border-black border md:grid md:grid-cols-3">
-          <div className="col-span-2 align-middle">
+          <div className="col-span-2 align-middle pl-6">
           <h2 className="py-20 text-6xl">Hulabo 448k – zaawansowana terapia radiofrekwencyjna</h2>
           <ul>
             <li>Urządzenie wykorzystujące fale radiowe o częstotliwości 448 kHz</li>
@@ -26,6 +27,7 @@ export default function Home() {
             <li>Przyspieszenie regeneracji mięśni i tkanek</li>
             <li>Poprawa krążenia i drenaż limfatyczny</li>
           </ul>
+          <BooksyWidget/>
           </div>
           <div className="justify-items-right">
             <Image src="/pics/p18.jpeg" alt="" width={1000} height={1000}/>

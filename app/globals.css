@@ -14,6 +14,10 @@
   }
 }
 
+@theme{
+  --color-booksy: #13a6b0;
+}
+
 html{
   scroll-behavior: smooth;
 }
