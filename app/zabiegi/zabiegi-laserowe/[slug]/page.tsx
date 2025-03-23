@@ -5,7 +5,6 @@ import BooksyWidget from "@/app/components/BooksyWidget";
 import { notFound } from "next/navigation";
 import type { Metadata, ResolvingMetadata } from "next";
 
-// Define treatment type and data
 type Treatment = {
   title: string;
   description: string[];
@@ -117,16 +116,14 @@ const treatments: Record<string, Treatment> = {
   },
 };
 
-// Define Props with asynchronous params & searchParams for metadata
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-// Generate metadata for this page based on treatment data
 export async function generateMetadata(
   { params }: Props,
-  parent: ResolvingMetadata
+  _parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { slug } = await params;
   const treatment = treatments[slug];
@@ -135,7 +132,6 @@ export async function generateMetadata(
   };
 }
 
-// The page component
 export default async function TreatmentPage({ params }: Props) {
   const { slug } = await params;
   const treatment = treatments[slug];
