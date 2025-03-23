@@ -2,7 +2,8 @@
 
 import Navigation from "../navbar";
 import Footer from "../footer";
-import {Treatments} from "../components/ImageButtonGrid";
+import { Services } from "../components/ImageButtonGrid";
+
 
 export default function Home() {
   return (
@@ -11,7 +12,7 @@ export default function Home() {
         <Navigation />
       </header>
       <main style={{ maxWidth: "98vw" }} className="overflow-hidden pt-20 text-center w-[98vw]">
-        <Treatments />
+        <Services/>
       </main>
       <Footer />
     </div>

@@ -16,9 +16,9 @@ export default function Home() {
           <p className="text-xl">Poznaj nasz zespół</p>
         </div>
         
-        <div className="flex flex-col md:grid md:grid-cols-2 md:gap-8 items-center text-black w-full px-6 md:px-12 bg-white w-[98vw] font-light">
+        <div className="flex flex-col md:grid md:grid-cols-2 items-center text-black w-full px-6 bg-white w-[98vw] font-light py-8">
           {/* First Section */}
-          <div className="splitimagetop w-full h-64 bg-gray-300 md:h-[85vh]"></div>
+          <div className="splitimagetop w-full h-64 bg-gray-300 md:h-[85vh] border-black border"></div>
           <div className="text-left md:w-[30vw] md:pl-20">
             <p>Z ponad 15-letnim doświadczeniem w branży kosmetologii i medycyny estetycznej, specjalizujemy się w dostarczaniu zaawansowanych rozwiązań poprawiających wygląd i kondycję skóry. Naszym priorytetem jest skuteczność, bezpieczeństwo oraz naturalne efekty, osiągane dzięki wykorzystaniu innowacyjnych technologii i najwyższej jakości preparatów.</p>            
             <br />
@@ -52,7 +52,7 @@ export default function Home() {
             <br />
             <p>Zapraszamy do skorzystania z naszej oferty – łączymy profesjonalizm z indywidualnym podejściem, aby zapewnić najwyższy poziom usług i satysfakcję naszych klientów.</p>
           </div>
-          <div className="splitimagebot w-full h-64 bg-gray-300 md:h-[85vh] order-1 md:order-2"></div>
+          <div className="splitimagebot w-full h-64 bg-gray-300 md:h-[85vh] order-1 md:order-2 border-black border"></div>
         </div>
 
         <OurTeam />

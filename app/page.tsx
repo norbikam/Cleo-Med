@@ -2,7 +2,7 @@
 
 import Navigation from "./navbar";
 import Slideshow from "./components/slideshow"
-import ProceduresGrid from "./components/ProceduresGrid";
+import {Treatments, Trainings} from "./components/ImageButtonGrid";
 import Footer from "./footer";
 import OurTeam from "./components/OurTeam";
 import FourPhotoSlideshow from "./components/FourPhotoSlideshow";
@@ -21,7 +21,9 @@ export default function Home() {
       </header>
       <main style={{maxWidth:"98vw"}} className="overflow-hidden pt-14">
           <Slideshow />
-          <ProceduresGrid />
+          <Treatments />
+          <hr className="h-px bg-gray-400 border-0"/>
+          <Trainings />
           <Partner />
           <OurTeam />
           <FourPhotoSlideshow />
