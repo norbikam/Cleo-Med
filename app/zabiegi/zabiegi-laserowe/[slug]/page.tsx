@@ -1,10 +1,14 @@
-"use client";
-
 import Navigation from "@/app/navbar";
 import Footer from "@/app/footer";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import BooksyWidget from "@/app/components/BooksyWidget";
+
+interface PageProps {
+    params: {
+      slug: string;
+    };
+  }
 
 type Treatment = {
   title: string;
