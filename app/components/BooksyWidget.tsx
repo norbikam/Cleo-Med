@@ -1,23 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function BooksyWidget() {
   const widgetContainerRef = useRef<HTMLDivElement | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined" || !widgetContainerRef.current) return;
 
-    const script = document.createElement("script");
-    script.src = "https://booksy.com/widget/code.js?id=290619&country=pl&lang=pl";
-    script.type = "text/javascript";
-    script.async = true;
-    widgetContainerRef.current.appendChild(script);
+    const scriptId = "booksy-widget-script";
+    if(!document.getElementById(scriptId)){
 
-    return () => {
-      widgetContainerRef.current?.removeChild(script);
-    };
-  }, []);
+      const script = document.createElement("script");
+      script.id = scriptId
+      script.src = "https://booksy.com/widget/code.js?id=290619&country=pl&lang=pl";
+      script.type = "text/javascript";
+      script.async = true;
+      widgetContainerRef.current.appendChild(script);
+
+    } else {
+      setIsLoaded(true);
+    }
+
+  }, [isLoaded]);
 
   return (
   <div>

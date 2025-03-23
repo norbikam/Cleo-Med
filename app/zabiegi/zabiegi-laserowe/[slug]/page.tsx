@@ -27,7 +27,7 @@ const treatments: Record<string, Treatment> = {
       "Ujędrnianie skóry na ciele",
       "Leczenie blizn potrądzikowych",
     ],
-    image: "/treatments/maszyny/morpheus.jpeg",
+    image: "/pics/p1.jpeg",
   },
   dermapen: {
     title: "Dermapen 4 – mezoterapia mikroigłowa",
@@ -40,7 +40,7 @@ const treatments: Record<string, Treatment> = {
       "Redukcja blizn i rozstępów",
       "Wyrównanie kolorytu skóry",
     ],
-    image: "/treatments/maszyny/dermapen.jpeg",
+    image: "/pics/p2.jpeg",
   },
   "laser-hybrydowy": {
     title: "Laser hybrydowy (frakcyjny + Er:YAG)",
@@ -59,7 +59,7 @@ const treatments: Record<string, Treatment> = {
       "Redukcja blizn i przebarwień",
       "Wygładzanie zmarszczek",
     ],
-    image: "/treatments/maszyny/laser-hybrydowy.jpeg",
+    image: "/pics/p3.jpeg",
   },
   "laser-pikosekundowy": {
     title: "Laser pikosekundowy",
@@ -76,7 +76,7 @@ const treatments: Record<string, Treatment> = {
       "Odmładzanie skóry",
       "Peeling węglowy",
     ],
-    image: "/treatments/maszyny/laser-pikosekundowy.jpeg",
+    image: "/pics/p4.jpeg",
   },
   "laser-diodowy": {
     title: "Laser diodowy",
@@ -86,7 +86,7 @@ const treatments: Record<string, Treatment> = {
     treatments: [
       "Depilacja laserowa",
     ],
-    image: "/treatments/maszyny/laser-diodowy.jpeg",
+    image: "/pics/p5.jpeg",
   },
   hifu: {
     title: "HIFU – ultradźwiękowy lifting skóry",
@@ -98,7 +98,7 @@ const treatments: Record<string, Treatment> = {
       "Ujędrnianie skóry",
       "Redukcja zmarszczek",
     ],
-    image: "/treatments/maszyny/hifu.jpeg",
+    image: "/pics/p6.jpeg",
   },
   hulabo: {
     title: "Hulabo 448k – zaawansowana terapia radiofrekwencyjna",
@@ -112,7 +112,7 @@ const treatments: Record<string, Treatment> = {
       "Przyspieszenie regeneracji mięśni i tkanek",
       "Poprawa krążenia i drenaż limfatyczny",
     ],
-    image: "/treatments/maszyny/hulabo.jpeg",
+    image: "/pics/p7.jpeg",
   },
 };
 
