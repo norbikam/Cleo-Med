@@ -121,7 +121,7 @@ const treatments: Record<string, Treatment> = {
   },
 };
 
-export default function TreatmentPage({ params }: PageProps) {
+export default async function TreatmentPage({ params }: PageProps) {
   const treatment = treatments[params.slug];
 
   if (!treatment) {
