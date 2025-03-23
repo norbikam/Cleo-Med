@@ -1,14 +1,14 @@
 import Navigation from "@/app/navbar";
 import Footer from "@/app/footer";
 import Image from "next/image";
-import { notFound } from "next/navigation";
 import BooksyWidget from "@/app/components/BooksyWidget";
+import { notFound } from "next/navigation";
 
 interface PageProps {
-    params: {
-      slug: string;
-    };
-  }
+  params: {
+    slug: string;
+  };
+}
 
 type Treatment = {
   title: string;
@@ -32,7 +32,7 @@ const treatments: Record<string, Treatment> = {
       "Ujędrnianie skóry na ciele",
       "Leczenie blizn potrądzikowych",
     ],
-    image: "/pics/p1.jpeg",
+    image: "/treatments/maszyny/morpheus.jpeg",
   },
   dermapen: {
     title: "Dermapen 4 – mezoterapia mikroigłowa",
@@ -45,7 +45,7 @@ const treatments: Record<string, Treatment> = {
       "Redukcja blizn i rozstępów",
       "Wyrównanie kolorytu skóry",
     ],
-    image: "/pics/p2.jpeg",
+    image: "/treatments/maszyny/dermapen.jpeg",
   },
   "laser-hybrydowy": {
     title: "Laser hybrydowy (frakcyjny + Er:YAG)",
@@ -64,7 +64,7 @@ const treatments: Record<string, Treatment> = {
       "Redukcja blizn i przebarwień",
       "Wygładzanie zmarszczek",
     ],
-    image: "/pics/p3.jpeg",
+    image: "/treatments/maszyny/laser-hybrydowy.jpeg",
   },
   "laser-pikosekundowy": {
     title: "Laser pikosekundowy",
@@ -81,7 +81,7 @@ const treatments: Record<string, Treatment> = {
       "Odmładzanie skóry",
       "Peeling węglowy",
     ],
-    image: "/pics/p4.jpeg",
+    image: "/treatments/maszyny/laser-pikosekundowy.jpeg",
   },
   "laser-diodowy": {
     title: "Laser diodowy",
@@ -91,7 +91,7 @@ const treatments: Record<string, Treatment> = {
     treatments: [
       "Depilacja laserowa",
     ],
-    image: "/pics/p5.jpeg",
+    image: "/treatments/maszyny/laser-diodowy.jpeg",
   },
   hifu: {
     title: "HIFU – ultradźwiękowy lifting skóry",
@@ -103,7 +103,7 @@ const treatments: Record<string, Treatment> = {
       "Ujędrnianie skóry",
       "Redukcja zmarszczek",
     ],
-    image: "/pics/p6.jpeg",
+    image: "/treatments/maszyny/hifu.jpeg",
   },
   hulabo: {
     title: "Hulabo 448k – zaawansowana terapia radiofrekwencyjna",
@@ -117,11 +117,11 @@ const treatments: Record<string, Treatment> = {
       "Przyspieszenie regeneracji mięśni i tkanek",
       "Poprawa krążenia i drenaż limfatyczny",
     ],
-    image: "/pics/p7.jpeg",
+    image: "/treatments/maszyny/hulabo.jpeg",
   },
 };
 
-export default function TreatmentPage({ params }: { params: { slug: string } }) {
+export default function TreatmentPage({ params }: PageProps) {
   const treatment = treatments[params.slug];
 
   if (!treatment) {
@@ -162,7 +162,7 @@ export default function TreatmentPage({ params }: { params: { slug: string } }) 
             <BooksyWidget />
           </div>
           <div className="justify-items-right">
-            <Image src={treatment.image} alt={treatment.title} width={1000} height={0} className="overflow-hidden"/>
+            <Image src={treatment.image} alt={treatment.title} width={1000} height={1000} />
           </div>
         </div>
       </main>
