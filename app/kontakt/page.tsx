@@ -24,7 +24,7 @@ export default function Home() {
               <div className="flex place-content-around col-span-2 w-full"><Facebook/><Instagram/><WhatsApp/></div>
             </div>
             <br />
-            <iframe className="justify-self-center w-full" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2318.3073038303396!2d17.0172382770225!3d54.46498239043967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46fe10a824f679b9%3A0xef089efff4316619!2sC.H.%20Manhatan!5e0!3m2!1spl!2spl!4v1742386425730!5m2!1spl!2spl" height="450" loading="lazy"></iframe>
+            <iframe className="justify-self-center w-full pl-8" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2318.3073038303396!2d17.0172382770225!3d54.46498239043967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46fe10a824f679b9%3A0xef089efff4316619!2sC.H.%20Manhatan!5e0!3m2!1spl!2spl!4v1742386425730!5m2!1spl!2spl" height="450" loading="lazy"></iframe>
             </div>
           <div className="splitimagetop w-full h-64 bg-gray-300 md:h-[85vh] col-span-2"></div>
         </div>
