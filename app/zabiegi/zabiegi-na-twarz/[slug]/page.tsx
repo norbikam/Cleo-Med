@@ -133,7 +133,7 @@ export default async function TreatmentPage({ params }: Props) {
                 <li key={index}>{desc}</li>
               ))}
             </ul>
-            <ul className="list-disc pr-8 pl-8 text-left pb-10">
+            <ul className="list-disc pr-8 pl-0 md:pl-8 text-left pb-10">
               {treatment.treatments.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}

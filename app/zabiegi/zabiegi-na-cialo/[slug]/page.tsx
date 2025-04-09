@@ -126,7 +126,7 @@ export default async function TreatmentPage({ params }: Props) {
             {treatment.benefits && (
               <>
                 <p className="py-4 text-4xl text-left">Zalety:</p>
-                <ul className="list-disc pr-8 pl-8 text-left pb-10">
+                <ul className="list-disc pr-8 pl-0 md:pl-8 text-left pb-10">
                   {treatment.benefits.map((benefit, index) => (
                     <li key={index}>{benefit}</li>
                   ))}
