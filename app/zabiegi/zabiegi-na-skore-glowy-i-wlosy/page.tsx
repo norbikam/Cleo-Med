@@ -15,7 +15,7 @@ export default function Home() {
         <h2 className="text-black text-3xl pb-8">Zabiegi na skórę głowy i włosy</h2>
         <div className="treatmentcon flex flex-col container text-black text-2xl w-full text-center justify-items-center border-black border md:grid md:grid-cols-3">
           <div className="col-span-2 align-middle">
-          <h2 className="py-20 text-6xl">Mezoterapia skóry głowy</h2>
+          <h2 className="py-20  text-2xl md:text-6xl">Mezoterapia skóry głowy</h2>
           <p>stymulacja wzrostu włosów poprzez dostarczanie składników odżywczych</p>
           <BooksyWidget/>
           </div>

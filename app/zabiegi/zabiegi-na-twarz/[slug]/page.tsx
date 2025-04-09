@@ -127,7 +127,7 @@ export default async function TreatmentPage({ params }: Props) {
         </h2>
         <div className="treatmentcon flex flex-col container text-black text-2xl w-full text-center justify-items-center border border-black md:grid md:grid-cols-3 pl-6">
           <div className="col-span-2 align-middle pl-6">
-            <h2 className="py-20 text-6xl">{treatment.title}</h2>
+            <h2 className="py-20 text-2xl md:text-6xl">{treatment.title}</h2>
             <ul className="mb-8">
               {treatment.description.map((desc, index) => (
                 <li key={index}>{desc}</li>
