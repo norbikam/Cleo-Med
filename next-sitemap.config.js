@@ -1,4 +1,4 @@
 module.exports = {
-    siteUrl: 'https://twojadomena.pl',
+    siteUrl: 'https://cleo-med.pl',
     generateRobotsTxt: true,
   }
