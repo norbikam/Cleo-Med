@@ -197,7 +197,7 @@ export function Trainings(){
               className="relative group overflow-hidden shadow-(color:black) shadow-2xl imagebutton"
             >
               <a
-                href={training.href}
+                // href={training.href}
                 className="block relative h-96 w-full"
                 role="button"
               >
