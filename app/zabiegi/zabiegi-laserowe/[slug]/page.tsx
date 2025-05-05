@@ -1,9 +1,9 @@
 import Navigation from "@/app/navbar";
 import Footer from "@/app/footer";
 import Image from "next/image";
-import BooksyWidget from "@/app/components/BooksyWidget";
 import { notFound } from "next/navigation";
 import type { Metadata, ResolvingMetadata } from "next";
+import ZolmiButton from "@/app/components/ZolmiButton";
 
 type Treatment = {
   title: string;
@@ -147,14 +147,13 @@ export default async function TreatmentPage({ params }: Props) {
         <Navigation />
       </header>
       <main
-        style={{ maxWidth: "98vw" }}
-        className="overflow-hidden pt-20 text-center w-[98vw] justify-items-center"
+        className="overflow-hidden pt-20 text-center w-[98vw] justify-items-center w-max-[98vw]"
       >
         <h2 className="text-black text-3xl pb-8">
           Zabieg z użyciem urządzenia
         </h2>
-        <div className="treatmentcon flex flex-col container text-black text-2xl w-full text-center justify-items-center border border-black md:grid md:grid-cols-3 pl-6">
-          <div className="col-span-2 align-middle pl-0 md:pl-6">
+        <div className="treatmentcon flex flex-col container text-black text-2xl w-full text-center justify-items-center border border-black md:grid md:grid-cols-3">
+          <div className="col-span-2 align-middle py-6 px-8 md:px-0">
             <h2 className="py-20 text-2xl md:text-6xl">{treatment.title}</h2>
             <ul className="mb-8">
               {treatment.description.map((desc, index) => (
@@ -177,16 +176,17 @@ export default async function TreatmentPage({ params }: Props) {
                 <li key={index}>{item}</li>
               ))}
             </ul>
-            <BooksyWidget />
+            <ZolmiButton />
           </div>
-          <div className="justify-items-right">
+            <div className="overflow-hidden">
             <Image
               src={treatment.image}
               alt={treatment.title}
               width={1000}
-              height={1000}
+              height={1600}
+              className="object-cover w-full h-full"
             />
-          </div>
+            </div>
         </div>
       </main>
       <Footer />

@@ -1,9 +1,9 @@
 import Navigation from "@/app/navbar";
 import Footer from "@/app/footer";
 import Image from "next/image";
-import BooksyWidget from "@/app/components/BooksyWidget";
 import { notFound } from "next/navigation";
 import type { Metadata, ResolvingMetadata } from "next";
+import ZolmiButton from "@/app/components/ZolmiButton";
 
 type Treatment = {
   title: string;
@@ -177,7 +177,7 @@ export default async function TreatmentPage({ params }: Props) {
                 <li key={index}>{item}</li>
               ))}
             </ul>
-            <BooksyWidget />
+            <ZolmiButton />
           </div>
           <div className="justify-items-right">
             <Image

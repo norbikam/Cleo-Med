@@ -11,7 +11,7 @@ import InfoBlocks from "./components/InfoBlocks";
 import FourPhotoSlideshowGap from "./components/FourPhotoSlideshowGap"
 import MembercardInfo from "./components/MembercardInfo";
 import Partner from "./components/Partner";
-import BooksyWidget from "./components/BooksyWidget";
+import ZolmiButton from "./components/ZolmiButton";
 
 
 export default function Home() {
@@ -25,7 +25,7 @@ export default function Home() {
           <Treatments />
           {/* <hr className="h-px bg-gray-400 border-0"/> */}
           <div className="place-items-center bg-white">
-            <BooksyWidget/>
+            <ZolmiButton/>
           </div>
           {/* <hr className="h-px bg-gray-400 border-0"/> */}
           <Trainings />

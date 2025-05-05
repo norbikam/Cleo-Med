@@ -3,7 +3,7 @@
 import Navigation from "@/app/navbar";
 import Footer from "@/app/footer";
 import Image from "next/image";
-import BooksyWidget from "@/app/components/BooksyWidget";
+import ZolmiButton from "@/app/components/ZolmiButton";
 
 export default function Home() {
   return (
@@ -11,16 +11,16 @@ export default function Home() {
       <header>
         <Navigation />
       </header>
-      <main style={{ maxWidth: "98vw" }} className="overflow-hidden pt-20 text-center w-[98vw] justify-items-center">
+      <main className="overflow-hidden pt-20 text-center w-[98vw] justify-items-center w-max-[98vw]">
         <h2 className="text-black text-3xl pb-8">Zabiegi na skórę głowy i włosy</h2>
         <div className="treatmentcon flex flex-col container text-black text-2xl w-full text-center justify-items-center border-black border md:grid md:grid-cols-3">
           <div className="col-span-2 align-middle">
           <h2 className="py-20  text-2xl md:text-6xl">Mezoterapia skóry głowy</h2>
-          <p>stymulacja wzrostu włosów poprzez dostarczanie składników odżywczych</p>
-          <BooksyWidget/>
+          <p className="pb-6">stymulacja wzrostu włosów poprzez dostarczanie składników odżywczych</p>
+          <ZolmiButton/>
           </div>
           <div className="justify-items-right">
-            <Image src="/treatments/zabieg.jpeg" alt="" width={1000} height={1000}/>
+            <Image src="/treatments/zabieg.jpeg" alt="" width={1000} height={1000} className="object-cover w-full h-full"/>
           </div>
         </div>
       </main>
