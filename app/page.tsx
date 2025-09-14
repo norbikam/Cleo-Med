@@ -11,7 +11,7 @@ interface Product {
   images: string[];
   description?: string;
   category_id?: string;
-  _debug_images?: any; // Debug
+  _debug_images?: string; // Debug
 }
 
 export default function HomePage() {
