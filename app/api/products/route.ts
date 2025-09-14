@@ -1,5 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+interface BaseLinkerProductInfo {
+  name?: string;
+  sku?: string;
+  description?: string;
+  category_id?: string;
+  prices?: Record<string, string | number>;
+  stock?: Record<string, string | number>;
+  images?: Record<string, string> | string[];
+  image?: string;
+  main_image?: string;
+  photo?: string;
+}
+
+interface BaseLinkerResponse {
+  status: string;
+  products?: Record<string, BaseLinkerProductInfo>;
+  error_message?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { password } = await request.json();
@@ -24,41 +43,37 @@ export async function POST(request: NextRequest) {
       })
     });
 
-    const data: any = await response.json();
+    const data: BaseLinkerResponse = await response.json();
     
     if (data.status === 'SUCCESS') {
       const products = data.products || {};
       const productList = [];
       
       for (const [pid, info] of Object.entries(products)) {
-        const productInfo = info as any;
-        const name = productInfo.name;
+        const name = info.name;
         if (!name) continue;
         
-        const price = productInfo.prices?.['21155'] || 0;
-        const stock = productInfo.stock?.['bl_41507'] || 0;
+        const price = info.prices?.['21155'] || 0;
+        const stock = info.stock?.['bl_41507'] || 0;
         
-        // DEBUG: Sprawdź strukturę obrazków
-        console.log(`Product ${pid} images:`, productInfo.images);
+        console.log(`Product ${pid} images:`, info.images);
         
-        // Różne sposoby pobierania obrazków z BaseLinker
         let images: string[] = [];
         
-        if (productInfo.images) {
-          if (Array.isArray(productInfo.images)) {
-            // Jeśli to array
-            images = productInfo.images;
-          } else if (typeof productInfo.images === 'object') {
-            // Jeśli to obiekt z kluczami
-            images = Object.values(productInfo.images).filter(img => img) as string[];
+        if (info.images) {
+          if (Array.isArray(info.images)) {
+            images = info.images;
+          } else if (typeof info.images === 'object') {
+            images = Object.values(info.images).filter((img): img is string => 
+              typeof img === 'string' && img.length > 0
+            );
           }
         }
         
-        // Sprawdź też inne pola z obrazkami
         if (images.length === 0) {
-          if (productInfo.image) images.push(productInfo.image);
-          if (productInfo.main_image) images.push(productInfo.main_image);
-          if (productInfo.photo) images.push(productInfo.photo);
+          if (info.image) images.push(info.image);
+          if (info.main_image) images.push(info.main_image);
+          if (info.photo) images.push(info.photo);
         }
         
         console.log(`Final images for ${name}:`, images);
@@ -66,14 +81,12 @@ export async function POST(request: NextRequest) {
         productList.push({
           id: pid,
           name: name,
-          sku: productInfo.sku || pid,
-          price_brutto: parseFloat(price) || 0,
-          quantity: parseInt(stock) || 0,
+          sku: info.sku || pid,
+          price_brutto: typeof price === 'string' ? parseFloat(price) : Number(price),
+          quantity: typeof stock === 'string' ? parseInt(stock) : Number(stock),
           images: images,
-          description: productInfo.description || '',
-          category_id: productInfo.category_id || '',
-          // DEBUG: Dodaj raw data żeby sprawdzić
-          _debug_images: productInfo.images
+          description: info.description || '',
+          category_id: info.category_id || ''
         });
       }
       

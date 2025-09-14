@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface Product {
   id: string;
@@ -11,7 +12,6 @@ interface Product {
   images: string[];
   description?: string;
   category_id?: string;
-  _debug_images?: string; // Debug
 }
 
 export default function HomePage() {
@@ -36,7 +36,7 @@ export default function HomePage() {
       const data = await response.json();
 
       if (data.success) {
-        console.log('Otrzymane produkty:', data.products); // Debug
+        console.log('Otrzymane produkty:', data.products);
         setProducts(data.products);
         setIsLoggedIn(true);
       } else {
@@ -54,18 +54,6 @@ export default function HomePage() {
     setProducts([]);
     setPassword('');
     setError('');
-  };
-
-  // Funkcja do sprawdzenia czy URL obrazka jest poprawny
-  const getValidImageUrl = (images: string[]): string | null => {
-    if (!images || images.length === 0) return null;
-    
-    for (const img of images) {
-      if (img && typeof img === 'string' && (img.startsWith('http') || img.startsWith('/'))) {
-        return img;
-      }
-    }
-    return null;
   };
 
   if (!isLoggedIn) {
@@ -121,7 +109,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -143,97 +130,65 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Products */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {products.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              </svg>
-            </div>
             <h3 className="text-lg font-medium text-gray-900">Brak produktów</h3>
             <p className="text-gray-500">Nie znaleziono produktów w BaseLinker</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => {
-              const imageUrl = getValidImageUrl(product.images);
-              
-              return (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-200"
-                >
-                  {/* Image */}
-                  <div className="aspect-square bg-gray-100 relative">
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          console.log('Image failed to load:', imageUrl);
-                          (e.target as HTMLImageElement).style.display = 'none';
-                        }}
-                        onLoad={() => {
-                          console.log('Image loaded successfully:', imageUrl);
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="text-center">
-                          <svg className="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <p className="text-xs text-gray-400">Brak zdjęcia</p>
-                          {/* DEBUG: Pokaż raw images data */}
-                          {product._debug_images && (
-                            <p className="text-xs text-red-400 mt-1">
-                              Debug: {JSON.stringify(product._debug_images)}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm text-gray-500 mb-3">
-                      SKU: {product.sku}
-                    </p>
-                    
-                    <div className="flex justify-between items-end">
-                      <div>
-                        <p className="text-2xl font-bold text-green-600">
-                          {new Intl.NumberFormat('pl-PL', {
-                            style: 'currency',
-                            currency: 'PLN'
-                          }).format(product.price_brutto)}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-500">Magazyn</p>
-                        <p className={`font-semibold ${product.quantity > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                          {product.quantity} szt.
-                        </p>
-                      </div>
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-200"
+              >
+                <div className="aspect-square bg-gray-100 relative">
+                  {product.images && product.images[0] ? (
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
                     </div>
-                    
-                    {/* DEBUG: Show images array */}
-                    {product.images && product.images.length > 0 && (
-                      <div className="mt-2 text-xs text-gray-400">
-                        Images: {product.images.join(', ')}
-                      </div>
-                    )}
+                  )}
+                </div>
+
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-3">
+                    SKU: {product.sku}
+                  </p>
+                  
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <p className="text-2xl font-bold text-green-600">
+                        {new Intl.NumberFormat('pl-PL', {
+                          style: 'currency',
+                          currency: 'PLN'
+                        }).format(product.price_brutto)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-500">Magazyn</p>
+                      <p className={`font-semibold ${product.quantity > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                        {product.quantity} szt.
+                      </p>
+                    </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
       </div>
