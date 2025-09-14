@@ -183,7 +183,6 @@ export default function HomePage() {
         <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
           <div className="text-center mb-6">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Panel Produktów</h1>
-            <p className="text-gray-600">BaseLinker Integration</p>
           </div>
           
           <form onSubmit={login} className="space-y-4">
@@ -236,7 +235,7 @@ export default function HomePage() {
           <div className="flex justify-between items-center h-16">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Produkty BaseLinker
+                Katalog Produktów
               </h1>
               <p className="text-sm text-gray-500">
                 Wyświetlane: {filteredProducts.length} z {products.length} produktów
