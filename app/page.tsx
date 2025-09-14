@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 interface Product {
   id: string;
@@ -26,9 +26,31 @@ export default function HomePage() {
   const [hideOutOfStock, setHideOutOfStock] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('name-asc');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all'); // Nowy filtr kategorii
   
   // Stan dla rozwijania filtrów na mobile
   const [filtersExpanded, setFiltersExpanded] = useState(false);
+
+  // Pobierz unikalne kategorie z produktów
+  const categories = useMemo(() => {
+    const categoryMap = new Map<string, { id: string; count: number }>();
+    
+    products.forEach(product => {
+      const categoryId = product.category_id || 'uncategorized';
+      const current = categoryMap.get(categoryId) || { id: categoryId, count: 0 };
+      categoryMap.set(categoryId, { ...current, count: current.count + 1 });
+    });
+
+    const sortedCategories = Array.from(categoryMap.entries())
+      .map(([id, data]) => ({
+        id,
+        name: id === 'uncategorized' ? 'Bez kategorii' : `Kategoria ${id}`,
+        count: data.count
+      }))
+      .sort((a, b) => b.count - a.count); // Sortuj po liczbie produktów
+
+    return sortedCategories;
+  }, [products]);
 
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,6 +87,7 @@ export default function HomePage() {
     setSearchTerm('');
     setSortBy('name-asc');
     setHideOutOfStock(true);
+    setSelectedCategory('all');
     setFiltersExpanded(false);
   };
 
@@ -94,6 +117,7 @@ export default function HomePage() {
   const getFilteredProducts = () => {
     let filtered = products;
 
+    // Filtr wyszukiwania
     if (searchTerm) {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -101,8 +125,17 @@ export default function HomePage() {
       );
     }
 
+    // Filtr dostępności
     if (hideOutOfStock) {
       filtered = filtered.filter(product => product.quantity > 0);
+    }
+
+    // Filtr kategorii
+    if (selectedCategory !== 'all') {
+      const categoryToFilter = selectedCategory === 'uncategorized' ? '' : selectedCategory;
+      filtered = filtered.filter(product => 
+        (product.category_id || 'uncategorized') === selectedCategory
+      );
     }
 
     return getSortedProducts(filtered);
@@ -129,7 +162,7 @@ export default function HomePage() {
                 placeholder="Wprowadź hasło"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-black"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                 required
                 disabled={loading}
               />
@@ -162,7 +195,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-black">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -173,6 +206,11 @@ export default function HomePage() {
               </h1>
               <p className="text-sm text-gray-500">
                 Wyświetlane: {filteredProducts.length} z {products.length} produktów
+                {selectedCategory !== 'all' && (
+                  <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                    {categories.find(c => c.id === selectedCategory)?.name}
+                  </span>
+                )}
               </p>
             </div>
             <button
@@ -214,6 +252,11 @@ export default function HomePage() {
                       Tylko dostępne
                     </span>
                   )}
+                  {selectedCategory !== 'all' && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                      Kategoria
+                    </span>
+                  )}
                   {sortBy !== 'name-asc' && (
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                       Sortowane
@@ -240,7 +283,7 @@ export default function HomePage() {
             ${filtersExpanded ? 'animate-slideDown' : ''}
           `}>
             <div className="p-4 lg:p-6 border-t lg:border-t-0 border-gray-200">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
                 
                 {/* Search */}
                 <div>
@@ -271,6 +314,25 @@ export default function HomePage() {
                       </button>
                     )}
                   </div>
+                </div>
+
+                {/* Category Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Kategoria
+                  </label>
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors bg-white"
+                  >
+                    <option value="all">Wszystkie kategorie ({products.length})</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name} ({category.count})
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Sort */}
@@ -332,12 +394,13 @@ export default function HomePage() {
               {/* Quick Clear Filters - Mobile */}
               <div className="block lg:hidden mt-4 pt-4 border-t border-gray-200">
                 <div className="flex flex-wrap gap-2">
-                  {(searchTerm || hideOutOfStock || sortBy !== 'name-asc') && (
+                  {(searchTerm || hideOutOfStock || sortBy !== 'name-asc' || selectedCategory !== 'all') && (
                     <button
                       onClick={() => {
                         setSearchTerm('');
                         setHideOutOfStock(true);
                         setSortBy('name-asc');
+                        setSelectedCategory('all');
                       }}
                       className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
                     >
@@ -375,14 +438,51 @@ export default function HomePage() {
             <div className="text-xs lg:text-sm text-gray-500">Dostępnych</div>
           </div>
           <div className="bg-white rounded-lg p-3 lg:p-4 border border-gray-200">
-            <div className="text-xl lg:text-2xl font-bold text-red-600">
-              {products.filter(p => p.quantity === 0).length}
+            <div className="text-xl lg:text-2xl font-bold text-orange-600">
+              {categories.length}
             </div>
-            <div className="text-xs lg:text-sm text-gray-500">Niedostępnych</div>
+            <div className="text-xs lg:text-sm text-gray-500">Kategorii</div>
           </div>
           <div className="bg-white rounded-lg p-3 lg:p-4 border border-gray-200">
             <div className="text-xl lg:text-2xl font-bold text-purple-600">{filteredProducts.length}</div>
             <div className="text-xs lg:text-sm text-gray-500">Wyświetlanych</div>
+          </div>
+        </div>
+
+        {/* Categories Quick Filter - Desktop only */}
+        <div className="hidden lg:block mb-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <h3 className="text-sm font-medium text-gray-700 mb-3">Szybki filtr kategorii:</h3>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedCategory('all')}
+                className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === 'all'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Wszystkie ({products.length})
+              </button>
+              {categories.slice(0, 8).map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${
+                    selectedCategory === category.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {category.name} ({category.count})
+                </button>
+              ))}
+              {categories.length > 8 && (
+                <span className="px-3 py-2 text-sm text-gray-500">
+                  +{categories.length - 8} więcej w dropdown
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -398,11 +498,14 @@ export default function HomePage() {
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               {searchTerm ? 'Brak wyników wyszukiwania' : 
+               selectedCategory !== 'all' ? 'Brak produktów w tej kategorii' :
                hideOutOfStock ? 'Brak dostępnych produktów' : 'Brak produktów'}
             </h3>
             <p className="text-gray-500 mb-4">
               {searchTerm 
                 ? `Nie znaleziono produktów dla "${searchTerm}"`
+                : selectedCategory !== 'all'
+                ? `Brak produktów w kategorii "${categories.find(c => c.id === selectedCategory)?.name}"`
                 : hideOutOfStock 
                 ? 'Wszystkie produkty są niedostępne lub spróbuj wyłączyć filtr dostępności'
                 : 'Nie znaleziono żadnych produktów w BaseLinker'
@@ -415,6 +518,14 @@ export default function HomePage() {
                   className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-lg transition-colors w-full sm:w-auto"
                 >
                   Wyczyść wyszukiwanie
+                </button>
+              )}
+              {selectedCategory !== 'all' && (
+                <button
+                  onClick={() => setSelectedCategory('all')}
+                  className="bg-orange-500 hover:bg-orange-600 text-white font-medium px-4 py-2 rounded-lg transition-colors w-full sm:w-auto"
+                >
+                  Pokaż wszystkie kategorie
                 </button>
               )}
               {hideOutOfStock && products.filter(p => p.quantity === 0).length > 0 && (
@@ -450,6 +561,15 @@ export default function HomePage() {
                       <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
+                    </div>
+                  )}
+                  
+                  {/* Category badge */}
+                  {product.category_id && (
+                    <div className="absolute top-2 left-2">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        {product.category_id === '' ? 'Bez kategorii' : `Kat. ${product.category_id}`}
+                      </span>
                     </div>
                   )}
                   

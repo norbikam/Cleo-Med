@@ -1,5 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+interface BaseLinkerProductInfo {
+  name?: string;
+  sku?: string;
+  description?: string;
+  category_id?: string;
+  prices?: Record<string, string | number>;
+  stock?: Record<string, string | number>;
+  images?: Record<string, string> | string[];
+  image?: string;
+  main_image?: string;
+  photo?: string;
+}
+
+interface BaseLinkerResponse {
+  status: string;
+  products?: Record<string, BaseLinkerProductInfo>;
+  error_message?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { password } = await request.json();
@@ -12,7 +31,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // KROK 1: Pobierz produkty (jak wcześniej - działało)
+    // KROK 1: Pobierz produkty
     const response = await fetch('https://api.baselinker.com/connector.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -25,7 +44,7 @@ export async function POST(request: NextRequest) {
       })
     });
 
-    const data = await response.json();
+    const data: BaseLinkerResponse = await response.json();
     
     if (data.status === 'SUCCESS') {
       const products = data.products || {};
@@ -34,7 +53,7 @@ export async function POST(request: NextRequest) {
       console.log('Products fetched:', productIds.length);
       
       // KROK 2: Spróbuj pobrać obrazki dla produktów
-      let imagesData: any = {};
+      let imagesData: Record<string, BaseLinkerProductInfo> = {};
       try {
         const imagesResponse = await fetch('https://api.baselinker.com/connector.php', {
           method: 'POST',
@@ -44,13 +63,13 @@ export async function POST(request: NextRequest) {
             method: 'getInventoryProductsData',
             parameters: JSON.stringify({
               inventory_id: "24235",
-              products: productIds // Pierwsze 20 produktów
+              products: productIds
             })
           })
         });
         
-        const imagesResult = await imagesResponse.json();
-        console.log('Images API result:', imagesResult);
+        const imagesResult: BaseLinkerResponse = await imagesResponse.json();
+        console.log('Images API result:', imagesResult.status);
         
         if (imagesResult.status === 'SUCCESS') {
           imagesData = imagesResult.products || {};
@@ -61,7 +80,7 @@ export async function POST(request: NextRequest) {
       
       const productList = [];
       
-      for (const [pid, info] of Object.entries(products as Record<string, any>)) {
+      for (const [pid, info] of Object.entries(products)) {
         const name = info.name;
         if (!name) continue;
         
@@ -85,8 +104,9 @@ export async function POST(request: NextRequest) {
         if (images.length === 0 && productWithImages) {
           const imageFields = ['image', 'main_image', 'photo', 'picture'];
           for (const field of imageFields) {
-            if (productWithImages[field]) {
-              images.push(productWithImages[field]);
+            const imageValue = (productWithImages as Record<string, unknown>)[field];
+            if (imageValue && typeof imageValue === 'string') {
+              images.push(imageValue);
             }
           }
         }
@@ -100,7 +120,7 @@ export async function POST(request: NextRequest) {
           price_brutto: typeof price === 'string' ? parseFloat(price) : Number(price),
           quantity: typeof stock === 'string' ? parseInt(stock) : Number(stock),
           images: images,
-          description: info.description || '',
+          description: productWithImages?.description || info.description || '',
           category_id: info.category_id || ''
         });
       }
