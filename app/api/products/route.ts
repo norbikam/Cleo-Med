@@ -27,6 +27,18 @@ interface BaseLinkerProductDetailed {
   weight: number;
 }
 
+interface ProcessedProduct {
+  id: string;
+  name: string;
+  sku: string;
+  price_brutto: number;
+  quantity: number;
+  images: string[];
+  description: string;
+  category_id: string;
+  category_name: string;
+}
+
 interface BaseLinkerResponse {
   status: string;
   categories?: BaseLinkerCategory[];
@@ -82,17 +94,7 @@ const processCategoryParallel = async (
   totalCategories: number
 ): Promise<{
   categoryName: string;
-  products: Array<{
-    id: string;
-    name: string;
-    sku: string;
-    price_brutto: number;
-    quantity: number;
-    images: string[];
-    description: string;
-    category_id: string;
-    category_name: string;
-  }>;
+  products: ProcessedProduct[];
   count: number;
 }> => {
   
@@ -118,7 +120,7 @@ const processCategoryParallel = async (
     const productsListData: BaseLinkerResponse = await productsListResponse.json();
     
     if (productsListData.status !== 'SUCCESS' || !productsListData.products) {
-      console.log(`   ❌ [${category.name}] No products: ${productsListData.error_message}`);
+      console.log(`   ❌ [${category.name}] No products: ${productsListData.error_message || 'Unknown error'}`);
       return { categoryName: category.name, products: [], count: 0 };
     }
 
@@ -131,8 +133,8 @@ const processCategoryParallel = async (
     console.log(`   📦 [${category.name}] Found ${productIds.length} products`);
 
     // KROK 2: Pobierz szczegóły wszystkich produktów na raz (lub w większych chunkach)
-    const chunkSize = 200; // Zwiększony chunk size
-    const allCategoryProducts: any[] = [];
+    const chunkSize = 200;
+    const allCategoryProducts: ProcessedProduct[] = [];
     
     // 🚀 Równoległe przetwarzanie chunków
     const chunkPromises: Promise<void>[] = [];
@@ -140,7 +142,7 @@ const processCategoryParallel = async (
     for (let i = 0; i < productIds.length; i += chunkSize) {
       const chunk = productIds.slice(i, i + chunkSize);
       
-      const chunkPromise = (async () => {
+      const chunkPromise = (async (): Promise<void> => {
         try {
           const detailsResponse = await fetch('https://api.baselinker.com/connector.php', {
             method: 'POST',
@@ -264,8 +266,8 @@ export async function POST(request: NextRequest) {
     console.log(`🚀 Starting parallel processing of ${categories.length} categories...`);
     
     // Przetwarzaj kategorie równolegle (w grupach po 5-10 żeby nie przeciążyć API)
-    const concurrencyLimit = 8; // Liczba równoczesnych requestów
-    const allProducts: any[] = [];
+    const concurrencyLimit = 8;
+    const allProducts: ProcessedProduct[] = [];
     const categoryStats: Record<string, number> = {};
     
     // Podziel kategorie na grupy
@@ -325,7 +327,7 @@ export async function POST(request: NextRequest) {
       });
 
     const categoriesWithProducts = Object.values(categoryStats).filter(count => count > 0).length;
-    const avgProductsPerCategory = allProducts.length / categoriesWithProducts;
+    const avgProductsPerCategory = allProducts.length / (categoriesWithProducts || 1);
 
     console.log(`\n⚡ Performance: ${(allProducts.length / parseFloat(totalTime)).toFixed(0)} products/second`);
 
