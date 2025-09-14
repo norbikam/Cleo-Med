@@ -145,9 +145,11 @@ export default function HomePage() {
               >
                 <div className="aspect-square bg-gray-100 relative">
                   {product.images && product.images[0] ? (
-                    <img
+                    <Image
                       src={product.images[0]}
                       alt={product.name}
+                      width={400}
+                      height={400}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).style.display = 'none';
