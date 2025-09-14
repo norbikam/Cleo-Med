@@ -1,24 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-interface BaseLinkerProductInfo {
-  name?: string;
-  sku?: string;
-  description?: string;
-  category_id?: string;
-  prices?: Record<string, string | number>;
-  stock?: Record<string, string | number>;
-  images?: Record<string, string> | string[];
-  image?: string;
-  main_image?: string;
-  photo?: string;
-}
-
-interface BaseLinkerResponse {
-  status: string;
-  products?: Record<string, BaseLinkerProductInfo>;
-  error_message?: string;
-}
-
 export async function POST(request: NextRequest) {
   try {
     const { password } = await request.json();
@@ -31,6 +12,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // KROK 1: Pobierz produkty (jak wcześniej - działało)
     const response = await fetch('https://api.baselinker.com/connector.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -43,40 +25,73 @@ export async function POST(request: NextRequest) {
       })
     });
 
-    const data: BaseLinkerResponse = await response.json();
+    const data = await response.json();
     
     if (data.status === 'SUCCESS') {
       const products = data.products || {};
+      const productIds = Object.keys(products);
+      
+      console.log('Products fetched:', productIds.length);
+      
+      // KROK 2: Spróbuj pobrać obrazki dla produktów
+      let imagesData: any = {};
+      try {
+        const imagesResponse = await fetch('https://api.baselinker.com/connector.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            token: process.env.BASELINKER_API_TOKEN!,
+            method: 'getInventoryProductsData',
+            parameters: JSON.stringify({
+              inventory_id: "24235",
+              products: productIds // Pierwsze 20 produktów
+            })
+          })
+        });
+        
+        const imagesResult = await imagesResponse.json();
+        console.log('Images API result:', imagesResult);
+        
+        if (imagesResult.status === 'SUCCESS') {
+          imagesData = imagesResult.products || {};
+        }
+      } catch (imageError) {
+        console.log('Images fetch failed, continuing without images:', imageError);
+      }
+      
       const productList = [];
       
-      for (const [pid, info] of Object.entries(products)) {
+      for (const [pid, info] of Object.entries(products as Record<string, any>)) {
         const name = info.name;
         if (!name) continue;
         
         const price = info.prices?.['21155'] || 0;
         const stock = info.stock?.['bl_41507'] || 0;
         
-        console.log(`Product ${pid} images:`, info.images);
-        
+        // Sprawdź czy mamy obrazki z drugiego API
         let images: string[] = [];
-        
-        if (info.images) {
-          if (Array.isArray(info.images)) {
-            images = info.images;
-          } else if (typeof info.images === 'object') {
-            images = Object.values(info.images).filter((img): img is string => 
+        const productWithImages = imagesData[pid];
+        if (productWithImages?.images) {
+          if (Array.isArray(productWithImages.images)) {
+            images = productWithImages.images.filter((img: string) => img && img.length > 0);
+          } else if (typeof productWithImages.images === 'object') {
+            images = Object.values(productWithImages.images).filter((img): img is string => 
               typeof img === 'string' && img.length > 0
             );
           }
         }
         
-        if (images.length === 0) {
-          if (info.image) images.push(info.image);
-          if (info.main_image) images.push(info.main_image);
-          if (info.photo) images.push(info.photo);
+        // Jeśli dalej brak obrazków, sprawdź inne pola
+        if (images.length === 0 && productWithImages) {
+          const imageFields = ['image', 'main_image', 'photo', 'picture'];
+          for (const field of imageFields) {
+            if (productWithImages[field]) {
+              images.push(productWithImages[field]);
+            }
+          }
         }
         
-        console.log(`Final images for ${name}:`, images);
+        console.log(`Product ${name}: ${images.length} images found`);
         
         productList.push({
           id: pid,
@@ -93,7 +108,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ 
         success: true,
         products: productList,
-        count: productList.length
+        count: productList.length,
+        images_fetched: Object.keys(imagesData).length
       });
     } else {
       return NextResponse.json(
