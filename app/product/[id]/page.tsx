@@ -79,7 +79,7 @@ export default function ProductDetailsPage() {
         style: 'currency',
         currency: 'PLN'
       }).format(price || 0);
-    } catch (error) {
+    } catch {
       return `${price || 0} PLN`;
     }
   };
