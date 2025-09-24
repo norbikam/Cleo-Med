@@ -67,11 +67,14 @@ const extractDescription = (textFields: Record<string, string> | undefined): str
   return '';
 };
 
+// ✅ POPRAWNA definicja funkcji - usuń nieprawidłową typizację params
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    // ✅ Await params dla Next.js 15+
+    const params = await context.params;
     const productId = params.id;
     
     if (!productId) {
