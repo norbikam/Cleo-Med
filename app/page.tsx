@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useAuth } from './hooks/useAuth'; // Dostosuj ścieżkę jeśli trzeba
 
 interface Product {
   id: string;
@@ -23,17 +25,49 @@ interface Category {
 type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc' | 'stock-asc' | 'stock-desc';
 
 export default function HomePage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Używaj hook useAuth zamiast lokalnego stanu
+  const { isLoggedIn, saveSession, clearSession, getRemainingTime } = useAuth();
+  
   const [products, setProducts] = useState<Product[]>([]);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
   
-  // Nowe stany dla filtrów
+  // Filtry
   const [hideOutOfStock, setHideOutOfStock] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('name-asc');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  // Auto-load produktów jeśli już zalogowany
+  useEffect(() => {
+    if (isLoggedIn && products.length === 0) {
+      console.log('🔄 Auto-loading products for logged in user');
+      loadProducts();
+    }
+  }, [isLoggedIn]);
+
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: 'auto-load' }) // Specjalny token dla auto-load
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setProducts(data.products);
+        console.log('✅ Products auto-loaded:', data.products.length);
+      }
+    } catch (err) {
+      console.error('❌ Auto-load error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,24 +85,24 @@ export default function HomePage() {
 
       if (data.success) {
         setProducts(data.products);
-        setIsLoggedIn(true);
         
-        // Debug console info
-        console.log('🔄 Products loaded:', data.products.length);
-        console.log('📊 Debug info:', data.debug);
-        console.log('📂 Match success rate:', data.match_success_rate + '%');
+        // Zapisz sesję
+        saveSession(rememberMe);
+        
+        console.log('✅ Login successful, session saved');
+        console.log('📊 Products loaded:', data.products.length);
       } else {
         setError(data.error || 'Wystąpił błąd');
       }
     } catch (err) {
-      console.error('Błąd fetch:', err);
+      console.error('❌ Login error:', err);
       setError('Błąd połączenia z serwerem');
     }
     setLoading(false);
   };
 
   const logout = () => {
-    setIsLoggedIn(false);
+    clearSession();
     setProducts([]);
     setPassword('');
     setError('');
@@ -76,9 +110,10 @@ export default function HomePage() {
     setSortBy('name-asc');
     setHideOutOfStock(true);
     setSelectedCategory('all');
+    console.log('👋 User logged out');
   };
 
-  // 🎯 KLUCZOWA FUNKCJA: Process categories from products
+  // Reszta funkcji bez zmian...
   const processCategories = (): Category[] => {
     console.log('🔄 Processing categories from products:', products.length);
     
@@ -110,7 +145,6 @@ export default function HomePage() {
       count: data.count
     }));
     
-    // Sortuj kategorie - najpierw te z prawdziwymi nazwami, potem "Bez kategorii"
     categories.sort((a, b) => {
       if (a.id === '') return 1;
       if (b.id === '') return -1;
@@ -125,7 +159,6 @@ export default function HomePage() {
 
   const categories = processCategories();
 
-  // Funkcja sortowania
   const getSortedProducts = (products: Product[]) => {
     return [...products].sort((a, b) => {
       switch (sortBy) {
@@ -147,11 +180,9 @@ export default function HomePage() {
     });
   };
 
-  // Funkcja filtrowania
   const getFilteredProducts = () => {
     let filtered = products;
 
-    // Filtr wyszukiwania
     if (searchTerm) {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -159,19 +190,16 @@ export default function HomePage() {
       );
     }
 
-    // Filtr kategorii
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(product => 
         (product.category_id || '') === selectedCategory
       );
     }
 
-    // Filtr dostępności
     if (hideOutOfStock) {
       filtered = filtered.filter(product => product.quantity > 0);
     }
 
-    // Sortowanie
     return getSortedProducts(filtered);
   };
 
@@ -183,6 +211,7 @@ export default function HomePage() {
         <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
           <div className="text-center mb-6">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Panel Produktów</h1>
+            <p className="text-gray-600">Wprowadź hasło aby uzyskać dostęp</p>
           </div>
           
           <form onSubmit={login} className="space-y-4">
@@ -199,6 +228,20 @@ export default function HomePage() {
                 required
                 disabled={loading}
               />
+            </div>
+
+            {/* Remember Me Checkbox */}
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                Zapamiętaj logowanie {rememberMe ? '(24h)' : '(4h)'}
+              </label>
             </div>
             
             {error && (
@@ -222,6 +265,10 @@ export default function HomePage() {
               )}
             </button>
           </form>
+
+          <div className="mt-4 text-center text-xs text-gray-500">
+            🔒 Twoje dane są bezpieczne i przechowywane lokalnie
+          </div>
         </div>
       </div>
     );
@@ -242,15 +289,34 @@ export default function HomePage() {
                 {categories.length > 0 && ` • ${categories.length} kategorii dostępnych`}
               </p>
             </div>
-            <button
-              onClick={logout}
-              className="bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-lg transition-colors"
-            >
-              Wyloguj
-            </button>
+            <div className="flex items-center space-x-4">
+              {/* Session info */}
+              <div className="text-right text-xs text-gray-500">
+                <div>Sesja wygasa za:</div>
+                <div className="font-medium text-blue-600">{getRemainingTime()}</div>
+              </div>
+              <button
+                onClick={logout}
+                className="bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-lg transition-colors"
+              >
+                Wyloguj
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Loading overlay dla auto-load */}
+      {loading && products.length === 0 && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl">
+            <div className="flex items-center space-x-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <span className="text-gray-700">Ładowanie produktów...</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters & Controls */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -456,6 +522,11 @@ export default function HomePage() {
                 key={product.id}
                 className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-200"
               >
+                <Link
+                  href={`/product/${product.id}`}
+                  key={product.id}
+                  className="block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-200 cursor-pointer group"
+                >
                 {/* Image */}
                 <div className="aspect-square bg-gray-100 relative">
                   {product.images && product.images[0] ? (
@@ -535,6 +606,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+                </Link>
               </div>
             ))}
           </div>

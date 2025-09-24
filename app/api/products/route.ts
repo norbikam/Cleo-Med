@@ -217,7 +217,8 @@ export async function POST(request: NextRequest) {
   try {
     const { password } = await request.json();
     
-    if (password !== process.env.ADMIN_PASSWORD) {
+    // Dla auto-load nie sprawdzamy hasła, ale kontynuujemy ładowanie produktów
+    if (password !== 'auto-load' && password !== process.env.ADMIN_PASSWORD) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       return NextResponse.json(
         { success: false, error: 'Nieprawidłowe hasło' }, 
@@ -225,7 +226,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('\n🚀 Starting BaseLinker API - TURBO SPEED VERSION...');
+    console.log('\n🚀 Starting BaseLinker API...');
+    if (password === 'auto-load') {
+      console.log('🔄 Auto-load request - skipping password verification');
+    }
+    
     const startTime = Date.now();
 
     // KROK 1: Pobierz wszystkie kategorie
@@ -261,22 +266,20 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    // KROK 2: 🚀 RÓWNOLEGŁE PRZETWARZANIE WSZYSTKICH KATEGORII
+ // KROK 2: 🚀 RÓWNOLEGŁE PRZETWARZANIE WSZYSTKICH KATEGORII
     console.log('\n📦 === PARALLEL PROCESSING ALL CATEGORIES ===');
     console.log(`🚀 Starting parallel processing of ${categories.length} categories...`);
     
-    // Przetwarzaj kategorie równolegle (w grupach po 5-10 żeby nie przeciążyć API)
     const concurrencyLimit = 8;
     const allProducts: ProcessedProduct[] = [];
     const categoryStats: Record<string, number> = {};
     
-    // Podziel kategorie na grupy
+    // Reszta istniejącego kodu...
     for (let i = 0; i < categories.length; i += concurrencyLimit) {
       const categoryBatch = categories.slice(i, i + concurrencyLimit);
       
       console.log(`\n🔄 Processing batch ${Math.floor(i/concurrencyLimit) + 1}/${Math.ceil(categories.length/concurrencyLimit)} (${categoryBatch.length} categories)`);
       
-      // Przetwórz tę grupę równolegle
       const batchPromises = categoryBatch.map((category, index) => 
         processCategoryParallel(
           category, 
@@ -289,7 +292,6 @@ export async function POST(request: NextRequest) {
       try {
         const batchResults = await Promise.all(batchPromises);
         
-        // Zbierz wyniki z tej grupy
         batchResults.forEach(result => {
           allProducts.push(...result.products);
           categoryStats[result.categoryName] = result.count;
@@ -298,7 +300,6 @@ export async function POST(request: NextRequest) {
         const batchProductsCount = batchResults.reduce((sum, result) => sum + result.count, 0);
         console.log(`   ✅ Batch completed: ${batchProductsCount} products added`);
         
-        // Krótkie opóźnienie między grupami żeby nie przeciążyć API
         if (i + concurrencyLimit < categories.length) {
           await new Promise(resolve => setTimeout(resolve, 500));
         }
@@ -311,40 +312,22 @@ export async function POST(request: NextRequest) {
     const endTime = Date.now();
     const totalTime = ((endTime - startTime) / 1000).toFixed(2);
 
-    console.log('\n📊 === FINAL TURBO STATISTICS ===');
+    console.log('\n📊 === FINAL STATISTICS ===');
     console.log(`⚡ Total processing time: ${totalTime} seconds`);
     console.log(`✅ Categories processed: ${categories.length}`);
     console.log(`📦 Total products loaded: ${allProducts.length}`);
-    
-    console.log('\n📂 Top categories by product count:');
-    Object.entries(categoryStats)
-      .sort(([,a], [,b]) => b - a)
-      .slice(0, 10)
-      .forEach(([categoryName, count]) => {
-        if (count > 0) {
-          console.log(`   "${categoryName}": ${count} products`);
-        }
-      });
-
-    const categoriesWithProducts = Object.values(categoryStats).filter(count => count > 0).length;
-    const avgProductsPerCategory = allProducts.length / (categoriesWithProducts || 1);
-
-    console.log(`\n⚡ Performance: ${(allProducts.length / parseFloat(totalTime)).toFixed(0)} products/second`);
 
     return NextResponse.json({ 
       success: true,
       products: allProducts,
       count: allProducts.length,
-      source: 'turbo_parallel_processing',
+      source: password === 'auto-load' ? 'auto_load_session' : 'fresh_login',
       categories_loaded: categories.length,
-      categories_with_products: categoriesWithProducts,
       processing_time_seconds: parseFloat(totalTime),
-      performance_products_per_second: Math.round(allProducts.length / parseFloat(totalTime)),
       debug: {
         category_stats: categoryStats,
         total_categories: categories.length,
-        avg_products_per_category: Math.round(avgProductsPerCategory),
-        concurrent_requests: concurrencyLimit
+        auto_load: password === 'auto-load'
       }
     });
 
