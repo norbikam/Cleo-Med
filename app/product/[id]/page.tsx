@@ -284,12 +284,6 @@ export default function ProductDetailsPage() {
                       <span className="text-gray-600">{String(product.weight)} kg</span>
                     </div>
                   )}
-                  {product.tax_rate > 0 && (
-                    <div className="flex justify-between">
-                      <span className="font-medium text-gray-700">VAT:</span>
-                      <span className="text-gray-600">{String(product.tax_rate)}%</span>
-                    </div>
-                  )}
                   {product.category_id && (
                     <div className="flex justify-between">
                       <span className="font-medium text-gray-700">ID Kategorii:</span>
