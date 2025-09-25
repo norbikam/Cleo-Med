@@ -1,6 +1,6 @@
 import { prisma } from './database';
 import { Decimal } from '@prisma/client/runtime/library';
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient, Prisma } from '@prisma/client';
 
 interface DatabaseCategory {
   id: string;
@@ -316,28 +316,35 @@ export class SyncService {
             const stockValue = Object.values(detailedProduct.stock || {})[0] || 0;
             const taxRate = this.toSafeDecimal(detailedProduct.tax_rate);
 
-            const productData = {
-              baselinker_id: productId,
-              name: name,
-              sku: this.toSafeString(detailedProduct.sku) || productId,
-              ean: this.toSafeString(detailedProduct.ean) || null,
-              price_brutto: this.toSafeDecimal(priceValue),
-              price_netto: taxRate.greaterThan(0) 
-                ? this.toSafeDecimal(priceValue).dividedBy(taxRate.dividedBy(100).plus(1))
-                : this.toSafeDecimal(priceValue),
-              quantity: this.toSafeNumber(stockValue),
-              weight: this.toSafeDecimal(detailedProduct.weight),
-              tax_rate: taxRate,
-              description: description || null,
-              category_id: category.category_id.toString(),
-              category_name: category.name,
-              images: images.length > 0 ? images : null,
-              text_fields: Object.keys(detailedProduct.text_fields || {}).length > 0 
-                ? detailedProduct.text_fields 
-                : null,
-              last_sync: new Date(),
-              is_active: true
-            };
+            const productData: any = {
+                baselinker_id: productId,
+                name: name,
+                sku: this.toSafeString(detailedProduct.sku) || productId,
+                ean: this.toSafeString(detailedProduct.ean) || null,
+                price_brutto: this.toSafeDecimal(priceValue),
+                price_netto: taxRate.greaterThan(0) 
+                    ? this.toSafeDecimal(priceValue).dividedBy(taxRate.dividedBy(100).plus(1))
+                    : this.toSafeDecimal(priceValue),
+                quantity: this.toSafeNumber(stockValue),
+                weight: this.toSafeDecimal(detailedProduct.weight),
+                tax_rate: taxRate,
+                description: description || null,
+                category_id: category.category_id.toString(),
+                category_name: category.name,
+                last_sync: new Date(),
+                is_active: true
+                };
+
+                // Dodaj images tylko jeśli są
+                if (images.length > 0) {
+                productData.images = images;
+                }
+
+                // Dodaj text_fields tylko jeśli są
+                if (Object.keys(detailedProduct.text_fields || {}).length > 0) {
+                productData.text_fields = detailedProduct.text_fields;
+            }
+
 
             // Check if product exists
             const existingProduct = await tx.product.findUnique({
