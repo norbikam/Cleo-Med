@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Category {
+  id           String    @id
+  name         String
+  parent_id    String?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  products     Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id                String    @id
+  name              String
+  sku               String    @unique
+  ean               String?
+  price_brutto      Decimal   @default(0) @db.Decimal(10,2)
+  price_netto       Decimal?  @default(0) @db.Decimal(10,2)
+  quantity          Int       @default(0)
+  weight            Decimal?  @default(0) @db.Decimal(8,3)
+  tax_rate          Decimal?  @default(0) @db.Decimal(5,2)
+  description       String?
+  category_id       String?
+  category_name     String?
+  images            Json?     // Array of image URLs
+  text_fields       Json?     // All additional fields from BaseLinker
+  baselinker_id     String    @unique
+  last_sync         DateTime  @default(now())
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  is_active         Boolean   @default(true)
+  
+  category          Category? @relation(fields: [category_id], references: [id])
+
+  @@index([category_id])
+  @@index([quantity])
+  @@index([price_brutto])
+  @@index([last_sync])
+  @@index([is_active])
+  @@index([baselinker_id])
+  @@map("products")
+}
+
+model SyncLog {
+  id                  Int       @id @default(autoincrement())
+  sync_type           String    // "full", "incremental", "categories"
+  status              String    // "started", "success", "failed"
+  started_at          DateTime  @default(now())
+  completed_at        DateTime?
+  products_processed  Int?      @default(0)
+  products_updated    Int?      @default(0)
+  products_created    Int?      @default(0)
+  categories_processed Int?     @default(0)
+  error_message       String?
+  duration_seconds    Int?
+
+  @@index([status])
+  @@index([started_at])
+  @@map("sync_logs")
+}
+
+model AppSettings {
+  key         String   @id @db.VarChar(255)
+  value       String
+  description String?
+  updated_at  DateTime @updatedAt
+
+  @@map("app_settings")
+}

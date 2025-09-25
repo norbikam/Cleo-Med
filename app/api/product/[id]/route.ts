@@ -1,79 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '../../../lib/database';
 
-interface BaseLinkerProductDetailed {
-  ean: string;
-  sku: string;
-  category_id: number;
-  text_fields: Record<string, string>;
-  prices: Record<string, number>;
-  stock: Record<string, number>;
-  images: Record<string, string>;
-  tax_rate: number;
-  weight: number;
-}
+// Reszta importów...
 
-interface BaseLinkerResponse {
-  status: string;
-  products?: Record<string, BaseLinkerProductDetailed>;
-  error_message?: string;
-}
 
-const toSafeString = (value: unknown): string => {
-  if (value === null || value === undefined) return '';
-  if (typeof value === 'string') return value;
-  if (typeof value === 'number') return value.toString();
-  return String(value);
-};
-
-const toSafeNumber = (value: unknown): number => {
-  if (typeof value === 'number' && !isNaN(value)) return value;
-  if (typeof value === 'string') {
-    const parsed = parseFloat(value.trim());
-    return !isNaN(parsed) ? parsed : 0;
-  }
-  return 0;
-};
-
-const extractImages = (images: Record<string, string> | undefined): string[] => {
-  if (!images || typeof images !== 'object') return [];
-  return Object.values(images).filter((img: string) => img && img.length > 0);
-};
-
-const extractName = (textFields: Record<string, string> | undefined, fallbackName?: string): string => {
-  if (!textFields) return fallbackName || '';
-  
-  const nameKeys = ['name', 'name|pl', 'name|en', 'name|'];
-  for (const key of nameKeys) {
-    if (textFields[key]) {
-      const name = toSafeString(textFields[key]).trim();
-      if (name) return name;
-    }
-  }
-  
-  return fallbackName || '';
-};
-
-const extractDescription = (textFields: Record<string, string> | undefined): string => {
-  if (!textFields) return '';
-  
-  const descKeys = ['description', 'description|pl', 'description|en', 'description|'];
-  for (const key of descKeys) {
-    if (textFields[key]) {
-      const desc = toSafeString(textFields[key]).trim();
-      if (desc) return desc;
-    }
-  }
-  
-  return '';
-};
-
-// ✅ POPRAWNA definicja funkcji - usuń nieprawidłową typizację params
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // ✅ Await params dla Next.js 15+
     const params = await context.params;
     const productId = params.id;
     
@@ -84,73 +19,52 @@ export async function GET(
       );
     }
 
-    console.log(`🔍 Fetching product details for ID: ${productId}`);
+    console.log(`🔍 Fetching product from Neon database: ${productId}`);
 
-    const response = await fetch('https://api.baselinker.com/connector.php', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-BLToken': process.env.BASELINKER_API_TOKEN!
+    // 🎯 ZMIANA: Pobierz z bazy danych zamiast BaseLinker
+    const product = await prisma.product.findUnique({
+      where: { 
+        id: productId,
+        is_active: true 
       },
-      body: new URLSearchParams({
-        method: 'getInventoryProductsData',
-        parameters: JSON.stringify({
-          inventory_id: 24235,
-          products: [productId]
-        })
-      })
+      include: {
+        category: true
+      }
     });
 
-    const data: BaseLinkerResponse = await response.json();
-    
-    if (data.status !== 'SUCCESS' || !data.products) {
-      console.log(`❌ Product not found: ${data.error_message}`);
+    if (!product) {
       return NextResponse.json(
         { success: false, error: 'Produkt nie został znaleziony' },
         { status: 404 }
       );
     }
 
-    const productData = data.products[productId];
-    if (!productData) {
-      return NextResponse.json(
-        { success: false, error: 'Produkt nie został znaleziony' },
-        { status: 404 }
-      );
-    }
-
-    // Bezpieczne przetwarzanie danych
-    const name = extractName(productData.text_fields, productId);
-    const description = extractDescription(productData.text_fields);
-    const images = extractImages(productData.images);
-    
-    const priceValue = Object.values(productData.prices || {})[0] || 0;
-    const stockValue = Object.values(productData.stock || {})[0] || 0;
-
+    // Konwertuj na format oczekiwany przez frontend
     const processedProduct = {
-      id: productId,
-      name: name,
-      sku: toSafeString(productData.sku) || productId,
-      price_brutto: toSafeNumber(priceValue),
-      quantity: toSafeNumber(stockValue),
-      images: images,
-      description: description,
-      category_id: toSafeString(productData.category_id),
-      weight: toSafeNumber(productData.weight),
-      tax_rate: toSafeNumber(productData.tax_rate),
-      ean: toSafeString(productData.ean),
-      text_fields: productData.text_fields || {}
+      id: product.id,
+      name: product.name,
+      sku: product.sku,
+      price_brutto: Number(product.price_brutto),
+      quantity: product.quantity,
+      images: Array.isArray(product.images) ? product.images as string[] : [],
+      description: product.description || '',
+      category_id: product.category_id || '',
+      weight: Number(product.weight) || 0,
+      tax_rate: Number(product.tax_rate) || 0,
+      ean: product.ean || '',
+      text_fields: (product.text_fields as Record<string, string>) || {}
     };
 
-    console.log(`✅ Product loaded: ${name}`);
+    console.log(`✅ Product loaded from Neon: ${product.name}`);
 
     return NextResponse.json({ 
       success: true,
-      product: processedProduct
+      product: processedProduct,
+      source: 'neon_database'
     });
 
   } catch (error) {
-    console.error('❌ Product API Error:', error);
+    console.error('❌ Neon Product API Error:', error);
     return NextResponse.json(
       { success: false, error: 'Błąd serwera' }, 
       { status: 500 }
