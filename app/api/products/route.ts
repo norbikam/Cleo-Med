@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     
 
     // Konwertuj na format oczekiwany przez frontend
-    const formattedProducts = products.map((product: any) => ({
+    const formattedProducts = products.map((product) => ({
     id: product.id,
     name: product.name,
     sku: product.sku,
