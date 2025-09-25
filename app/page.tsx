@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from './hooks/useAuth'; // Dostosuj ścieżkę jeśli trzeba
+import Image from 'next/image';
 
 interface Product {
   id: string;
@@ -530,9 +531,11 @@ export default function HomePage() {
                 {/* Image */}
                 <div className="aspect-square bg-gray-100 relative">
                   {product.images && product.images[0] ? (
-                    <img
+                    <Image
                       src={product.images[0]}
                       alt={product.name}
+                      height={600}
+                      width={600}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).style.display = 'none';
