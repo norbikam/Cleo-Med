@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from './hooks/useAuth'; // Dostosuj ścieżkę jeśli trzeba
-import Image from 'next/image';
 
 interface Product {
   id: string;
