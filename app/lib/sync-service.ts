@@ -32,13 +32,6 @@ interface BaseLinkerProductDetailed {
   weight: number;
 }
 
-interface BaseLinkerResponse {
-  status: string;
-  categories?: BaseLinkerCategory[];
-  products?: Record<string, BaseLinkerProductDetailed>;
-  error_message?: string;
-}
-
 // Typy dla API responses
 interface ApiCallResponse {
   status: string;
