@@ -64,9 +64,9 @@ export async function POST(request: NextRequest) {
         id: string;
         name: string;
         sku: string;
-        price_brutto: any;
+        price_brutto: number;
         quantity: number;
-        images: any;
+        images: string;
         description: string | null;
         category_id: string | null;
         category_name: string | null;
