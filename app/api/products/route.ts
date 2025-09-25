@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
         sku: product.sku,
         price_brutto: Number(product.price_brutto),
         quantity: product.quantity,
-        images: Array.isArray(product.images) ? product.images as string[] : [],
+        images: Array.isArray(product.images) ? (product.images as string[]) : [],
         description: product.description || '',
         category_id: product.category_id || '',
         category_name: product.category_name || product.category?.name || 'Bez kategorii'
