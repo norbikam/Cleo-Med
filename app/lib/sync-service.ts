@@ -1,6 +1,6 @@
 import { prisma } from './database';
 import { Decimal } from '@prisma/client/runtime/library';
-import type { PrismaClient, Prisma } from '@prisma/client';
+import type { PrismaClient } from '@prisma/client';
 
 interface DatabaseCategory {
   id: string;
