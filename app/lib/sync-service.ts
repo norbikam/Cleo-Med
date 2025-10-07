@@ -316,7 +316,7 @@ export class SyncService {
             const stockValue = Object.values(detailedProduct.stock || {})[0] || 0;
             const taxRate = this.toSafeDecimal(detailedProduct.tax_rate);
 
-            const productData: any = {
+            const productData = {
                 baselinker_id: productId,
                 name: name,
                 sku: this.toSafeString(detailedProduct.sku) || productId,
@@ -332,7 +332,9 @@ export class SyncService {
                 category_id: category.category_id.toString(),
                 category_name: category.name,
                 last_sync: new Date(),
-                is_active: true
+                is_active: true,
+                images: images,
+                text_fields: detailedProduct.text_fields
                 };
 
                 // Dodaj images tylko jeśli są
