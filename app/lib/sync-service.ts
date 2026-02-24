@@ -299,7 +299,7 @@ export class SyncService {
       );
       
       if (detailsData.products && typeof detailsData.products === 'object') {
-        // Use transaction for chunk with proper typing
+        // Use transaction for chunk with proper typing and extended timeout
         await prisma.$transaction(async (tx: PrismaTransaction) => {
           const productEntries = Object.entries(detailsData.products!) as [string, BaseLinkerProductDetailed][];
           
@@ -333,43 +333,25 @@ export class SyncService {
                 category_name: category.name,
                 last_sync: new Date(),
                 is_active: true,
-                images: images,
-                text_fields: detailedProduct.text_fields
-                };
+                images: images.length > 0 ? images : [],
+                text_fields: Object.keys(detailedProduct.text_fields || {}).length > 0 ? detailedProduct.text_fields : {}
+            };
 
-                // Dodaj images tylko jeśli są
-                if (images.length > 0) {
-                productData.images = images;
-                }
-
-                // Dodaj text_fields tylko jeśli są
-                if (Object.keys(detailedProduct.text_fields || {}).length > 0) {
-                productData.text_fields = detailedProduct.text_fields;
-            }
-
-
-            // Check if product exists
-            const existingProduct = await tx.product.findUnique({
-              where: { baselinker_id: productId }
+            // Zoptymalizowany zapis UPSERT - wykonuje wszystko w 1 zapytaniu
+            await tx.product.upsert({
+              where: { baselinker_id: productId },
+              update: productData,
+              create: {
+                id: productId,
+                ...productData
+              }
             });
-
-            if (existingProduct) {
-              await tx.product.update({
-                where: { baselinker_id: productId },
-                data: productData
-              });
-              updated++;
-            } else {
-              await tx.product.create({
-                data: {
-                  id: productId,
-                  ...productData
-                }
-              });
-              created++;
-            }
+            
             processed++;
+            updated++;
           }
+        }, {
+          timeout: 30000 // Zapobiega błędowi "Prisma Transaction Timeout"
         });
       }
       

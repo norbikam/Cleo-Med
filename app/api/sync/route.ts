@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { syncService } from '../../lib/sync-service';
 import { dbHelpers } from '../../lib/database';
 
+export const maxDuration = 60; // lub 300, jeśli masz plan Vercel Pro
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const { password, force = false } = await request.json();

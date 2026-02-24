@@ -16,6 +16,7 @@
     "@prisma/client": "^6.16.2",
     "@tailwindcss/vite": "^4.0.10",
     "@vercel/analytics": "^1.5.0",
+    "@vercel/functions": "^3.4.2",
     "@vercel/speed-insights": "^1.2.0",
     "bootstrap": "^5.3.3",
     "framer-motion": "^12.5.0",
@@ -28,7 +29,8 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "tailwind": "^4.0.0",
-    "three": "^0.174.0"
+    "three": "^0.174.0",
+    "vercel": "^50.22.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

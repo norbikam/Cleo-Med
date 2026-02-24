@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, dbHelpers } from '../../lib/database';
-import { syncService } from '../../lib/sync-service';
-
 
 export async function POST(request: NextRequest) {
   try {
     const { password } = await request.json();
     
-    // Weryfikacja hasła (except auto-load)
+    // Weryfikacja hasła
     if (password !== 'auto-load' && password !== process.env.ADMIN_PASSWORD) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       return NextResponse.json(
@@ -16,87 +13,118 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('🚀 Loading products from Neon database...');
+    console.log('🚀 Loading products directly from BaseLinker (Bypass DB)...');
     const startTime = Date.now();
+    const token = process.env.BASELINKER_API_TOKEN;
+    const inventoryId = 24235; // ID Twojego katalogu w BaseLinkerze
 
-    // Sprawdź czy baza wymaga synchronizacji
-    const needsSync = await dbHelpers.needsSync();
-    const stats = await dbHelpers.getStats();
-    
-    console.log('📊 Database stats:', stats);
+    if (!token) {
+      throw new Error('Brak tokenu BaseLinker w zmiennych środowiskowych');
+    }
 
-    // Jeśli baza jest pusta, wymuś pierwszą synchronizację
-    if (stats.totalProducts === 0) {
-      console.log('🔄 First sync - database is empty, syncing from BaseLinker...');
-      
-      const syncResult = await syncService.fullSync();
-      if (!syncResult.success) {
-        return NextResponse.json({
-          success: false,
-          error: 'Nie udało się zsynchronizować bazy danych: ' + syncResult.error
-        }, { status: 500 });
-      }
-    } else if (needsSync) {
-      // Synchronizacja w tle - nie blokuj użytkownika
-      console.log('⏰ Database needs sync, starting background sync...');
-      syncService.fullSync().catch(error => {
-        console.error('❌ Background sync failed:', error);
+    // 1. Pobierz kategorie (żeby zmapować id na nazwy)
+    const catRes = await fetch('https://api.baselinker.com/connector.php', {
+      method: 'POST',
+      headers: { 'X-BLToken': token, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ 
+        method: 'getInventoryCategories', 
+        parameters: JSON.stringify({ inventory_id: inventoryId }) 
+      }),
+      cache: 'no-store' // zawsze pobieraj świeże
+    });
+    const catData = await catRes.json();
+    const catMap: Record<number, string> = {};
+    if (catData.categories) {
+      catData.categories.forEach((c: any) => {
+        catMap[c.category_id] = c.name;
       });
     }
 
-    // 🎯 KLUCZOWA ZMIANA: Pobierz produkty z BAZY DANYCH
-    const products = await prisma.product.findMany({
-      where: {
-        is_active: true
-      },
-      include: {
-        category: true
-      },
-      orderBy: {
-        name: 'asc'
+    // 2. Pobierz listę wszystkich ID produktów
+    const listRes = await fetch('https://api.baselinker.com/connector.php', {
+      method: 'POST',
+      headers: { 'X-BLToken': token, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ 
+        method: 'getInventoryProductsList', 
+        parameters: JSON.stringify({ inventory_id: inventoryId }) 
+      }),
+      cache: 'no-store'
+    });
+    const listData = await listRes.json();
+    
+    if (!listData.products) {
+       return NextResponse.json({ success: true, products: [], count: 0, source: 'baselinker_direct' });
+    }
+
+    const productIds = Object.keys(listData.products);
+    
+    // 3. Pobierz szczegóły produktów w paczkach po 100 (równolegle dla szybkości)
+    const chunks:string[][] = [];
+    for (let i = 0; i < productIds.length; i += 100) {
+      chunks.push(productIds.slice(i, i + 100));
+    }
+
+    const chunkPromises = chunks.map(chunk => 
+      fetch('https://api.baselinker.com/connector.php', {
+        method: 'POST',
+        headers: { 'X-BLToken': token, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ 
+          method: 'getInventoryProductsData', 
+          parameters: JSON.stringify({ inventory_id: inventoryId, products: chunk }) 
+        }),
+        cache: 'no-store'
+      }).then(res => res.json())
+    );
+
+    const chunksResults = await Promise.all(chunkPromises);
+    
+    // 4. Połącz i sformatuj produkty dla frontendu
+    const allProducts: any[] = [];
+    chunksResults.forEach(result => {
+      if (result.products) {
+        Object.entries(result.products).forEach(([id, p]: [string, any]) => {
+          
+          const price = Object.values(p.prices || {})[0] || 0;
+          const stock = Object.values(p.stock || {})[0] || 0;
+          const images = Object.values(p.images || {}).filter(img => typeof img === 'string' && img.length > 0) as string[];
+          
+          const name = p.text_fields?.name || p.text_fields?.['name|pl'] || id;
+          const description = p.text_fields?.description || p.text_fields?.['description|pl'] || '';
+
+          allProducts.push({
+            id: id,
+            name: name,
+            sku: p.sku || id,
+            price_brutto: Number(price),
+            quantity: Number(stock),
+            images: images,
+            description: description,
+            category_id: p.category_id?.toString() || '',
+            category_name: catMap[p.category_id] || 'Bez kategorii'
+          });
+        });
       }
     });
 
-    
-
-    // Konwertuj na format oczekiwany przez frontend
-    const formattedProducts = products.map((product) => ({
-    id: product.id,
-    name: product.name,
-    sku: product.sku,
-    price_brutto: Number(product.price_brutto),
-    quantity: product.quantity,
-    images: Array.isArray(product.images) ? (product.images as string[]) : [],
-    description: product.description || '',
-    category_id: product.category_id || '',
-    category_name: product.category_name || product.category?.name || 'Bez kategorii'
-    }));
+    // 5. Posortuj alfabetycznie (tak jak robiła to baza danych)
+    allProducts.sort((a, b) => a.name.localeCompare(b.name));
 
     const endTime = Date.now();
     const loadTime = ((endTime - startTime) / 1000).toFixed(2);
-
-    console.log(`✅ Products loaded from Neon database in ${loadTime}s`);
+    console.log(`✅ Zaciągnięto produkty z BaseLinkera w ${loadTime}s`);
 
     return NextResponse.json({ 
       success: true,
-      products: formattedProducts,
-      count: formattedProducts.length,
-      source: 'neon_database', // 🎯 Zmienione ze 'database' na 'neon_database'
-      database_stats: stats,
-      needs_sync: needsSync,
-      load_time_seconds: parseFloat(loadTime),
-      debug: {
-        total_in_db: stats.totalProducts,
-        active_products: stats.activeProducts,
-        last_sync: stats.lastSyncAt,
-        sync_needed: needsSync
-      }
+      products: allProducts,
+      count: allProducts.length,
+      source: 'baselinker_direct',
+      load_time_seconds: parseFloat(loadTime)
     });
 
   } catch (error) {
-    console.error('❌ Neon Database API Error:', error);
+    console.error('❌ Direct BaseLinker API Error:', error);
     return NextResponse.json(
-      { success: false, error: 'Błąd serwera: ' + (error instanceof Error ? error.message : 'Nieznany błąd') }, 
+      { success: false, error: 'Błąd połączenia z BaseLinker: ' + (error instanceof Error ? error.message : 'Nieznany błąd') }, 
       { status: 500 }
     );
   }
