@@ -16,13 +16,12 @@ export async function POST(request: NextRequest) {
     console.log('🚀 Loading products directly from BaseLinker (Bypass DB)...');
     const startTime = Date.now();
     const token = process.env.BASELINKER_API_TOKEN;
-    const inventoryId = 24235; // ID Twojego katalogu w BaseLinkerze
+    const inventoryId = process.env.INVENTORY_ID;
 
     if (!token) {
       throw new Error('Brak tokenu BaseLinker w zmiennych środowiskowych');
     }
 
-    // 1. Pobierz kategorie (żeby zmapować id na nazwy)
     const catRes = await fetch('https://api.baselinker.com/connector.php', {
       method: 'POST',
       headers: { 'X-BLToken': token, 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -30,7 +29,7 @@ export async function POST(request: NextRequest) {
         method: 'getInventoryCategories', 
         parameters: JSON.stringify({ inventory_id: inventoryId }) 
       }),
-      cache: 'no-store' // zawsze pobieraj świeże
+      cache: 'no-store'
     });
     const catData = await catRes.json();
     const catMap: Record<number, string> = {};
@@ -40,7 +39,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 2. Pobierz listę wszystkich ID produktów
     const listRes = await fetch('https://api.baselinker.com/connector.php', {
       method: 'POST',
       headers: { 'X-BLToken': token, 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -58,7 +56,6 @@ export async function POST(request: NextRequest) {
 
     const productIds = Object.keys(listData.products);
     
-    // 3. Pobierz szczegóły produktów w paczkach po 100 (równolegle dla szybkości)
     const chunks:string[][] = [];
     for (let i = 0; i < productIds.length; i += 100) {
       chunks.push(productIds.slice(i, i + 100));
@@ -78,7 +75,6 @@ export async function POST(request: NextRequest) {
 
     const chunksResults = await Promise.all(chunkPromises);
     
-    // 4. Połącz i sformatuj produkty dla frontendu
     const allProducts: any[] = [];
     chunksResults.forEach(result => {
       if (result.products) {
@@ -106,7 +102,6 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // 5. Posortuj alfabetycznie (tak jak robiła to baza danych)
     allProducts.sort((a, b) => a.name.localeCompare(b.name));
 
     const endTime = Date.now();

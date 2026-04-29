@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../lib/database';
 
-// Reszta importów...
 
 
 export async function GET(

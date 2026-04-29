@@ -111,7 +111,7 @@ const processCategoryParallel = async (
       body: new URLSearchParams({
         method: 'getInventoryProductsList',
         parameters: JSON.stringify({
-          inventory_id: 24235,
+          inventory_id: process.env.INVENTORY_ID,
           filter_category_id: category.category_id
         })
       })
@@ -153,7 +153,7 @@ const processCategoryParallel = async (
             body: new URLSearchParams({
               method: 'getInventoryProductsData',
               parameters: JSON.stringify({
-                inventory_id: 24235,
+                inventory_id: process.env.INVENTORY_ID,
                 products: chunk
               })
             })
@@ -247,7 +247,7 @@ export async function POST(request: NextRequest) {
         body: new URLSearchParams({
           method: 'getInventoryCategories',
           parameters: JSON.stringify({
-            inventory_id: 24235
+            inventory_id: process.env.INVENTORY_ID
           })
         })
       });

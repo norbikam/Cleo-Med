@@ -95,7 +95,7 @@ export async function GET(
       body: new URLSearchParams({
         method: 'getInventoryProductsData',
         parameters: JSON.stringify({
-          inventory_id: 24235,
+          inventory_id: process.env.INVENTORY_ID || 44367,
           products: [productId]
         })
       })

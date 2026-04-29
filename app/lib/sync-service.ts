@@ -200,7 +200,7 @@ export class SyncService {
       new URLSearchParams({
         method: 'getInventoryCategories',
         parameters: JSON.stringify({
-          inventory_id: 24235
+          inventory_id: process.env.INVENTORY_ID
         })
       }),
       'Categories fetch'
@@ -257,7 +257,7 @@ export class SyncService {
       new URLSearchParams({
         method: 'getInventoryProductsList',
         parameters: JSON.stringify({
-          inventory_id: 24235,
+          inventory_id: process.env.INVENTORY_ID,
           filter_category_id: category.category_id
         })
       }),
@@ -291,7 +291,7 @@ export class SyncService {
         new URLSearchParams({
           method: 'getInventoryProductsData',
           parameters: JSON.stringify({
-            inventory_id: 24235,
+            inventory_id: process.env.INVENTORY_ID,
             products: chunk
           })
         }),
