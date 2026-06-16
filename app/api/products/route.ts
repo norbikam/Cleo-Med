@@ -1,126 +1,51 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/session";
+import { getProducts } from "@/lib/baselinker/products";
+import { db } from "@/lib/db";
+import { clients, clientProductPricing } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
-export async function POST(request: NextRequest) {
+export async function GET() {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: "Brak dostępu." }, { status: 401 });
+
   try {
-    const { password } = await request.json();
-    
-    // Weryfikacja hasła
-    if (password !== 'auto-load' && password !== process.env.ADMIN_PASSWORD) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return NextResponse.json(
-        { success: false, error: 'Nieprawidłowe hasło' }, 
-        { status: 401 }
-      );
-    }
+    const { products, categories } = await getProducts();
 
-    console.log('🚀 Loading products directly from BaseLinker (Bypass DB)...');
-    const startTime = Date.now();
-    const token = process.env.BASELINKER_API_TOKEN;
-    const inventoryId = process.env.INVENTORY_ID;
+    const [client] = await db
+      .select({ priceDiscountPercent: clients.priceDiscountPercent })
+      .from(clients)
+      .where(eq(clients.id, session.clientId))
+      .limit(1);
 
-    if (!token) {
-      throw new Error('Brak tokenu BaseLinker w zmiennych środowiskowych');
-    }
+    const pricingRows = await db
+      .select()
+      .from(clientProductPricing)
+      .where(eq(clientProductPricing.clientId, session.clientId));
 
-    const catRes = await fetch('https://api.baselinker.com/connector.php', {
-      method: 'POST',
-      headers: { 'X-BLToken': token, 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ 
-        method: 'getInventoryCategories', 
-        parameters: JSON.stringify({ inventory_id: inventoryId }) 
-      }),
-      cache: 'no-store'
-    });
-    const catData = await catRes.json();
-    const catMap: Record<number, string> = {};
-    if (catData.categories) {
-      catData.categories.forEach((c: any) => {
-        catMap[c.category_id] = c.name;
-      });
-    }
-
-    const listRes = await fetch('https://api.baselinker.com/connector.php', {
-      method: 'POST',
-      headers: { 'X-BLToken': token, 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ 
-        method: 'getInventoryProductsList', 
-        parameters: JSON.stringify({ inventory_id: inventoryId }) 
-      }),
-      cache: 'no-store'
-    });
-    const listData = await listRes.json();
-    
-    if (!listData.products) {
-       return NextResponse.json({ success: true, products: [], count: 0, source: 'baselinker_direct' });
-    }
-
-    const productIds = Object.keys(listData.products);
-    
-    const chunks:string[][] = [];
-    for (let i = 0; i < productIds.length; i += 100) {
-      chunks.push(productIds.slice(i, i + 100));
-    }
-
-    const chunkPromises = chunks.map(chunk => 
-      fetch('https://api.baselinker.com/connector.php', {
-        method: 'POST',
-        headers: { 'X-BLToken': token, 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ 
-          method: 'getInventoryProductsData', 
-          parameters: JSON.stringify({ inventory_id: inventoryId, products: chunk }) 
-        }),
-        cache: 'no-store'
-      }).then(res => res.json())
+    const priceMap = new Map(
+      pricingRows.map(p => [p.productId, parseFloat(String(p.customPrice))])
     );
 
-    const chunksResults = await Promise.all(chunkPromises);
-    
-    const allProducts: any[] = [];
-    chunksResults.forEach(result => {
-      if (result.products) {
-        Object.entries(result.products).forEach(([id, p]: [string, any]) => {
-          
-          const price = Object.values(p.prices || {})[0] || 0;
-          const stock = Object.values(p.stock || {})[0] || 0;
-          const images = Object.values(p.images || {}).filter(img => typeof img === 'string' && img.length > 0) as string[];
-          
-          const name = p.text_fields?.name || p.text_fields?.['name|pl'] || id;
-          const description = p.text_fields?.description || p.text_fields?.['description|pl'] || '';
+    const globalDiscount = client?.priceDiscountPercent
+      ? parseFloat(String(client.priceDiscountPercent))
+      : 0;
 
-          allProducts.push({
-            id: id,
-            name: name,
-            sku: p.sku || id,
-            price_brutto: Number(price),
-            quantity: Number(stock),
-            images: images,
-            description: description,
-            category_id: p.category_id?.toString() || '',
-            category_name: catMap[p.category_id] || 'Bez kategorii'
-          });
-        });
+    const adjusted = products.map(p => {
+      const custom = priceMap.get(String(p.id));
+      if (custom !== undefined) {
+        return { ...p, price: custom, originalPrice: p.price, hasCustomPrice: true };
       }
+      if (globalDiscount > 0) {
+        return { ...p, price: parseFloat((p.price * (1 - globalDiscount / 100)).toFixed(2)), originalPrice: p.price };
+      }
+      return p;
     });
 
-    allProducts.sort((a, b) => a.name.localeCompare(b.name));
-
-    const endTime = Date.now();
-    const loadTime = ((endTime - startTime) / 1000).toFixed(2);
-    console.log(`✅ Zaciągnięto produkty z BaseLinkera w ${loadTime}s`);
-
-    return NextResponse.json({ 
-      success: true,
-      products: allProducts,
-      count: allProducts.length,
-      source: 'baselinker_direct',
-      load_time_seconds: parseFloat(loadTime)
-    });
-
-  } catch (error) {
-    console.error('❌ Direct BaseLinker API Error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Błąd połączenia z BaseLinker: ' + (error instanceof Error ? error.message : 'Nieznany błąd') }, 
-      { status: 500 }
-    );
+    return NextResponse.json({ products: adjusted, categories, discount: globalDiscount });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[products] BL error:", message);
+    return NextResponse.json({ error: message, products: [], categories: {} }, { status: 502 });
   }
 }

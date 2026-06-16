@@ -1,44 +1,38 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Jost, Cinzel } from "next/font/google";
 import "./globals.css";
 
-import { ReactLenis } from 'lenis/react'
-
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { Analytics } from "@vercel/analytics/react"
-
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jost = Jost({
+  subsets: ["latin", "latin-ext"],
+  weight: ["200", "300", "400", "500", "600"],
+  variable: "--font-jost",
+  display: "swap",
+});
+
+const cinzel = Cinzel({
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-cinzel",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "CleoMed",
-  description: "Centrum medycyny estetycznej i kosmetologii",
+  title: "Cleo Med — Dystrybucja B2B",
+  description: "Profesjonalne preparaty medycyny estetycznej dla gabinetów i klinik.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pl">
-      <SpeedInsights/>
-      <Analytics />
-      <ReactLenis root>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-      </ReactLenis>
+    <html lang="pl" className={`${cormorant.variable} ${jost.variable} ${cinzel.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }
