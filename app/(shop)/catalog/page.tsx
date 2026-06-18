@@ -25,6 +25,7 @@ export default function CatalogPage() {
   const [error,      setError]      = useState<string | null>(null);
   const [gridKey,    setGridKey]    = useState(0);
   const revealRef = useRef<HTMLDivElement>(null);
+  const gridRef   = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch("/api/products")
@@ -51,10 +52,26 @@ export default function CatalogPage() {
   function changeCategory(id: string) {
     setActive(id);
     setGridKey(k => k + 1);
+    setTimeout(() => {
+      if (!gridRef.current) return;
+      const offset = window.innerWidth < 640 ? 100 : 160;
+      const top = gridRef.current.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    }, 50);
   }
 
   const usedCats = Array.from(new Set(products.map(p => p.categoryId).filter(Boolean))) as string[];
-  const filtered = products.filter(p => active === "all" || p.categoryId === active);
+
+  // category order = order of first appearance in the API response (matches BL ordering)
+  const catOrder: Record<string, number> = {};
+  products.forEach(p => { if (p.categoryId && !(p.categoryId in catOrder)) catOrder[p.categoryId] = Object.keys(catOrder).length; });
+
+  const filtered = products
+    .filter(p => active === "all" || p.categoryId === active)
+    .sort((a, b) => {
+      if (active !== "all") return 0;
+      return (catOrder[a.categoryId ?? ""] ?? 999) - (catOrder[b.categoryId ?? ""] ?? 999);
+    });
 
   return (
     <div ref={revealRef} style={{ minHeight:"100vh", background:"var(--obsidian)" }}>
@@ -73,9 +90,9 @@ export default function CatalogPage() {
           pointerEvents:"none",
         }}/>
 
-        <div className="mob-pad mob-pad-y" style={{ maxWidth:"1280px", margin:"0 auto", padding:"80px 60px 100px" }}>
+        <div className="mob-pad mob-pad-y" style={{ maxWidth:"1600px", margin:"0 auto", padding:"80px 60px 100px" }}>
           <p className="animate-fadeUp" style={{
-            fontFamily:"var(--font-cinzel)", fontSize:"10px",
+            fontFamily:"var(--font-cinzel)", fontSize:"13px",
             letterSpacing:".5em", textTransform:"uppercase",
             color:"var(--gold)", marginBottom:"32px",
             animationDelay:".2s",
@@ -147,7 +164,7 @@ export default function CatalogPage() {
           <div className="marquee-track">
             {[...usedCats, ...usedCats].map((id, i) => (
               <span key={i} style={{
-                fontFamily:"var(--font-cinzel)", fontSize:"10px",
+                fontFamily:"var(--font-cinzel)", fontSize:"13px",
                 letterSpacing:".4em", textTransform:"uppercase",
                 color:"rgba(154,107,32,.45)", padding:"0 32px",
               }}>
@@ -161,12 +178,12 @@ export default function CatalogPage() {
 
       {/* ── FILTER TABS ── */}
       <div style={{
-        position:"sticky", top:"108px", zIndex:20,
+        position:"sticky", top:"var(--nav-bottom, 108px)", zIndex:20,
         background:"rgba(245,241,236,.97)", backdropFilter:"blur(14px)",
         borderBottom:"1px solid rgba(154,107,32,.1)",
       }}>
         <div className="mob-pad" style={{
-          maxWidth:"1280px", margin:"0 auto", padding:"0 60px",
+          maxWidth:"1600px", margin:"0 auto", padding:"0 60px",
           display:"flex", alignItems:"center", justifyContent:"space-between",
           gap:"8px",
         }}>
@@ -183,7 +200,7 @@ export default function CatalogPage() {
                   style={{
                     flexShrink:0,
                     padding:"16px 12px",
-                    fontFamily:"var(--font-jost)", fontSize:"11px",
+                    fontFamily:"var(--font-jost)", fontSize:"13px",
                     fontWeight: isActive ? 600 : 400,
                     letterSpacing:".12em", textTransform:"uppercase",
                     color: isActive ? "var(--gold-light)" : "var(--text-muted)",
@@ -196,7 +213,7 @@ export default function CatalogPage() {
                   onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}>
                   {tab.label}
                   {isActive && (
-                    <span style={{ marginLeft:"6px", fontSize:"11px", color:"var(--text-muted)", fontWeight:400 }}>
+                    <span style={{ marginLeft:"6px", fontSize:"13px", color:"var(--text-muted)", fontWeight:400 }}>
                       {tab.count}
                     </span>
                   )}
@@ -216,7 +233,7 @@ export default function CatalogPage() {
       </div>
 
       {/* ── GRID ── */}
-      <div className="mob-pad mob-pad-y" style={{ maxWidth:"1280px", margin:"0 auto", padding:"60px 60px 100px" }}>
+      <div ref={gridRef} className="mob-pad mob-pad-y" style={{ maxWidth:"1600px", margin:"0 auto", padding:"60px 60px 100px" }}>
 
         {error && (
           <div style={{
@@ -254,9 +271,7 @@ export default function CatalogPage() {
             </p>
           </div>
         ) : (
-          <div key={gridKey}
-            className="grid-stagger"
-            style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(240px, 1fr))", gap:"2px" }}>
+          <div key={gridKey} className="grid-stagger catalog-grid">
             {filtered.map(p => (
               <ProductCard key={p.id} product={p}
                 categoryLabel={p.categoryName ? shortName(p.categoryName) : undefined}
@@ -282,7 +297,7 @@ const img = !imgErr ? p.images?.[0] : null;
   function handleAdd(e: React.MouseEvent) {
     e.stopPropagation();
     if (outOfStock) return;
-    for (let i = 0; i < qty; i++) addItem({ id: p.id, name: p.name, sku: p.sku ?? "", price: p.price });
+    for (let i = 0; i < qty; i++) addItem({ id: p.id, name: p.name, sku: p.sku ?? "", price: p.price, image: p.images?.[0] });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
@@ -338,7 +353,7 @@ const img = !imgErr ? p.images?.[0] : null;
             background:"rgba(237,232,223,.82)",
           }}>
             <span style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"9px",
+              fontFamily:"var(--font-cinzel)", fontSize:"11px",
               letterSpacing:".35em", textTransform:"uppercase", color:"var(--text-muted)",
             }}>Niedostępny</span>
           </div>
@@ -346,7 +361,7 @@ const img = !imgErr ? p.images?.[0] : null;
         {!outOfStock && p.stock <= 5 && (
           <div style={{
             position:"absolute", top:"12px", left:"12px",
-            fontFamily:"var(--font-cinzel)", fontSize:"8px",
+            fontFamily:"var(--font-cinzel)", fontSize:"11px",
             letterSpacing:".3em", textTransform:"uppercase",
             padding:"5px 12px",
             background:"var(--gold)", color:"var(--obsidian)",
@@ -364,7 +379,7 @@ const img = !imgErr ? p.images?.[0] : null;
       }}>
         {categoryLabel && (
           <p style={{
-            fontFamily:"var(--font-cinzel)", fontSize:"9px",
+            fontFamily:"var(--font-cinzel)", fontSize:"11px",
             letterSpacing:".3em", textTransform:"uppercase",
             color:"var(--gold)", marginBottom:"10px",
           }}>{categoryLabel}</p>
@@ -408,7 +423,7 @@ const img = !imgErr ? p.images?.[0] : null;
               onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}>−</button>
             <span style={{
               width:"32px", height:"32px", display:"flex", alignItems:"center", justifyContent:"center",
-              fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400, color:"var(--pearl)",
+              fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400, color:"var(--pearl)",
               borderLeft:"1px solid rgba(201,149,106,.15)", borderRight:"1px solid rgba(201,149,106,.15)",
             }}>{qty}</span>
             <button
@@ -427,7 +442,7 @@ const img = !imgErr ? p.images?.[0] : null;
             disabled={outOfStock}
             style={{
               flex:1, height:"32px",
-              fontFamily:"var(--font-jost)", fontSize:"9px",
+              fontFamily:"var(--font-jost)", fontSize:"11px",
               fontWeight:500, letterSpacing:".22em", textTransform:"uppercase",
               color: outOfStock ? "var(--text-muted)" : "#F8F4EE",
               background: added ? "#4ade80" : outOfStock ? "rgba(0,0,0,.08)" : "var(--gold)",

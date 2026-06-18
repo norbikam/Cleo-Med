@@ -21,9 +21,9 @@ type Period = "daily" | "weekly" | "monthly" | "all";
 const S = {
   page:  { maxWidth:"1200px", margin:"0 auto", padding:"40px 20px 80px" },
   card:  { background:"#fff", border:"1px solid rgba(154,107,32,.1)", padding:"24px 28px" } as React.CSSProperties,
-  label: { fontFamily:"var(--font-cinzel)", fontSize:"9px", letterSpacing:".35em", textTransform:"uppercase" as const, color:"var(--gold)", marginBottom:"8px" },
+  label: { fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".35em", textTransform:"uppercase" as const, color:"var(--gold)", marginBottom:"8px" },
   big:   { fontFamily:"var(--font-cormorant)", fontSize:"44px", fontWeight:400, lineHeight:1, color:"var(--pearl)" } as React.CSSProperties,
-  sub:   { fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginTop:"4px" },
+  sub:   { fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginTop:"4px" },
 } as const;
 
 export default function AdminPage() {
@@ -136,7 +136,7 @@ export default function AdminPage() {
       <div style={{ display:"flex", gap:"2px", marginBottom:"16px", flexWrap:"wrap" }}>
         {(["daily","weekly","monthly","all"] as Period[]).map(p => (
           <button key={p} onClick={() => setPeriod(p)} className="adm-period-btn" style={{
-            padding:"8px 18px", fontFamily:"var(--font-cinzel)", fontSize:"8px",
+            padding:"8px 18px", fontFamily:"var(--font-cinzel)", fontSize:"11px",
             letterSpacing:".25em", textTransform:"uppercase", border:"1px solid",
             cursor:"pointer", transition:"all .15s",
             color: period===p ? "var(--obsidian)" : "var(--text-muted)",
@@ -166,14 +166,14 @@ export default function AdminPage() {
       <div style={{ marginBottom:"28px" }}>
         <div className="adm-import-row" style={{ display:"flex", alignItems:"center", gap:"12px", flexWrap:"wrap", marginBottom: (importing || importResult || importLogs.length > 0) ? "10px" : "0" }}>
           <button onClick={handleImport} disabled={importing} style={{
-            padding:"10px 24px", fontFamily:"var(--font-jost)", fontSize:"10px", fontWeight:500,
+            padding:"10px 24px", fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
             letterSpacing:".2em", textTransform:"uppercase", border:"none", cursor: importing ? "wait" : "pointer",
             color:"var(--obsidian)", background: importing ? "rgba(154,107,32,.5)" : "var(--gold)",
           }}>
             {importing ? "Importuję..." : "Importuj klientów z BL"}
           </button>
           {importResult && !importing && (
-            <div style={{ fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--pearl)", background:"rgba(154,107,32,.06)", border:"1px solid rgba(154,107,32,.15)", padding:"9px 16px" }}>
+            <div style={{ fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--pearl)", background:"rgba(154,107,32,.06)", border:"1px solid rgba(154,107,32,.15)", padding:"9px 16px" }}>
               <span style={{ color:"var(--gold)", fontWeight:600 }}>Gotowe. </span>
               {importResult.newClients} nowych klientów · {importResult.newOrders} zamówień · {importResult.newAddresses} adresów · {importResult.updatedContacts ?? 0} zaktualizowanych kontaktów
             </div>
@@ -183,7 +183,7 @@ export default function AdminPage() {
           <div ref={logsRef} style={{
             background:"rgba(10,8,6,.95)", border:"1px solid rgba(154,107,32,.15)",
             padding:"12px 16px", maxHeight:"160px", overflowY:"auto",
-            fontFamily:"monospace", fontSize:"11px", lineHeight:"1.7", color:"rgba(200,190,170,.75)",
+            fontFamily:"monospace", fontSize:"13px", lineHeight:"1.7", color:"rgba(200,190,170,.75)",
           }}>
             {importLogs.map((line, i) => (
               <div key={i} style={{ color: line.includes("Nowy klient") ? "rgba(154,107,32,.9)" : undefined }}>{line}</div>
@@ -199,7 +199,7 @@ export default function AdminPage() {
           <div style={{ display:"flex", alignItems:"center", gap:"12px" }}>
             <p style={{ ...S.label, margin:0 }}>Klienci ({filtered.length})</p>
             <button onClick={openCreate} style={{
-              padding:"6px 16px", fontFamily:"var(--font-cinzel)", fontSize:"8px",
+              padding:"6px 16px", fontFamily:"var(--font-cinzel)", fontSize:"11px",
               letterSpacing:".25em", textTransform:"uppercase",
               color:"var(--obsidian)", background:"var(--gold)",
               border:"none", cursor:"pointer", whiteSpace:"nowrap",
@@ -240,10 +240,10 @@ export default function AdminPage() {
                 <tr key={c.id} style={{ borderBottom:"1px solid rgba(154,107,32,.05)" }}
                   onMouseEnter={e => (e.currentTarget.style.background = "rgba(154,107,32,.02)")}
                   onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
-                  <td style={{ padding:"12px 16px", fontFamily:"monospace", fontSize:"12px", color:"var(--pearl)", whiteSpace:"nowrap" }}>{c.phone}</td>
-                  <td style={{ padding:"12px 16px", fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--pearl)", maxWidth:"160px", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.name ?? <span style={{ color:"var(--text-muted)" }}>—</span>}</td>
-                  <td style={{ padding:"12px 16px", fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", maxWidth:"160px", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.email ?? "—"}</td>
-                  <td style={{ padding:"12px 16px", fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", whiteSpace:"nowrap" }}>
+                  <td style={{ padding:"12px 16px", fontFamily:"monospace", fontSize:"14px", color:"var(--pearl)", whiteSpace:"nowrap" }}>{c.phone}</td>
+                  <td style={{ padding:"12px 16px", fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--pearl)", maxWidth:"160px", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.name ?? <span style={{ color:"var(--text-muted)" }}>—</span>}</td>
+                  <td style={{ padding:"12px 16px", fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", maxWidth:"160px", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.email ?? "—"}</td>
+                  <td style={{ padding:"12px 16px", fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", whiteSpace:"nowrap" }}>
                     {c.createdAt ? new Date(c.createdAt).toLocaleDateString("pl-PL") : "—"}
                   </td>
                   <td style={{ padding:"12px 16px" }}>
@@ -255,7 +255,7 @@ export default function AdminPage() {
                     }}>{c.active ? "Aktywny" : "Nieaktywny"}</span>
                   </td>
                   <td style={{ padding:"12px 16px", textAlign:"right" }}>
-                    <Link href={`/admin/clients/${c.id}`} style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--gold)", textDecoration:"none", whiteSpace:"nowrap" }}>Zarządzaj →</Link>
+                    <Link href={`/admin/clients/${c.id}`} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--gold)", textDecoration:"none", whiteSpace:"nowrap" }}>Zarządzaj →</Link>
                   </td>
                 </tr>
               ))}
@@ -350,14 +350,14 @@ export default function AdminPage() {
                 </div>
               )}
 
-              <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", lineHeight:1.6 }}>
+              <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", lineHeight:1.6 }}>
                 Klient będzie nieaktywny do momentu ustawienia hasła przez niego na stronie logowania.
               </p>
 
               <div style={{ display:"flex", gap:"8px", marginTop:"4px" }}>
                 <button type="button" onClick={() => setCreateOpen(false)} style={{
                   flex:1, height:"44px",
-                  fontFamily:"var(--font-jost)", fontSize:"10px", letterSpacing:".15em", textTransform:"uppercase",
+                  fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".15em", textTransform:"uppercase",
                   color:"var(--text-muted)", background:"none",
                   border:"1px solid rgba(154,107,32,.15)", cursor:"pointer",
                 }}>
@@ -365,7 +365,7 @@ export default function AdminPage() {
                 </button>
                 <button type="submit" disabled={createLoading} style={{
                   flex:2, height:"44px",
-                  fontFamily:"var(--font-jost)", fontSize:"10px", letterSpacing:".15em", textTransform:"uppercase",
+                  fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".15em", textTransform:"uppercase",
                   color:"var(--obsidian)", background: createLoading ? "rgba(154,107,32,.5)" : "var(--gold)",
                   border:"none", cursor: createLoading ? "wait" : "pointer",
                   transition:"background .15s",

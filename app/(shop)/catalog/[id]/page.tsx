@@ -20,9 +20,14 @@ export default function ProductPage() {
   const [related, setRelated] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [imgIdx,  setImgIdx]  = useState(0);
+  const [imgDir,  setImgDir]  = useState<1|-1>(1);
   const [imgErrs, setImgErrs] = useState<Record<number, boolean>>({});
   const [added,   setAdded]   = useState(false);
   const [qty,     setQty]     = useState(1);
+  const [lightbox, setLightbox] = useState(false);
+  const [touchX,   setTouchX]   = useState<number | null>(null);
+
+  function goTo(newIdx: number, dir: 1 | -1) { setImgDir(dir); setImgIdx(newIdx); }
 
   useEffect(() => {
     fetch(`/api/products/${id}`)
@@ -30,6 +35,12 @@ export default function ProductPage() {
       .then(d => setProduct(d.product ?? null))
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    const fn = (e: KeyboardEvent) => { if (e.key === "Escape") setLightbox(false); };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, []);
 
   useEffect(() => {
     if (!product?.categoryId) return;
@@ -44,7 +55,7 @@ export default function ProductPage() {
 
   function handleAdd() {
     if (!product) return;
-    for (let i = 0; i < qty; i++) addItem({ id: product.id, name: product.name, sku: product.sku ?? "", price: product.price });
+    for (let i = 0; i < qty; i++) addItem({ id: product.id, name: product.name, sku: product.sku ?? "", price: product.price, image: product.images?.[0] });
     setAdded(true);
     setTimeout(() => setAdded(false), 2500);
   }
@@ -85,7 +96,7 @@ export default function ProductPage() {
         <nav className="mob-hide" style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"48px" }}>
           <button onClick={() => router.push("/catalog")}
             style={{
-              fontFamily:"var(--font-jost)", fontSize:"11px",
+              fontFamily:"var(--font-jost)", fontSize:"13px",
               letterSpacing:".18em", textTransform:"uppercase",
               color:"var(--text-muted)", background:"none", border:"none",
               cursor:"pointer", transition:"color .25s",
@@ -94,17 +105,17 @@ export default function ProductPage() {
             onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}>
             Katalog
           </button>
-          <span style={{ color:"rgba(154,107,32,.3)", fontSize:"12px" }}>›</span>
+          <span style={{ color:"rgba(154,107,32,.3)", fontSize:"14px" }}>›</span>
           {catShort && (
             <>
-              <span style={{ fontFamily:"var(--font-jost)", fontSize:"11px", letterSpacing:".15em", color:"var(--text-muted)" }}>
+              <span style={{ fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".15em", color:"var(--text-muted)" }}>
                 {catShort}
               </span>
-              <span style={{ color:"rgba(154,107,32,.3)", fontSize:"12px" }}>›</span>
+              <span style={{ color:"rgba(154,107,32,.3)", fontSize:"14px" }}>›</span>
             </>
           )}
           <span style={{
-            fontFamily:"var(--font-jost)", fontSize:"11px",
+            fontFamily:"var(--font-jost)", fontSize:"13px",
             letterSpacing:".1em", color:"var(--pearl)",
             overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:"300px",
           }}>{product.name}</span>
@@ -115,18 +126,33 @@ export default function ProductPage() {
           {/* GALLERY */}
           <div>
             {/* MAIN IMAGE */}
-            <div style={{
-              aspectRatio:"1/1", overflow:"hidden",
-              background:"linear-gradient(to bottom, #F5F1EC, #FFFFFF)",
-              border:"1px solid rgba(154,107,32,.14)",
-              position:"relative",
-            }}>
+            <div
+              style={{
+                aspectRatio:"1/1", overflow:"hidden",
+                background:"linear-gradient(to bottom, #F5F1EC, #FFFFFF)",
+                border:"1px solid rgba(154,107,32,.14)",
+                position:"relative",
+                cursor: validImgs.length > 0 ? "zoom-in" : "default",
+                userSelect:"none",
+              }}
+              onClick={() => validImgs.length > 0 && setLightbox(true)}
+              onTouchStart={e => setTouchX(e.touches[0].clientX)}
+              onTouchEnd={e => {
+                if (touchX === null || validImgs.length <= 1) return;
+                const diff = touchX - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 40) {
+                  if (diff > 0) goTo((imgIdx + 1) % validImgs.length, 1);
+                  else          goTo((imgIdx - 1 + validImgs.length) % validImgs.length, -1);
+                }
+                setTouchX(null);
+              }}
+            >
               {validImgs.length > 0 ? (
                 <img
                   key={imgIdx}
                   src={validImgs[imgIdx] ?? validImgs[0]} alt={product.name}
                   onError={() => setImgErrs(p => ({ ...p, [imgIdx]: true }))}
-                  style={{ width:"100%", height:"100%", objectFit:"contain", transition:"opacity .25s" }}
+                  style={{ width:"100%", height:"100%", objectFit:"contain", animation:`${imgDir === 1 ? "imgSlideRight" : "imgSlideLeft"} .26s ease` }}
                 />
               ) : (
                 <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -142,7 +168,7 @@ export default function ProductPage() {
               {validImgs.length > 1 && (
                 <>
                   <button
-                    onClick={() => setImgIdx(i => (i - 1 + validImgs.length) % validImgs.length)}
+                    onClick={e => { e.stopPropagation(); goTo((imgIdx - 1 + validImgs.length) % validImgs.length, -1); }}
                     style={{
                       position:"absolute", left:"12px", top:"50%", transform:"translateY(-50%)",
                       width:"40px", height:"40px",
@@ -158,7 +184,7 @@ export default function ProductPage() {
                     </svg>
                   </button>
                   <button
-                    onClick={() => setImgIdx(i => (i + 1) % validImgs.length)}
+                    onClick={e => { e.stopPropagation(); goTo((imgIdx + 1) % validImgs.length, 1); }}
                     style={{
                       position:"absolute", right:"12px", top:"50%", transform:"translateY(-50%)",
                       width:"40px", height:"40px",
@@ -181,7 +207,7 @@ export default function ProductPage() {
                   }}>
                     {validImgs.map((_, i) => (
                       <button
-                        key={i} onClick={() => setImgIdx(i)}
+                        key={i} onClick={e => { e.stopPropagation(); goTo(i, i > imgIdx ? 1 : -1); }}
                         style={{
                           width: imgIdx === i ? "20px" : "6px",
                           height:"6px",
@@ -204,7 +230,7 @@ export default function ProductPage() {
                 gap:"4px", marginTop:"4px",
               }}>
                 {validImgs.map((src, i) => (
-                  <button key={i} onClick={() => setImgIdx(i)}
+                  <button key={i} onClick={() => goTo(i, i > imgIdx ? 1 : -1)}
                     style={{
                       aspectRatio:"1/1", overflow:"hidden",
                       background:"linear-gradient(to bottom, #F5F1EC, #FFFFFF)",
@@ -227,7 +253,7 @@ export default function ProductPage() {
 
             {catShort && (
               <p style={{
-                fontFamily:"var(--font-cinzel)", fontSize:"10px",
+                fontFamily:"var(--font-cinzel)", fontSize:"13px",
                 letterSpacing:".4em", textTransform:"uppercase",
                 color:"var(--gold)", marginBottom:"20px",
               }}>{catShort}</p>
@@ -318,7 +344,7 @@ export default function ProductPage() {
                 disabled={product.stock <= 0}
                 style={{
                   flex:1, height:"48px",
-                  fontFamily:"var(--font-jost)", fontSize:"10px",
+                  fontFamily:"var(--font-jost)", fontSize:"13px",
                   fontWeight:500, letterSpacing:".25em", textTransform:"uppercase",
                   color: product.stock <= 0 ? "var(--text-muted)" : "#F8F4EE",
                   background: added ? "#4ade80" : product.stock <= 0 ? "rgba(0,0,0,.07)" : "var(--gold)",
@@ -340,7 +366,7 @@ export default function ProductPage() {
             borderTop:"1px solid rgba(154,107,32,.1)",
           }}>
             <p style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"10px",
+              fontFamily:"var(--font-cinzel)", fontSize:"13px",
               letterSpacing:".45em", textTransform:"uppercase",
               color:"var(--gold)", marginBottom:"32px",
             }}>Opis produktu</p>
@@ -364,13 +390,13 @@ export default function ProductPage() {
           }}>
             <div style={{ display:"flex", alignItems:"baseline", gap:"20px", marginBottom:"40px" }}>
               <p style={{
-                fontFamily:"var(--font-cinzel)", fontSize:"10px",
+                fontFamily:"var(--font-cinzel)", fontSize:"13px",
                 letterSpacing:".45em", textTransform:"uppercase",
                 color:"var(--gold)",
               }}>Inni oglądali również</p>
               {catShort && (
                 <span style={{
-                  fontFamily:"var(--font-jost)", fontSize:"11px", fontWeight:400,
+                  fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400,
                   color:"var(--text-muted)", letterSpacing:".05em",
                 }}>z kategorii {catShort}</span>
               )}
@@ -389,6 +415,97 @@ export default function ProductPage() {
         )}
 
       </div>
+
+      {/* LIGHTBOX */}
+      {lightbox && validImgs.length > 0 && (
+        <div
+          onClick={() => setLightbox(false)}
+          style={{
+            position:"fixed", inset:0, zIndex:200,
+            background:"rgba(245,241,236,.98)",
+            display:"flex", alignItems:"center", justifyContent:"center",
+          }}
+          onTouchStart={e => setTouchX(e.touches[0].clientX)}
+          onTouchEnd={e => {
+            if (touchX === null || validImgs.length <= 1) return;
+            const diff = touchX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) {
+              if (diff > 0) goTo((imgIdx + 1) % validImgs.length, 1);
+              else          goTo((imgIdx - 1 + validImgs.length) % validImgs.length, -1);
+            }
+            setTouchX(null);
+          }}
+        >
+          <img
+            key={imgIdx}
+            src={validImgs[imgIdx]}
+            alt={product.name}
+            onClick={e => e.stopPropagation()}
+            style={{ maxWidth:"90vw", maxHeight:"90vh", objectFit:"contain", animation:`${imgDir === 1 ? "imgSlideRight" : "imgSlideLeft"} .26s ease` }}
+          />
+
+          {validImgs.length > 1 && (
+            <>
+              <button
+                onClick={e => { e.stopPropagation(); goTo((imgIdx - 1 + validImgs.length) % validImgs.length, -1); }}
+                style={{
+                  position:"absolute", left:"16px", top:"50%", transform:"translateY(-50%)",
+                  width:"48px", height:"48px", display:"flex", alignItems:"center", justifyContent:"center",
+                  background:"rgba(154,107,32,.08)", border:"1px solid rgba(154,107,32,.2)",
+                  cursor:"pointer", transition:"background .2s, border-color .2s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background="rgba(154,107,32,.15)"; e.currentTarget.style.borderColor="rgba(154,107,32,.4)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background="rgba(154,107,32,.08)"; e.currentTarget.style.borderColor="rgba(154,107,32,.2)"; }}>
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+                  <path d="M10 3L5 8l5 5" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <button
+                onClick={e => { e.stopPropagation(); goTo((imgIdx + 1) % validImgs.length, 1); }}
+                style={{
+                  position:"absolute", right:"16px", top:"50%", transform:"translateY(-50%)",
+                  width:"48px", height:"48px", display:"flex", alignItems:"center", justifyContent:"center",
+                  background:"rgba(154,107,32,.08)", border:"1px solid rgba(154,107,32,.2)",
+                  cursor:"pointer", transition:"background .2s, border-color .2s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background="rgba(154,107,32,.15)"; e.currentTarget.style.borderColor="rgba(154,107,32,.4)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background="rgba(154,107,32,.08)"; e.currentTarget.style.borderColor="rgba(154,107,32,.2)"; }}>
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+                  <path d="M6 3l5 5-5 5" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </>
+          )}
+
+          <button
+            onClick={() => setLightbox(false)}
+            style={{
+              position:"absolute", top:"16px", right:"16px",
+              width:"44px", height:"44px", display:"flex", alignItems:"center", justifyContent:"center",
+              background:"rgba(154,107,32,.08)", border:"1px solid rgba(154,107,32,.2)",
+              cursor:"pointer", fontSize:"22px", color:"var(--gold)",
+              transition:"background .2s, border-color .2s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background="rgba(154,107,32,.15)"; e.currentTarget.style.borderColor="rgba(154,107,32,.4)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background="rgba(154,107,32,.08)"; e.currentTarget.style.borderColor="rgba(154,107,32,.2)"; }}>
+            ×
+          </button>
+
+          {validImgs.length > 1 && (
+            <div style={{ position:"absolute", bottom:"20px", left:"50%", transform:"translateX(-50%)", display:"flex", gap:"6px" }}>
+              {validImgs.map((_, i) => (
+                <button key={i} onClick={e => { e.stopPropagation(); goTo(i, i > imgIdx ? 1 : -1); }}
+                  style={{
+                    width: imgIdx === i ? "20px" : "6px", height:"6px",
+                    background: imgIdx === i ? "var(--gold)" : "rgba(154,107,32,.3)",
+                    border:"none", cursor:"pointer", padding:0, transition:"width .25s, background .25s",
+                  }}/>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
     </div>
   );
 }
@@ -403,7 +520,7 @@ function RelatedCard({ product: p, onNavigate }: { product: Product; onNavigate:
 
   function handleAdd(e: React.MouseEvent) {
     e.stopPropagation();
-    addItem({ id: p.id, name: p.name, sku: p.sku ?? "", price: p.price });
+    addItem({ id: p.id, name: p.name, sku: p.sku ?? "", price: p.price, image: p.images?.[0] });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
@@ -482,14 +599,14 @@ function RelatedCard({ product: p, onNavigate }: { product: Product; onNavigate:
             fontSize:"20px", fontWeight:400, color:"var(--gold)",
           }}>
             {p.price.toFixed(2)}{" "}
-            <span style={{ fontSize:"12px", color:"var(--text-muted)", fontWeight:400 }}>zł</span>
+            <span style={{ fontSize:"14px", color:"var(--text-muted)", fontWeight:400 }}>zł</span>
           </span>
 
           <button
             onClick={handleAdd}
             disabled={p.stock <= 0}
             style={{
-              fontFamily:"var(--font-jost)", fontSize:"9px",
+              fontFamily:"var(--font-jost)", fontSize:"11px",
               fontWeight:500, letterSpacing:".2em", textTransform:"uppercase",
               color: p.stock <= 0 ? "var(--text-muted)" : "#F8F4EE",
               background: added ? "#4ade80" : p.stock <= 0 ? "rgba(0,0,0,.07)" : "var(--gold)",

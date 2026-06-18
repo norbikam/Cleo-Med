@@ -76,6 +76,8 @@ export const blOrderCache = pgTable("bl_order_cache", {
   orderDate: timestamp("order_date"),
   customSourceId: integer("custom_source_id"),
   syncedAt: timestamp("synced_at").default(sql`now()`),
+  paymentConfirmationUrl: text("payment_confirmation_url"),
+  paymentConfirmationAt: timestamp("payment_confirmation_at"),
 });
 
 export const pageTexts = pgTable("page_texts", {
@@ -103,6 +105,12 @@ export const clientProductPricing = pgTable("client_product_pricing", {
   createdAt: timestamp("created_at").default(sql`now()`),
 });
 
+export const blProductCache = pgTable("bl_product_cache", {
+  blProductId: varchar("bl_product_id", { length: 50 }).primaryKey(),
+  data:        jsonb("data").notNull(),
+  cachedAt:    timestamp("cached_at").default(sql`now()`).notNull(),
+});
+
 export const discountCodes = pgTable("discount_codes", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   clientId: uuid("client_id").references(() => clients.id, { onDelete: "cascade" }),
@@ -116,6 +124,7 @@ export const discountCodes = pgTable("discount_codes", {
   createdAt: timestamp("created_at").default(sql`now()`),
 });
 
+export type BlProductCache = typeof blProductCache.$inferSelect;
 export type Client = typeof clients.$inferSelect;
 export type ClientPhone = typeof clientPhones.$inferSelect;
 export type ClientAddress = typeof clientAddresses.$inferSelect;

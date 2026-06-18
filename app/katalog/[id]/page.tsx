@@ -54,7 +54,7 @@ export default function KatalogProductPage() {
         Produkt nie istnieje.
       </p>
       <button onClick={() => router.push("/katalog")} style={{
-        fontFamily:"var(--font-jost)", fontSize:"10px", letterSpacing:".2em", textTransform:"uppercase",
+        fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".2em", textTransform:"uppercase",
         color:"var(--gold)", background:"none", border:"1px solid rgba(154,107,32,.3)",
         padding:"12px 28px", cursor:"pointer",
       }}>← Wróć do katalogu</button>
@@ -71,7 +71,7 @@ export default function KatalogProductPage() {
         {/* BREADCRUMB */}
         <nav style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"48px" }}>
           <button onClick={() => router.push("/katalog")} style={{
-            fontFamily:"var(--font-jost)", fontSize:"11px", letterSpacing:".18em", textTransform:"uppercase",
+            fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".18em", textTransform:"uppercase",
             color:"var(--text-muted)", background:"none", border:"none", cursor:"pointer", transition:"color .25s",
           }}
             onMouseEnter={e => (e.currentTarget.style.color = "var(--gold)")}
@@ -80,8 +80,8 @@ export default function KatalogProductPage() {
           </button>
           {catShort && (
             <>
-              <span style={{ color:"rgba(154,107,32,.3)", fontSize:"12px" }}>›</span>
-              <span style={{ fontFamily:"var(--font-jost)", fontSize:"11px", letterSpacing:".12em", color:"var(--text-muted)" }}>{catShort}</span>
+              <span style={{ color:"rgba(154,107,32,.3)", fontSize:"14px" }}>›</span>
+              <span style={{ fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".12em", color:"var(--text-muted)" }}>{catShort}</span>
             </>
           )}
         </nav>
@@ -182,7 +182,7 @@ export default function KatalogProductPage() {
           <div style={{ display:"flex", flexDirection:"column" }}>
             {catShort && (
               <p style={{
-                fontFamily:"var(--font-cinzel)", fontSize:"10px", letterSpacing:".4em", textTransform:"uppercase",
+                fontFamily:"var(--font-cinzel)", fontSize:"13px", letterSpacing:".4em", textTransform:"uppercase",
                 color:"var(--gold)", marginBottom:"20px",
               }}>{catShort}</p>
             )}
@@ -228,7 +228,7 @@ export default function KatalogProductPage() {
             {/* ORDER BUTTON */}
             <a href="/login" style={{
               display:"block", textAlign:"center",
-              fontFamily:"var(--font-jost)", fontSize:"10px",
+              fontFamily:"var(--font-jost)", fontSize:"13px",
               fontWeight:500, letterSpacing:".25em", textTransform:"uppercase",
               color:"#F8F4EE", background: product.stock <= 0 ? "rgba(154,107,32,.3)" : "var(--gold)",
               border:"none", padding:"16px 0", textDecoration:"none",
@@ -241,7 +241,7 @@ export default function KatalogProductPage() {
             </a>
 
             <p style={{
-              fontFamily:"var(--font-jost)", fontSize:"11px", letterSpacing:".04em",
+              fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".04em",
               color:"var(--text-muted)", textAlign:"center", marginTop:"14px",
             }}>
               Aby złożyć zamówienie, zaloguj się do sklepu
@@ -253,7 +253,7 @@ export default function KatalogProductPage() {
         {product.description && (
           <div style={{ marginTop:"80px", paddingTop:"60px", borderTop:"1px solid rgba(154,107,32,.1)" }}>
             <p style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"10px", letterSpacing:".45em", textTransform:"uppercase",
+              fontFamily:"var(--font-cinzel)", fontSize:"13px", letterSpacing:".45em", textTransform:"uppercase",
               color:"var(--gold)", marginBottom:"32px",
             }}>Opis produktu</p>
             <div
@@ -271,7 +271,7 @@ export default function KatalogProductPage() {
         {related.length > 0 && (
           <div style={{ marginTop:"80px", paddingTop:"60px", borderTop:"1px solid rgba(154,107,32,.1)" }}>
             <p style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"10px", letterSpacing:".45em", textTransform:"uppercase",
+              fontFamily:"var(--font-cinzel)", fontSize:"13px", letterSpacing:".45em", textTransform:"uppercase",
               color:"var(--gold)", marginBottom:"40px",
             }}>Podobne produkty</p>
             <div className="mob-grid-2" style={{ display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:"2px" }}>
@@ -333,7 +333,7 @@ function RelatedCard({ product: p, onNavigate }: { product: Product; onNavigate:
         <div style={{ borderTop:"1px solid rgba(154,107,32,.08)", paddingTop:"12px" }}>
           <span style={{ fontFamily:"var(--font-cormorant)", fontSize:"20px", fontWeight:400, color:"var(--gold)" }}>
             {p.price.toFixed(2)}{" "}
-            <span style={{ fontSize:"12px", color:"var(--text-muted)", fontWeight:400 }}>zł</span>
+            <span style={{ fontSize:"14px", color:"var(--text-muted)", fontWeight:400 }}>zł</span>
           </span>
         </div>
       </div>

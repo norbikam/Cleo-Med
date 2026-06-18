@@ -26,11 +26,11 @@ const COURIERS = [
 const EMPTY_ADDR: AddrForm = { fullname:"", street:"", city:"", postcode:"", phone:"", email:"", courierType:"DPD", lockerCode:"", lockerName:"", isDefault:false };
 
 const Lbl = ({ s }: { s: string }) => (
-  <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"9px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"6px" }}>{s}</p>
+  <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"6px" }}>{s}</p>
 );
 const card: React.CSSProperties = { background:"#fff", border:"1px solid rgba(154,107,32,.1)", padding:"24px 28px", marginBottom:"2px" };
 const inp:  React.CSSProperties = { height:"40px", padding:"0 14px", fontFamily:"var(--font-jost)", fontSize:"13px", border:"1px solid rgba(154,107,32,.2)", outline:"none", color:"var(--pearl)", background:"var(--obsidian)" };
-const gbtn: React.CSSProperties = { padding:"9px 20px", fontFamily:"var(--font-jost)", fontSize:"10px", fontWeight:500, letterSpacing:".18em", textTransform:"uppercase", border:"none", cursor:"pointer", color:"var(--obsidian)", background:"var(--gold)" };
+const gbtn: React.CSSProperties = { padding:"9px 20px", fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500, letterSpacing:".18em", textTransform:"uppercase", border:"none", cursor:"pointer", color:"var(--obsidian)", background:"var(--gold)" };
 const onF = (e: React.FocusEvent<HTMLInputElement|HTMLSelectElement>) => (e.currentTarget.style.borderColor = "rgba(154,107,32,.5)");
 const onB = (e: React.FocusEvent<HTMLInputElement|HTMLSelectElement>) => (e.currentTarget.style.borderColor = "rgba(154,107,32,.2)");
 
@@ -269,12 +269,12 @@ export default function AdminClientPage() {
 
   return (
     <div style={{ maxWidth:"1200px", margin:"0 auto", padding:"40px 24px 80px" }} className="client-wrap">
-      <button onClick={() => router.push("/admin")} style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--gold)", background:"none", border:"none", cursor:"pointer", marginBottom:"32px" }}>
+      <button onClick={() => router.push("/admin")} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--gold)", background:"none", border:"none", cursor:"pointer", marginBottom:"32px" }}>
         ← Powrót
       </button>
 
       <div style={{ marginBottom:"36px" }}>
-        <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"9px", letterSpacing:".35em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"8px" }}>Klient</p>
+        <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".35em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"8px" }}>Klient</p>
         <h1 style={{ fontFamily:"var(--font-cormorant)", fontSize:"40px", fontWeight:400, color:"var(--pearl)", lineHeight:1 }}>
           {client.name ?? client.phone}
         </h1>
@@ -289,7 +289,7 @@ export default function AdminClientPage() {
           <div style={card}>
             <Lbl s="Status konta" />
             <div style={{ display:"flex", alignItems:"center", gap:"12px", flexWrap:"wrap", marginTop:"8px" }}>
-              <span style={{ fontFamily:"var(--font-cinzel)", fontSize:"9px", letterSpacing:".2em", textTransform:"uppercase", padding:"5px 12px", border:"1px solid", color: client.active ? "var(--gold)" : "var(--text-muted)", borderColor: client.active ? "rgba(154,107,32,.3)" : "rgba(154,107,32,.1)" }}>
+              <span style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".2em", textTransform:"uppercase", padding:"5px 12px", border:"1px solid", color: client.active ? "var(--gold)" : "var(--text-muted)", borderColor: client.active ? "rgba(154,107,32,.3)" : "rgba(154,107,32,.1)" }}>
                 {client.active ? "Aktywny" : "Nieaktywny"}
               </span>
               <button style={{ ...gbtn, background: client.active ? "rgba(180,50,50,.1)" : "var(--gold)", color: client.active ? "rgb(160,40,40)" : "var(--obsidian)" }} onClick={handleToggle} disabled={saving}>
@@ -299,8 +299,8 @@ export default function AdminClientPage() {
                 {syncing ? "Sync..." : "Sync BL"}
               </button>
             </div>
-            {syncMsg && <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--gold)", marginTop:"10px" }}>{syncMsg}</p>}
-            {saveMsg && <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--gold)", marginTop:"10px" }}>{saveMsg}</p>}
+            {syncMsg && <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--gold)", marginTop:"10px" }}>{syncMsg}</p>}
+            {saveMsg && <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--gold)", marginTop:"10px" }}>{saveMsg}</p>}
           </div>
 
           {/* Info */}
@@ -308,11 +308,11 @@ export default function AdminClientPage() {
             <Lbl s="Dane klienta" />
             <div style={{ display:"flex", flexDirection:"column", gap:"10px", marginTop:"8px" }}>
               <div>
-                <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Nazwa / firma</p>
+                <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Nazwa / firma</p>
                 <input style={{ ...inp, width:"100%" }} value={name} onChange={e => setName(e.target.value)} onFocus={onF} onBlur={onB}/>
               </div>
               <div>
-                <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Email</p>
+                <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Email</p>
                 <input style={{ ...inp, width:"100%" }} value={email} onChange={e => setEmail(e.target.value)} type="email" onFocus={onF} onBlur={onB}/>
               </div>
               <button style={{ ...gbtn, alignSelf:"flex-start" }} onClick={handleSaveInfo} disabled={saving}>Zapisz dane</button>
@@ -327,7 +327,7 @@ export default function AdminClientPage() {
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", background:"rgba(154,107,32,.04)", border:"1px solid rgba(154,107,32,.08)", marginTop:"12px", marginBottom:"16px" }}>
               <div>
                 <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500, color:"var(--pearl)" }}>Darmowa dostawa</p>
-                <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginTop:"2px" }}>
+                <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginTop:"2px" }}>
                   {client.freeShipping ? "Aktywna dla tego klienta" : "Klient płaci za dostawę"}
                 </p>
               </div>
@@ -338,7 +338,7 @@ export default function AdminClientPage() {
 
             {/* Per-product pricing */}
             <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500, color:"var(--pearl)", marginBottom:"4px" }}>Indywidualne ceny produktów</p>
-            <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"12px" }}>Ustaw konkretną cenę dla wybranego produktu — nadpisuje cenę katalogową.</p>
+            <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"12px" }}>Ustaw konkretną cenę dla wybranego produktu — nadpisuje cenę katalogową.</p>
 
             {/* Existing overrides */}
             {pricing.length > 0 && (
@@ -346,10 +346,10 @@ export default function AdminClientPage() {
                 {pricing.map(p => (
                   <div key={p.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 12px", borderBottom:"1px solid rgba(154,107,32,.05)" }}>
                     <div style={{ flex:1, minWidth:0 }}>
-                      <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--pearl)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{p.productName ?? p.productId}</p>
+                      <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--pearl)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{p.productName ?? p.productId}</p>
                     </div>
                     <span style={{ fontFamily:"var(--font-cormorant)", fontSize:"16px", color:"var(--gold-light)", margin:"0 16px", flexShrink:0 }}>{parseFloat(p.customPrice).toFixed(2)} zł</span>
-                    <button onClick={() => handleDeletePricing(p.id)} style={{ fontFamily:"var(--font-jost)", fontSize:"10px", color:"rgba(180,50,50,.6)", background:"none", border:"none", cursor:"pointer", flexShrink:0 }}>Usuń</button>
+                    <button onClick={() => handleDeletePricing(p.id)} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"rgba(180,50,50,.6)", background:"none", border:"none", cursor:"pointer", flexShrink:0 }}>Usuń</button>
                   </div>
                 ))}
               </div>
@@ -371,7 +371,7 @@ export default function AdminClientPage() {
                     {filteredProds.map(p => (
                       <button key={p.id} type="button"
                         onMouseDown={() => { setSelectedProd(p); setProductSearch(""); setCustomPrice(String(p.price)); setShowDropdown(false); }}
-                        style={{ width:"100%", textAlign:"left", padding:"10px 14px", background:"none", border:"none", borderBottom:"1px solid rgba(154,107,32,.05)", cursor:"pointer", fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--pearl)" }}
+                        style={{ width:"100%", textAlign:"left", padding:"10px 14px", background:"none", border:"none", borderBottom:"1px solid rgba(154,107,32,.05)", cursor:"pointer", fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--pearl)" }}
                         onMouseEnter={e => (e.currentTarget.style.background = "rgba(154,107,32,.04)")}
                         onMouseLeave={e => (e.currentTarget.style.background = "none")}>
                         <span>{p.name}</span>
@@ -388,7 +388,7 @@ export default function AdminClientPage() {
                       type="number" min="0" step="0.01" placeholder="Cena (zł)"
                       value={customPrice} onChange={e => setCustomPrice(e.target.value)}
                       onFocus={onF} onBlur={onB} required/>
-                    <span style={{ position:"absolute", right:"12px", top:"50%", transform:"translateY(-50%)", fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--text-muted)", pointerEvents:"none" }}>zł</span>
+                    <span style={{ position:"absolute", right:"12px", top:"50%", transform:"translateY(-50%)", fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--text-muted)", pointerEvents:"none" }}>zł</span>
                   </div>
                   <button type="submit" disabled={priceSaving} style={gbtn}>{priceSaving ? "..." : "Ustaw cenę"}</button>
                   <button type="button" onClick={() => { setSelectedProd(null); setProductSearch(""); setCustomPrice(""); }} style={{ ...gbtn, background:"rgba(154,107,32,.08)", color:"var(--pearl)" }}>✕</button>
@@ -403,15 +403,15 @@ export default function AdminClientPage() {
             <div style={{ marginTop:"8px" }}>
               <div style={{ padding:"10px 0", borderBottom:"1px solid rgba(154,107,32,.06)", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                 <span style={{ fontFamily:"monospace", fontSize:"13px" }}>{client.phone}</span>
-                <span style={{ fontFamily:"var(--font-cinzel)", fontSize:"8px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--text-muted)", padding:"3px 8px", border:"1px solid rgba(154,107,32,.15)" }}>Główny</span>
+                <span style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--text-muted)", padding:"3px 8px", border:"1px solid rgba(154,107,32,.15)" }}>Główny</span>
               </div>
               {phones.map(p => (
                 <div key={p.id} style={{ padding:"10px 0", borderBottom:"1px solid rgba(154,107,32,.06)", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                   <div>
                     <span style={{ fontFamily:"monospace", fontSize:"13px" }}>{p.phone}</span>
-                    {p.label && <span style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginLeft:"10px" }}>{p.label}</span>}
+                    {p.label && <span style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginLeft:"10px" }}>{p.label}</span>}
                   </div>
-                  <button onClick={() => handleDeletePhone(p.id)} style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"rgba(180,50,50,.6)", background:"none", border:"none", cursor:"pointer" }}>Usuń</button>
+                  <button onClick={() => handleDeletePhone(p.id)} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"rgba(180,50,50,.6)", background:"none", border:"none", cursor:"pointer" }}>Usuń</button>
                 </div>
               ))}
               <form onSubmit={handleAddPhone} className="phone-form" style={{ display:"flex", gap:"8px", marginTop:"12px", flexWrap:"wrap" }}>
@@ -427,14 +427,14 @@ export default function AdminClientPage() {
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"10px" }}>
               <Lbl s={`Adresy dostawy (${addresses.length})`} />
               {editingAddr !== "new" && (
-                <button onClick={startNewAddr} style={{ ...gbtn, fontSize:"9px", padding:"6px 14px" }}>+ Dodaj</button>
+                <button onClick={startNewAddr} style={{ ...gbtn, fontSize:"11px", padding:"6px 14px" }}>+ Dodaj</button>
               )}
             </div>
 
             {/* Inline new/edit form */}
             {editingAddr && (
               <form onSubmit={handleSaveAddr} style={{ padding:"16px", background:"rgba(154,107,32,.03)", border:"1px solid rgba(154,107,32,.15)", marginBottom:"10px", display:"flex", flexDirection:"column", gap:"10px" }}>
-                <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"8px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"2px" }}>
+                <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"2px" }}>
                   {editingAddr === "new" ? "Nowy adres" : "Edytuj adres"}
                 </p>
 
@@ -450,14 +450,14 @@ export default function AdminClientPage() {
 
                 {/* Kurier */}
                 <div>
-                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"6px" }}>Kurier</p>
+                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"6px" }}>Kurier</p>
                   <div style={{ display:"flex", gap:"6px", flexWrap:"wrap" }}>
                     {COURIERS.map(c => {
                       const active = addrForm.courierType === c.id;
                       return (
                         <button key={c.id} type="button"
                           onClick={() => { setAddrForm(f=>({...f,courierType:c.id,lockerCode:"",lockerName:"",street:"",postcode:"",city:""})); setLockerQuery(""); }}
-                          style={{ padding:"6px 14px", fontFamily:"var(--font-jost)", fontSize:"10px", fontWeight:active?500:300, letterSpacing:".15em", textTransform:"uppercase", cursor:"pointer", transition:"all .2s", color:active?"#F8F4EE":"var(--text-muted)", background:active?"var(--gold)":"transparent", border:active?"1px solid var(--gold)":"1px solid rgba(154,107,32,.2)" }}>
+                          style={{ padding:"6px 14px", fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:active?500:300, letterSpacing:".15em", textTransform:"uppercase", cursor:"pointer", transition:"all .2s", color:active?"#F8F4EE":"var(--text-muted)", background:active?"var(--gold)":"transparent", border:active?"1px solid var(--gold)":"1px solid rgba(154,107,32,.2)" }}>
                           {c.label}
                         </button>
                       );
@@ -468,14 +468,14 @@ export default function AdminClientPage() {
                 {/* Paczkomat InPost */}
                 {addrForm.courierType === "Paczkomat" && (
                   <div>
-                    <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"6px" }}>Paczkomat *</p>
+                    <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"6px" }}>Paczkomat *</p>
                     {addrForm.lockerCode ? (
                       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 14px", border:"1px solid rgba(154,107,32,.3)", background:"rgba(154,107,32,.04)" }}>
                         <div>
-                          <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"9px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--gold)" }}>{addrForm.lockerCode}</p>
-                          <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)" }}>{addrForm.street}, {addrForm.postcode} {addrForm.city}</p>
+                          <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--gold)" }}>{addrForm.lockerCode}</p>
+                          <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)" }}>{addrForm.street}, {addrForm.postcode} {addrForm.city}</p>
                         </div>
-                        <button type="button" onClick={clearLocker} style={{ fontFamily:"var(--font-jost)", fontSize:"10px", color:"var(--text-muted)", background:"none", border:"none", cursor:"pointer" }}>Zmień</button>
+                        <button type="button" onClick={clearLocker} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", background:"none", border:"none", cursor:"pointer" }}>Zmień</button>
                       </div>
                     ) : (
                       <div ref={lockerDropRef} style={{ position:"relative" }}>
@@ -487,7 +487,7 @@ export default function AdminClientPage() {
                             onFocus={() => lockerResults.length > 0 && setLockerOpen(true)}
                             onBlur={onB}
                           />
-                          {lockerLoading && <span style={{ position:"absolute", right:"12px", top:"50%", transform:"translateY(-50%)", fontFamily:"var(--font-jost)", fontSize:"10px", color:"var(--text-muted)" }}>…</span>}
+                          {lockerLoading && <span style={{ position:"absolute", right:"12px", top:"50%", transform:"translateY(-50%)", fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)" }}>…</span>}
                         </div>
                         {lockerOpen && lockerResults.length > 0 && (
                           <div style={{ position:"absolute", top:"calc(100% + 2px)", left:0, right:0, zIndex:200, background:"var(--obsidian)", border:"1px solid rgba(154,107,32,.2)", maxHeight:"200px", overflowY:"auto" }}>
@@ -496,14 +496,14 @@ export default function AdminClientPage() {
                                 style={{ display:"block", width:"100%", textAlign:"left", padding:"10px 14px", background:"none", border:"none", borderBottom:"1px solid rgba(154,107,32,.06)", cursor:"pointer" }}
                                 onMouseEnter={e=>(e.currentTarget.style.background="rgba(154,107,32,.05)")}
                                 onMouseLeave={e=>(e.currentTarget.style.background="none")}>
-                                <span style={{ fontFamily:"var(--font-cinzel)", fontSize:"8px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--gold)", display:"block" }}>{p.code}</span>
-                                <span style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)" }}>{p.street}, {p.postcode} {p.city}</span>
+                                <span style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--gold)", display:"block" }}>{p.code}</span>
+                                <span style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)" }}>{p.street}, {p.postcode} {p.city}</span>
                               </button>
                             ))}
                           </div>
                         )}
                         {lockerOpen && !lockerLoading && lockerQuery.length >= 2 && lockerResults.length === 0 && (
-                          <div style={{ position:"absolute", top:"calc(100% + 2px)", left:0, right:0, zIndex:200, background:"var(--obsidian)", border:"1px solid rgba(154,107,32,.15)", padding:"12px 14px", fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--text-muted)" }}>
+                          <div style={{ position:"absolute", top:"calc(100% + 2px)", left:0, right:0, zIndex:200, background:"var(--obsidian)", border:"1px solid rgba(154,107,32,.15)", padding:"12px 14px", fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--text-muted)" }}>
                             Brak wyników dla &ldquo;{lockerQuery}&rdquo;
                           </div>
                         )}
@@ -544,7 +544,7 @@ export default function AdminClientPage() {
 
                 <label style={{ display:"flex", alignItems:"center", gap:"8px", cursor:"pointer" }}>
                   <input type="checkbox" checked={addrForm.isDefault} onChange={e => setAddrForm(f=>({...f,isDefault:e.target.checked}))} style={{ accentColor:"var(--gold)" }}/>
-                  <span style={{ fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--text-muted)" }}>Ustaw jako domyślny</span>
+                  <span style={{ fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--text-muted)" }}>Ustaw jako domyślny</span>
                 </label>
                 <div style={{ display:"flex", gap:"8px" }}>
                   <button type="submit" disabled={addrSaving} style={gbtn}>{addrSaving ? "Zapisuję..." : "Zapisz"}</button>
@@ -571,19 +571,19 @@ export default function AdminClientPage() {
                           {a.isDefault && <span style={{ fontFamily:"var(--font-cinzel)", fontSize:"7px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--gold)", padding:"2px 6px", border:"1px solid rgba(154,107,32,.3)" }}>domyślny</span>}
                           {a.courierType && <span style={{ fontFamily:"var(--font-cinzel)", fontSize:"7px", letterSpacing:".15em", textTransform:"uppercase", color:"var(--text-muted)", padding:"2px 6px", background:"rgba(154,107,32,.06)" }}>{COURIERS.find(c=>c.id===a.courierType)?.label ?? a.courierType}</span>}
                         </div>
-                        <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400, color:"var(--text-muted)", lineHeight:1.5 }}>
+                        <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400, color:"var(--text-muted)", lineHeight:1.5 }}>
                           {a.lockerCode && <><span style={{ color:"var(--gold)", fontWeight:500 }}>{a.lockerCode}</span> — </>}
                           {a.street}, {a.postcode} {a.city}
                         </p>
                         {(a.phone || a.email) && (
-                          <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"rgba(100,75,50,.45)", marginTop:"2px" }}>
+                          <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"rgba(100,75,50,.45)", marginTop:"2px" }}>
                             {a.phone}{a.phone && a.email ? " · " : ""}{a.email}
                           </p>
                         )}
                       </div>
                       <div style={{ display:"flex", gap:"8px", flexShrink:0 }}>
-                        <button onClick={() => startEditAddr(a)} style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--gold)", background:"none", border:"none", cursor:"pointer" }}>Edytuj</button>
-                        <button onClick={() => handleDeleteAddr(a.id)} style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"rgba(180,50,50,.6)", background:"none", border:"none", cursor:"pointer" }}>Usuń</button>
+                        <button onClick={() => startEditAddr(a)} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--gold)", background:"none", border:"none", cursor:"pointer" }}>Edytuj</button>
+                        <button onClick={() => handleDeleteAddr(a.id)} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"rgba(180,50,50,.6)", background:"none", border:"none", cursor:"pointer" }}>Usuń</button>
                       </div>
                     </div>
                   </div>
@@ -601,11 +601,11 @@ export default function AdminClientPage() {
             <form onSubmit={handleAddCode} style={{ marginTop:"12px", display:"flex", flexDirection:"column", gap:"8px" }}>
               <div className="code-form-grid" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"8px" }}>
                 <div>
-                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Kod</p>
+                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Kod</p>
                   <input style={{ ...inp, width:"100%" }} placeholder="KLIENT15" value={codeStr} onChange={e => setCodeStr(e.target.value)} required onFocus={onF} onBlur={onB}/>
                 </div>
                 <div>
-                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Typ</p>
+                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Typ</p>
                   <select style={{ ...inp, width:"100%", appearance:"none" as "none" }} value={codeType} onChange={e => setCodeType(e.target.value)} onFocus={onF} onBlur={onB}>
                     <option value="percent">Procent (%)</option>
                     <option value="fixed">Kwota stała (zł)</option>
@@ -614,16 +614,16 @@ export default function AdminClientPage() {
                 </div>
                 {codeType !== "free_shipping" && (
                   <div>
-                    <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>{codeType === "percent" ? "Wartość %" : "Kwota (zł)"}</p>
+                    <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>{codeType === "percent" ? "Wartość %" : "Kwota (zł)"}</p>
                     <input style={{ ...inp, width:"100%" }} type="number" min="0" placeholder={codeType==="percent"?"15":"50"} value={codeValue} onChange={e => setCodeValue(e.target.value)} onFocus={onF} onBlur={onB}/>
                   </div>
                 )}
                 <div>
-                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Limit użyć</p>
+                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Limit użyć</p>
                   <input style={{ ...inp, width:"100%" }} type="number" min="1" placeholder="bez limitu" value={codeMaxUses} onChange={e => setCodeMaxUses(e.target.value)} onFocus={onF} onBlur={onB}/>
                 </div>
                 <div>
-                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Wygasa</p>
+                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Wygasa</p>
                   <input style={{ ...inp, width:"100%" }} type="date" value={codeExpiry} onChange={e => setCodeExpiry(e.target.value)} onFocus={onF} onBlur={onB}/>
                 </div>
               </div>
@@ -635,15 +635,15 @@ export default function AdminClientPage() {
                   <div key={c.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 0", borderBottom:"1px solid rgba(154,107,32,.05)" }}>
                     <div>
                       <span style={{ fontFamily:"monospace", fontSize:"13px", fontWeight:600, color: c.active ? "var(--pearl)" : "var(--text-muted)", textDecoration: c.active ? "none" : "line-through" }}>{c.code}</span>
-                      <span style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginLeft:"10px" }}>
+                      <span style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginLeft:"10px" }}>
                         {c.type==="percent" ? `${c.value}%` : c.type==="fixed" ? `${c.value} zł` : "darmowa dostawa"}
                         {c.maxUses != null && ` · ${c.usedCount}/${c.maxUses} użyć`}
                         {c.expiresAt && ` · do ${new Date(c.expiresAt).toLocaleDateString("pl-PL")}`}
                       </span>
                     </div>
                     <div style={{ display:"flex", gap:"8px" }}>
-                      <button onClick={() => handleToggleCode(c.id, c.active)} style={{ fontFamily:"var(--font-jost)", fontSize:"10px", color:"var(--gold)", background:"none", border:"none", cursor:"pointer" }}>{c.active ? "Wyłącz" : "Włącz"}</button>
-                      <button onClick={() => handleDeleteCode(c.id)} style={{ fontFamily:"var(--font-jost)", fontSize:"10px", color:"rgba(180,50,50,.6)", background:"none", border:"none", cursor:"pointer" }}>Usuń</button>
+                      <button onClick={() => handleToggleCode(c.id, c.active)} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--gold)", background:"none", border:"none", cursor:"pointer" }}>{c.active ? "Wyłącz" : "Włącz"}</button>
+                      <button onClick={() => handleDeleteCode(c.id)} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"rgba(180,50,50,.6)", background:"none", border:"none", cursor:"pointer" }}>Usuń</button>
                     </div>
                   </div>
                 ))}
@@ -667,11 +667,11 @@ export default function AdminClientPage() {
                           style={{ flex:1, display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", background:"transparent", border:"none", cursor:"pointer", textAlign:"left" }}>
                           <div style={{ display:"flex", gap:"10px", alignItems:"center" }}>
                             <span style={{ fontFamily:"var(--font-cormorant)", fontSize:"16px", color:"var(--pearl)" }}>#{o.blOrderId}</span>
-                            <span style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)" }}>
+                            <span style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)" }}>
                               {o.orderDate ? new Date(o.orderDate).toLocaleDateString("pl-PL") : "—"}
                             </span>
                             {o.statusName && (
-                              <span style={{ fontFamily:"var(--font-cinzel)", fontSize:"8px", letterSpacing:".15em", textTransform:"uppercase", padding:"2px 8px", border:"1px solid rgba(154,107,32,.2)", color:"var(--gold)" }}>{o.statusName}</span>
+                              <span style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".15em", textTransform:"uppercase", padding:"2px 8px", border:"1px solid rgba(154,107,32,.2)", color:"var(--gold)" }}>{o.statusName}</span>
                             )}
                           </div>
                           <span style={{ fontFamily:"var(--font-cormorant)", fontSize:"16px", color:"var(--gold-light)" }}>
@@ -690,7 +690,7 @@ export default function AdminClientPage() {
                       {expanded===o.id && (
                         <div style={{ padding:"12px 16px", borderTop:"1px solid rgba(154,107,32,.06)", background:"rgba(154,107,32,.02)" }}>
                           {(o.products as {name:string;qty:number;price:number}[]).map((p,i) => (
-                            <div key={i} style={{ display:"flex", justifyContent:"space-between", padding:"4px 0", fontFamily:"var(--font-jost)", fontSize:"12px" }}>
+                            <div key={i} style={{ display:"flex", justifyContent:"space-between", padding:"4px 0", fontFamily:"var(--font-jost)", fontSize:"14px" }}>
                               <span style={{ color:"var(--pearl)" }}>{p.name}</span>
                               <span style={{ color:"var(--text-muted)" }}>×{p.qty} · {(p.price*p.qty).toFixed(2)} zł</span>
                             </div>

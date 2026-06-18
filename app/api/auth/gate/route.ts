@@ -11,10 +11,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Nieprawidłowe hasło." }, { status: 401 });
   }
 
-  const maxAge = remember ? 60 * 60 * 24 : 60 * 60 * 4;
+  const maxAge = 60 * 60 * 24; // 24 hours
   const token  = await new SignJWT({ gate: true })
     .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime(remember ? "24h" : "4h")
+    .setExpirationTime("24h")
     .sign(secret);
 
   const res = NextResponse.json({ ok: true });

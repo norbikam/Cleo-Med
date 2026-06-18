@@ -5,9 +5,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const tabs = [
-  { href: "/admin",         label: "Pulpit",         exact: true },
-  { href: "/admin/codes",   label: "Kody rabatowe",  exact: false },
-  { href: "/admin/content", label: "Treści",         exact: false },
+  { href: "/admin",          label: "Pulpit",         exact: true },
+  { href: "/admin/orders",   label: "Zamówienia",     exact: false },
+  { href: "/admin/codes",    label: "Kody rabatowe",  exact: false },
+  { href: "/admin/content",  label: "Treści",         exact: false },
 ];
 
 export default function AdminNav() {

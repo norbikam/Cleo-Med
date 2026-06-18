@@ -35,7 +35,7 @@ function Label({ children }: { children: React.ReactNode }) {
   return (
     <label style={{
       display:"block", marginBottom:"7px",
-      fontFamily:"var(--font-cinzel)", fontSize:"8px",
+      fontFamily:"var(--font-cinzel)", fontSize:"11px",
       letterSpacing:".28em", textTransform:"uppercase",
       color:"var(--text-muted)",
     }}>{children}</label>
@@ -59,7 +59,7 @@ function MapButton({ url, label }: { url: string; label: string }) {
       style={{
         display:"flex", alignItems:"center", justifyContent:"center", gap:"10px",
         padding:"13px 24px", width:"100%",
-        fontFamily:"var(--font-jost)", fontSize:"11px",
+        fontFamily:"var(--font-jost)", fontSize:"13px",
         fontWeight:500, letterSpacing:".18em", textTransform:"uppercase",
         color:"var(--pearl)",
         background:"transparent",
@@ -81,7 +81,7 @@ function Divider({ label }: { label: string }) {
   return (
     <div style={{
       display:"flex", alignItems:"center", gap:"10px",
-      fontFamily:"var(--font-jost)", fontSize:"10px", letterSpacing:".1em",
+      fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".1em",
       color:"var(--text-muted)",
     }}>
       <div style={{ flex:1, height:"1px", background:"rgba(154,107,32,.1)" }}/>
@@ -101,17 +101,17 @@ function SelectedLocker({ code, address, onClear }: { code: string; address: str
     }}>
       <div>
         <p style={{
-          fontFamily:"var(--font-cinzel)", fontSize:"9px",
+          fontFamily:"var(--font-cinzel)", fontSize:"11px",
           letterSpacing:".25em", textTransform:"uppercase",
           color:"var(--gold)", marginBottom:"3px",
         }}>{code}</p>
-        <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400, color:"var(--text-muted)" }}>
+        <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400, color:"var(--text-muted)" }}>
           {address}
         </p>
       </div>
       <button type="button" onClick={onClear}
         style={{
-          fontFamily:"var(--font-jost)", fontSize:"10px", letterSpacing:".12em",
+          fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".12em",
           color:"var(--text-muted)", background:"none", border:"none", cursor:"pointer", transition:"color .2s",
         }}
         onMouseEnter={e => (e.currentTarget.style.color = "var(--gold)")}
@@ -145,12 +145,12 @@ function LockerDropdown({ points, onSelect }: { points: LockerPoint[]; onSelect:
           onMouseEnter={e => (e.currentTarget.style.background = "rgba(154,107,32,.05)")}
           onMouseLeave={e => (e.currentTarget.style.background = "none")}>
           <span style={{
-            fontFamily:"var(--font-cinzel)", fontSize:"9px",
+            fontFamily:"var(--font-cinzel)", fontSize:"11px",
             letterSpacing:".2em", textTransform:"uppercase",
             color:"var(--gold)", display:"block", marginBottom:"2px",
           }}>{p.code}</span>
           <span style={{
-            fontFamily:"var(--font-jost)", fontSize:"11px", fontWeight:400,
+            fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400,
             color:"var(--text-muted)",
           }}>{p.street}, {p.postcode} {p.city}</span>
         </button>
@@ -304,7 +304,7 @@ export default function AddressesPage() {
         <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", marginBottom:"48px" }}>
           <div>
             <p style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"10px",
+              fontFamily:"var(--font-cinzel)", fontSize:"13px",
               letterSpacing:".5em", textTransform:"uppercase",
               color:"var(--gold)", marginBottom:"16px",
             }}>Moje konto</p>
@@ -325,7 +325,7 @@ export default function AddressesPage() {
         {message && (
           <div style={{
             marginBottom:"20px", padding:"14px 18px",
-            fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+            fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
             borderLeft:`2px solid ${message.type === "ok" ? "rgba(74,222,128,.6)" : "rgba(154,107,32,.6)"}`,
             background: message.type === "ok" ? "rgba(74,222,128,.06)" : "rgba(154,107,32,.06)",
             color: message.type === "ok" ? "#16a34a" : "var(--gold)",
@@ -341,13 +341,13 @@ export default function AddressesPage() {
             display:"flex", flexDirection:"column", gap:"20px",
           }}>
             <p style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"10px",
+              fontFamily:"var(--font-cinzel)", fontSize:"13px",
               letterSpacing:".4em", textTransform:"uppercase",
               color:"var(--gold)", marginBottom:"4px",
             }}>{editId ? "Edytuj adres" : "Nowy adres dostawy"}</p>
 
             {/* ROW: Imię Nazwisko + Firma */}
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px" }}>
+            <div className="mob-grid-1-sm" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px" }}>
               <Field label="Imię i Nazwisko *">
                 <input required value={form.fullname}
                   onChange={e => set("fullname", e.target.value)}
@@ -361,7 +361,7 @@ export default function AddressesPage() {
             </div>
 
             {/* ROW: Email + Telefon */}
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px" }}>
+            <div className="mob-grid-1-sm" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px" }}>
               <Field label="Adres e-mail *">
                 <input required type="email" value={form.email}
                   onChange={e => set("email", e.target.value)}
@@ -377,16 +377,17 @@ export default function AddressesPage() {
             {/* KURIER */}
             <div>
               <Label>Preferowany kurier *</Label>
-              <div style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
+              <div className="mob-stack" style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
                 {COURIERS.map(c => {
                   const active = form.courierType === c.id;
                   return (
                     <button
                       key={c.id} type="button"
+                      className="mob-full"
                       onClick={() => { set("courierType", c.id); clearLocker(); }}
                       style={{
                         padding:"9px 18px",
-                        fontFamily:"var(--font-jost)", fontSize:"10px",
+                        fontFamily:"var(--font-jost)", fontSize:"13px",
                         fontWeight: active ? 500 : 300,
                         letterSpacing:".18em", textTransform:"uppercase",
                         color:      active ? "#F8F4EE"                   : "var(--text-muted)",
@@ -436,7 +437,7 @@ export default function AddressesPage() {
                         {lockerLoading && (
                           <span style={{
                             position:"absolute", right:"14px", top:"50%", transform:"translateY(-50%)",
-                            fontFamily:"var(--font-jost)", fontSize:"10px", color:"var(--text-muted)",
+                            fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)",
                           }}>…</span>
                         )}
                       </div>
@@ -448,7 +449,7 @@ export default function AddressesPage() {
                           position:"absolute", top:"calc(100% + 2px)", left:0, right:0, zIndex:100,
                           background:"var(--charcoal)", border:"1px solid rgba(154,107,32,.15)",
                           padding:"14px 16px",
-                          fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+                          fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
                           color:"var(--text-muted)",
                         }}>Brak wyników dla &ldquo;{lockerQuery}&rdquo;</div>
                       )}
@@ -480,7 +481,7 @@ export default function AddressesPage() {
                   />
                 </div>
 
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px" }}>
+                <div className="mob-grid-1-sm" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px" }}>
                   <Field label="Ulica i numer *">
                     <input required value={form.street}
                       onChange={e => set("street", e.target.value)}
@@ -509,7 +510,7 @@ export default function AddressesPage() {
                     onChange={e => set("street", e.target.value)}
                     placeholder="ul. Marszałkowska 1" className="input"/>
                 </Field>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:"16px" }}>
+                <div className="mob-grid-1-sm" style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:"16px" }}>
                   <Field label="Kod pocztowy *">
                     <input required value={form.postcode}
                       onChange={e => set("postcode", e.target.value)}
@@ -537,7 +538,7 @@ export default function AddressesPage() {
                 onChange={e => set("isDefault", e.target.checked)}
                 style={{ accentColor:"var(--gold)", width:"14px", height:"14px" }}/>
               <span style={{
-                fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+                fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
                 color:"var(--text-muted)",
               }}>Ustaw jako domyślny adres dostawy</span>
             </label>
@@ -564,14 +565,14 @@ export default function AddressesPage() {
         ) : (
           <div style={{ display:"flex", flexDirection:"column", gap:"2px" }}>
             {addresses.map(addr => (
-              <div key={addr.id} style={{
+              <div key={addr.id} className="mob-stack mob-align-start" style={{
                 padding:"20px 24px",
                 border:"1px solid rgba(154,107,32,.1)",
                 background:"var(--charcoal)",
                 display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:"16px",
               }}>
                 <div style={{ flex:1 }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"6px" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:"8px", marginBottom:"6px", flexWrap:"wrap" }}>
                     <span style={{
                       fontFamily:"var(--font-cormorant)", fontSize:"18px", fontWeight:400,
                       color:"var(--pearl)",
@@ -614,7 +615,7 @@ export default function AddressesPage() {
                 <div style={{ display:"flex", gap:"12px", flexShrink:0 }}>
                   <button onClick={() => startEdit(addr)}
                     style={{
-                      fontFamily:"var(--font-jost)", fontSize:"10px",
+                      fontFamily:"var(--font-jost)", fontSize:"13px",
                       letterSpacing:".15em", textTransform:"uppercase",
                       color:"var(--gold)", background:"none", border:"none",
                       cursor:"pointer", transition:"color .2s",
@@ -625,7 +626,7 @@ export default function AddressesPage() {
                   </button>
                   <button onClick={() => handleDelete(addr.id)}
                     style={{
-                      fontFamily:"var(--font-jost)", fontSize:"10px",
+                      fontFamily:"var(--font-jost)", fontSize:"13px",
                       letterSpacing:".15em", textTransform:"uppercase",
                       color:"rgba(100,75,50,.4)", background:"none", border:"none",
                       cursor:"pointer", transition:"color .2s",

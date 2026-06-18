@@ -42,7 +42,7 @@ export default function GatePage() {
         {/* Logo */}
         <div style={{ textAlign:"center", marginBottom:"36px" }}>
           <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"20px", fontWeight:500, letterSpacing:".2em", color:"var(--gold)" }}>CLEOMED</p>
-          <p style={{ fontFamily:"var(--font-jost)", fontSize:"9px", letterSpacing:".4em", textTransform:"uppercase", color:"var(--text-muted)", marginTop:"5px" }}>Panel Produktów</p>
+          <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", letterSpacing:".4em", textTransform:"uppercase", color:"var(--text-muted)", marginTop:"5px" }}>Panel Produktów</p>
         </div>
 
         <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400, color:"var(--text-muted)", textAlign:"center", marginBottom:"32px", lineHeight:1.6 }}>
@@ -53,7 +53,7 @@ export default function GatePage() {
           <div>
             <label style={{
               display:"block", marginBottom:"8px",
-              fontFamily:"var(--font-cinzel)", fontSize:"9px",
+              fontFamily:"var(--font-cinzel)", fontSize:"11px",
               letterSpacing:".3em", textTransform:"uppercase", color:"var(--text-muted)",
             }}>Hasło dostępu</label>
             <input
@@ -75,7 +75,7 @@ export default function GatePage() {
               onChange={e => setRemember(e.target.checked)}
               style={{ accentColor:"var(--gold)", width:"16px", height:"16px", flexShrink:0 }}
             />
-            <span style={{ fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--text-muted)" }}>
+            <span style={{ fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--text-muted)" }}>
               Zapamiętaj logowanie (24h)
             </span>
           </label>
@@ -84,7 +84,7 @@ export default function GatePage() {
             <div style={{
               padding:"10px 14px", borderLeft:"2px solid rgba(201,149,106,.6)",
               background:"rgba(201,149,106,.06)",
-              fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--gold-light)",
+              fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--gold-light)",
             }}>{error}</div>
           )}
 
@@ -95,7 +95,7 @@ export default function GatePage() {
 
         <p style={{
           marginTop:"24px", textAlign:"center",
-          fontFamily:"var(--font-jost)", fontSize:"11px", color:"rgba(92,68,32,.4)",
+          fontFamily:"var(--font-jost)", fontSize:"13px", color:"rgba(92,68,32,.4)",
         }}>
           🔒 Twoje dane są bezpieczne i przechowywane lokalnie
         </p>

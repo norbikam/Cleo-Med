@@ -37,7 +37,7 @@ function SetPasswordForm() {
 
         <div style={{ textAlign:"center", marginBottom:"40px" }}>
           <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"18px", fontWeight:500, letterSpacing:".2em", color:"var(--gold)", marginBottom:"6px" }}>CLEOMED</p>
-          <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--text-muted)" }}>Platforma B2B</p>
+          <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--text-muted)" }}>Platforma B2B</p>
         </div>
 
         <h2 style={{ fontFamily:"var(--font-cormorant)", fontSize:"36px", fontWeight:400, color:"var(--pearl)", marginBottom:"8px" }}>
@@ -51,7 +51,7 @@ function SetPasswordForm() {
 
         <form onSubmit={handleSubmit} style={{ display:"flex", flexDirection:"column", gap:"18px" }}>
           <div>
-            <label style={{ display:"block", marginBottom:"8px", fontFamily:"var(--font-cinzel)", fontSize:"9px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--text-muted)" }}>
+            <label style={{ display:"block", marginBottom:"8px", fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--text-muted)" }}>
               Nowe hasło
             </label>
             <input
@@ -62,7 +62,7 @@ function SetPasswordForm() {
             />
           </div>
           <div>
-            <label style={{ display:"block", marginBottom:"8px", fontFamily:"var(--font-cinzel)", fontSize:"9px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--text-muted)" }}>
+            <label style={{ display:"block", marginBottom:"8px", fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--text-muted)" }}>
               Powtórz hasło
             </label>
             <input

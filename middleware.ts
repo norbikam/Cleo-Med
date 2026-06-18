@@ -37,6 +37,19 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // ── /landing: redirect logged-in clients straight to catalog ──
+  if (pathname === "/landing") {
+    const gateToken    = request.cookies.get("gm_gate")?.value;
+    const sessionToken = request.cookies.get("gm_session")?.value;
+    if (gateToken && sessionToken) {
+      try {
+        await jwtVerify(gateToken, secret);
+        await jwtVerify(sessionToken, secret);
+        return NextResponse.redirect(new URL("/catalog", request.url));
+      } catch { /* invalid token — show landing normally */ }
+    }
+  }
+
   // ── Shop routes: additionally need gm_session ──
   const isShop = SHOP_PREFIXES.some(p => pathname === p || pathname.startsWith(p + "/"));
   if (isShop) {

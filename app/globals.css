@@ -4,9 +4,9 @@
 
 @layer base {
   :root {
-    --gold:       #9A6B20;
-    --gold-light: #B5843A;
-    --gold-pale:  #CC9E5A;
+    --gold:       #7A5518;
+    --gold-light: #9A6B20;
+    --gold-pale:  #B5843A;
     --obsidian:   #F5F1EC;
     --onyx:       #EDE8DF;
     --charcoal:   #FFFFFF;
@@ -17,14 +17,14 @@
     --text-main:  #1C1510;
     --text-muted: #3D2A0E;
     --text-sub:   #4A3418;
-    --text-accent:#9A6B20;
+    --text-accent:#7A5518;
     --border-gold: rgba(154,107,32,.15);
     --border-gold-2: rgba(154,107,32,.3);
 
     /* compat aliases */
-    --navy:      #9A6B20;
-    --navy-d:    #7D5518;
-    --navy-2:    #B5843A;
+    --navy:      #7A5518;
+    --navy-d:    #5E3F0E;
+    --navy-2:    #9A6B20;
     --dark:      #F5F1EC;
     --off:       #FFFFFF;
     --off-2:     #EDE8DF;
@@ -90,6 +90,7 @@
   .mob-pad    { padding-left: 16px !important; padding-right: 16px !important; }
   .mob-pad-y  { padding-top: 32px !important; padding-bottom: 60px !important; }
   .mob-grid-1 { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .mob-grid-1-sm { grid-template-columns: 1fr !important; }
   .mob-grid-2 { grid-template-columns: 1fr 1fr !important; }
   .mob-hide   { display: none !important; }
   .mob-full   { width: 100% !important; max-width: 100% !important; }
@@ -127,6 +128,14 @@
   from { transform:translateX(0); }
   to   { transform:translateX(-50%); }
 }
+@keyframes imgSlideRight {
+  from { opacity:0; transform:translateX(32px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+@keyframes imgSlideLeft {
+  from { opacity:0; transform:translateX(-32px); }
+  to   { opacity:1; transform:translateX(0); }
+}
 
 /* ── animation helpers ── */
 .animate-fadeUp   { animation: fadeUp  .7s cubic-bezier(.16,1,.3,1) both; }
@@ -149,6 +158,36 @@
 .grid-stagger > *:nth-child(5)  { animation-delay:.23s; }
 .grid-stagger > *:nth-child(6)  { animation-delay:.26s; }
 .grid-stagger > *:nth-child(n+7){ animation-delay:.28s; }
+
+/* ── whatsapp button ── */
+.wa-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,.25);
+  transition: transform .2s, box-shadow .2s;
+}
+.wa-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 28px rgba(0,0,0,.32);
+}
+@media (max-width: 639px) {
+  .wa-btn { bottom: 8px; right: 12px; }
+}
+
+/* ── catalog product grid ── */
+.catalog-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+@media (max-width: 1100px) { .catalog-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 800px)  { .catalog-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 500px)  { .catalog-grid { grid-template-columns: 1fr; } }
 
 /* ── product card ── */
 .pcard {

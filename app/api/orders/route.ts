@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Brak dostępu." }, { status: 401 });
 
   const body = await req.json();
-  const { addressId, newAddress, items, paymentMethod, userComments, weekendDelivery, weekendLocker } = body;
+  const { addressId, newAddress, items, paymentMethod, userComments, weekendDelivery, weekendLocker, discountCode, discountAmount, freeShipping } = body;
 
   if (!items || items.length === 0) {
     return NextResponse.json({ error: "Koszyk jest pusty." }, { status: 400 });
@@ -127,7 +127,21 @@ export async function POST(req: NextRequest) {
   const courierKey     = weekendDelivery ? "InPostWeekend" : baseCourierKey;
   const statusId       = STATUS_MAP[paymentKey][courierKey] ?? STATUS_MAP[paymentKey]["DPD"];
   const deliveryMethod = COURIER_LABELS[courierKey] ?? "DPD Kurier";
-  const deliveryPrice  = courierKey === "InPostWeekend" ? 25 : 20;
+  const deliveryPrice  = (client.freeShipping || freeShipping) ? 0 : courierKey === "InPostWeekend" ? 25 : 20;
+
+  const allProducts = [...blProducts];
+  if (discountAmount && discountAmount > 0) {
+    allProducts.push({
+      storage:    "db",
+      storage_id: 0,
+      product_id: "discount",
+      variant_id: 0,
+      name:       `Kod rabatowy: ${discountCode ?? ""}`,
+      sku:        "",
+      price_brutto: -parseFloat(String(discountAmount)),
+      quantity:   1,
+    });
+  }
 
   const orderId = await addOrder({
     order_status_id:    statusId,
@@ -149,12 +163,12 @@ export async function POST(req: NextRequest) {
     payment_method:     methodLabel,
     payment_method_cod: isCod ? 1 : 0,
     ...(userComments ? { user_comments: userComments, extra_field_1: userComments } : {}),
-    products:           blProducts,
+    products:           allProducts,
   });
 
   const orderTotal = items.reduce(
     (sum: number, i: { price: number; qty: number }) => sum + i.price * i.qty, 0
-  );
+  ) - (discountAmount ? parseFloat(String(discountAmount)) : 0);
 
   await db.insert(blOrderCache).values({
     clientId:        session.clientId,

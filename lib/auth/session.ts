@@ -7,7 +7,8 @@ import crypto from "crypto";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 const COOKIE_NAME = "gm_session";
-const TTL_DAYS = 30;
+const TTL_DAYS = 90;
+const REFRESH_THRESHOLD_DAYS = 30; // refresh when less than 30 days left
 
 export interface SessionPayload {
   clientId: string;
@@ -79,6 +80,12 @@ export async function getSession(): Promise<SessionPayload | null> {
       .limit(1);
 
     if (!client?.active) return null;
+
+    // Sliding refresh: extend session if less than REFRESH_THRESHOLD_DAYS remain
+    const msLeft = session.expiresAt.getTime() - Date.now();
+    if (msLeft < REFRESH_THRESHOLD_DAYS * 24 * 60 * 60 * 1000) {
+      refreshSession(tokenHash).catch(() => {});
+    }
 
     return { clientId, role, tokenHash };
   } catch {

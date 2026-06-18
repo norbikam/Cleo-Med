@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { clientAddresses } from "@/lib/db/schema";
+import { clientAddresses, clients } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 
@@ -8,13 +8,12 @@ export async function GET() {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Brak dostępu." }, { status: 401 });
 
-  const addresses = await db
-    .select()
-    .from(clientAddresses)
-    .where(eq(clientAddresses.clientId, session.clientId))
-    .orderBy(clientAddresses.createdAt);
+  const [addresses, clientRows] = await Promise.all([
+    db.select().from(clientAddresses).where(eq(clientAddresses.clientId, session.clientId)).orderBy(clientAddresses.createdAt),
+    db.select({ freeShipping: clients.freeShipping }).from(clients).where(eq(clients.id, session.clientId)).limit(1),
+  ]);
 
-  return NextResponse.json({ addresses });
+  return NextResponse.json({ addresses, freeShipping: clientRows[0]?.freeShipping ?? false });
 }
 
 export async function POST(req: NextRequest) {

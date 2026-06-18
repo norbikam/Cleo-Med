@@ -10,7 +10,7 @@ function Label({ children }: { children: React.ReactNode }) {
   return (
     <label style={{
       display:"block", marginBottom:"8px",
-      fontFamily:"var(--font-cinzel)", fontSize:"9px",
+      fontFamily:"var(--font-cinzel)", fontSize:"11px",
       letterSpacing:".3em", textTransform:"uppercase",
       color:"var(--text-muted)",
     }}>{children}</label>
@@ -71,7 +71,7 @@ export default function LoginPage() {
     flex: 1,
     padding: "14px 0",
     fontFamily: "var(--font-cinzel)",
-    fontSize: "9px",
+    fontSize: "13px",
     fontWeight: 500,
     letterSpacing: ".3em",
     textTransform: "uppercase" as const,
@@ -103,11 +103,11 @@ export default function LoginPage() {
       }}>
         <div>
           <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"16px", fontWeight:500, letterSpacing:".2em", color:"var(--gold)", marginBottom:"4px" }}>CLEOMED</p>
-          <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--text-muted)" }}>{pt(texts, "login_platform_label", "Platforma B2B")}</p>
+          <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--text-muted)" }}>{pt(texts, "login_platform_label", "Platforma B2B")}</p>
         </div>
 
         <div className="animate-fadeUp">
-          <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"10px", letterSpacing:".5em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"28px" }}>{pt(texts, "login_eyebrow", "Medycyna estetyczna")}</p>
+          <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"13px", letterSpacing:".5em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"28px" }}>{pt(texts, "login_eyebrow", "Medycyna estetyczna")}</p>
           <h1 style={{ fontFamily:"var(--font-cormorant)", fontSize:"clamp(42px, 4vw, 56px)", fontWeight:400, lineHeight:1.0, color:"var(--pearl)", marginBottom:"24px" }}>
             {pt(texts, "login_title_1", "Platforma")}<br/>{pt(texts, "login_title_2", "zamówień dla")}<br/>
             <em style={{ fontStyle:"italic", color:"var(--gold)" }}>{pt(texts, "login_title_3", "profesjonalistów")}</em>
@@ -127,12 +127,12 @@ export default function LoginPage() {
               ["feature_4_title","Wsparcie klienta",        "feature_4_sub","Dedykowany opiekun"],
             ] as const).map(([tk, td, sk, sd]) => (
               <div key={tk}>
-                <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:500, color:"var(--pearl)", marginBottom:"3px" }}>{pt(texts, tk, td)}</p>
-                <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", fontWeight:400, color:"var(--text-muted)" }}>{pt(texts, sk, sd)}</p>
+                <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:500, color:"var(--pearl)", marginBottom:"3px" }}>{pt(texts, tk, td)}</p>
+                <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400, color:"var(--text-muted)" }}>{pt(texts, sk, sd)}</p>
               </div>
             ))}
           </div>
-          <p style={{ marginTop:"40px", fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)" }}>© 2025 Cleo Med</p>
+          <p style={{ marginTop:"40px", fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)" }}>© 2025 Cleo Med</p>
         </div>
       </div>
 
@@ -143,7 +143,7 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <div className="lg:hidden" style={{ marginBottom:"40px", textAlign:"center" }}>
             <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"18px", fontWeight:500, letterSpacing:".2em", color:"var(--gold)" }}>CLEOMED</p>
-            <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--text-muted)", marginTop:"4px" }}>Platforma B2B</p>
+            <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".2em", textTransform:"uppercase", color:"var(--text-muted)", marginTop:"4px" }}>Platforma B2B</p>
           </div>
 
           {/* TABS */}
@@ -178,10 +178,10 @@ export default function LoginPage() {
                 {loading ? <Spinner text="Logowanie..." /> : "Zaloguj się →"}
               </button>
 
-              <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--text-muted)", textAlign:"center" }}>
+              <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--text-muted)", textAlign:"center" }}>
                 Nie masz konta?{" "}
                 <button type="button" onClick={() => { setTab("register"); setError(""); }}
-                  style={{ color:"var(--gold)", background:"none", border:"none", cursor:"pointer", fontSize:"12px", fontFamily:"var(--font-jost)", textDecoration:"underline" }}>
+                  style={{ color:"var(--gold)", background:"none", border:"none", cursor:"pointer", fontSize:"14px", fontFamily:"var(--font-jost)", textDecoration:"underline" }}>
                   Stwórz konto
                 </button>
               </p>
@@ -214,10 +214,10 @@ export default function LoginPage() {
                 {loading ? <Spinner text="Sprawdzanie..." /> : "Sprawdź i ustaw hasło →"}
               </button>
 
-              <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--text-muted)", textAlign:"center" }}>
+              <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--text-muted)", textAlign:"center" }}>
                 Masz już konto?{" "}
                 <button type="button" onClick={() => { setTab("login"); setError(""); setInfo(""); }}
-                  style={{ color:"var(--gold)", background:"none", border:"none", cursor:"pointer", fontSize:"12px", fontFamily:"var(--font-jost)", textDecoration:"underline" }}>
+                  style={{ color:"var(--gold)", background:"none", border:"none", cursor:"pointer", fontSize:"14px", fontFamily:"var(--font-jost)", textDecoration:"underline" }}>
                   Zaloguj się
                 </button>
               </p>

@@ -23,11 +23,26 @@ export default function Nav({ isAdmin }: { isAdmin?: boolean }) {
   const [menuClosing,   setMenuClosing]   = useState(false);
   const [query,        setQuery]        = useState("");
   const [scrolled,     setScrolled]     = useState(false);
+  const [barH,         setBarH]         = useState(36);
   const [allProds,     setAllProds]     = useState<{id:string; name:string; images?:string[]; price:number}[]>([]);
   const searchTimer = useRef<ReturnType<typeof setTimeout>>();
   const menuTimer   = useRef<ReturnType<typeof setTimeout>>();
   const { items } = useCart();
   const count = items.reduce((s, i) => s + i.qty, 0);
+
+  useEffect(() => {
+    const bar = document.getElementById("ann-bar");
+    if (!bar) return;
+    const measure = () => {
+      const h = bar.offsetHeight;
+      setBarH(h);
+      document.documentElement.style.setProperty("--nav-bottom", `${h + 72}px`);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(bar);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
@@ -162,7 +177,7 @@ export default function Nav({ isAdmin }: { isAdmin?: boolean }) {
                         <div style={{ width:"52px", height:"52px", flexShrink:0, background:"rgba(248,244,238,.05)" }}/>
                       )}
                       <span style={{
-                        fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+                        fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
                         color:"rgba(248,244,238,.8)", lineHeight:1.4,
                       }}>{p.name}</span>
                     </button>
@@ -203,7 +218,7 @@ export default function Nav({ isAdmin }: { isAdmin?: boolean }) {
             <button onClick={() => { closeMenu(); logout(); }}
               style={{
                 padding:"12px 40px",
-                fontFamily:"var(--font-jost)", fontSize:"12px", letterSpacing:".2em",
+                fontFamily:"var(--font-jost)", fontSize:"14px", letterSpacing:".2em",
                 textTransform:"uppercase", color:"rgba(248,244,238,.35)",
                 background:"none", border:"none", cursor:"pointer",
               }}>
@@ -215,14 +230,15 @@ export default function Nav({ isAdmin }: { isAdmin?: boolean }) {
 
       {/* ── NAV ── */}
       <header
-        className="fixed top-9 left-0 right-0 z-40 mob-pad-nav"
+        className="fixed left-0 right-0 z-40 mob-pad-nav"
         style={{
+          top: barH,
           padding:"0 60px", height:"72px",
           display:"flex", alignItems:"center", justifyContent:"space-between",
           background: scrolled ? "rgba(245,241,236,.97)" : "linear-gradient(to bottom, rgba(245,241,236,.92), transparent)",
           backdropFilter: scrolled ? "blur(14px)" : "none",
           borderBottom: scrolled ? "1px solid rgba(154,107,32,.12)" : "none",
-          transition:"background .4s, border-color .4s, backdrop-filter .4s",
+          transition:"background .4s, border-color .4s, backdrop-filter .4s, top .15s",
         }}
       >
         <Link href="/catalog" style={{ textDecoration:"none" }}>
@@ -237,9 +253,9 @@ export default function Nav({ isAdmin }: { isAdmin?: boolean }) {
             const isActive = pathname.startsWith(l.href);
             return (
               <Link key={l.href} href={l.href}
-                style={{ padding:"8px 16px", fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500, letterSpacing:".15em", textTransform:"uppercase", color: isActive ? "var(--gold-light)" : "var(--text-muted)", textDecoration:"none", transition:"color .3s" }}
-                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = "var(--gold-light)"; }}
-                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}
+                style={{ padding:"8px 16px", fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:600, letterSpacing:".15em", textTransform:"uppercase", color: isActive ? "var(--gold)" : "var(--pearl)", textDecoration:"none", transition:"color .3s" }}
+                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = "var(--gold)"; }}
+                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = "var(--pearl)"; }}
               >{l.label}</Link>
             );
           })}
@@ -254,7 +270,7 @@ export default function Nav({ isAdmin }: { isAdmin?: boolean }) {
           </button>
           <div style={{ width:"1px", height:"14px", background:"rgba(201,149,106,.15)", margin:"0 8px" }} />
           <Link href="/cart"
-            style={{ display:"flex", alignItems:"center", gap:"8px", padding:"9px 24px", fontFamily:"var(--font-jost)", fontSize:"10px", fontWeight:500, letterSpacing:".22em", textTransform:"uppercase", color:"var(--obsidian)", background:"var(--gold)", textDecoration:"none", transition:"background .3s" }}
+            style={{ display:"flex", alignItems:"center", gap:"8px", padding:"9px 24px", fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500, letterSpacing:".22em", textTransform:"uppercase", color:"var(--obsidian)", background:"var(--gold)", textDecoration:"none", transition:"background .3s" }}
             onMouseEnter={e => (e.currentTarget.style.background = "var(--gold-light)")}
             onMouseLeave={e => (e.currentTarget.style.background = "var(--gold)")}>
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
@@ -264,11 +280,11 @@ export default function Nav({ isAdmin }: { isAdmin?: boolean }) {
             </svg>
             Koszyk
             {count > 0 && (
-              <span style={{ fontFamily:"var(--font-jost)", fontSize:"10px", fontWeight:600, background:"var(--pearl)", color:"var(--gold)", height:"16px", minWidth:"16px", padding:"0 3px", display:"flex", alignItems:"center", justifyContent:"center" }}>{count}</span>
+              <span style={{ fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:600, background:"var(--pearl)", color:"var(--gold)", height:"16px", minWidth:"16px", padding:"0 3px", display:"flex", alignItems:"center", justifyContent:"center" }}>{count}</span>
             )}
           </Link>
           <button onClick={logout}
-            style={{ marginLeft:"4px", padding:"4px 8px", fontFamily:"var(--font-jost)", fontSize:"10px", letterSpacing:".1em", color:"var(--text-muted)", background:"none", border:"none", cursor:"pointer", transition:"color .3s" }}
+            style={{ marginLeft:"4px", padding:"4px 8px", fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".1em", color:"var(--text-muted)", background:"none", border:"none", cursor:"pointer", transition:"color .3s" }}
             onMouseEnter={e => (e.currentTarget.style.color = "var(--pearl)")}
             onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}>
             Wyloguj
@@ -291,7 +307,7 @@ export default function Nav({ isAdmin }: { isAdmin?: boolean }) {
               <circle cx="12" cy="13" r="1" fill="currentColor"/>
             </svg>
             {count > 0 && (
-              <span style={{ position:"absolute", top:"4px", right:"4px", fontSize:"9px", fontWeight:700, background:"var(--gold)", color:"var(--obsidian)", width:"13px", height:"13px", display:"flex", alignItems:"center", justifyContent:"center" }}>{count}</span>
+              <span style={{ position:"absolute", top:"4px", right:"4px", fontSize:"11px", fontWeight:700, background:"var(--gold)", color:"var(--obsidian)", width:"13px", height:"13px", display:"flex", alignItems:"center", justifyContent:"center" }}>{count}</span>
             )}
           </Link>
           <button onClick={() => { if (menuOpen || menuClosing) closeMenu(); else { setMenuOpen(true); closeSearch(); } }}

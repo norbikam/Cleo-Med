@@ -72,6 +72,10 @@ export async function addOrder(order: {
   return String(data.order_id);
 }
 
+export async function setOrderStatus(orderId: string, statusId: number): Promise<void> {
+  await blRequest("setOrderStatus", { order_id: Number(orderId), status_id: statusId });
+}
+
 export async function getStatusList(): Promise<Array<{ id: number; name: string }>> {
   const data = await blRequest<{ statuses: Array<{ id: number; name: string }> }>("getOrderStatusList");
   return data.statuses ?? [];

@@ -17,7 +17,7 @@ const inp: React.CSSProperties = {
   color:"var(--pearl)", background:"var(--obsidian)",
 };
 const btn: React.CSSProperties = {
-  padding:"9px 20px", fontFamily:"var(--font-jost)", fontSize:"10px",
+  padding:"9px 20px", fontFamily:"var(--font-jost)", fontSize:"13px",
   fontWeight:500, letterSpacing:".18em", textTransform:"uppercase",
   border:"none", cursor:"pointer",
   color:"var(--obsidian)", background:"var(--gold)",
@@ -78,20 +78,20 @@ export default function CodesPage() {
     <div style={{ maxWidth:"1200px", margin:"0 auto", padding:"40px 24px 80px" }} className="codes-wrap">
       {/* Header */}
       <div style={{ marginBottom:"32px" }}>
-        <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"9px", letterSpacing:".35em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"12px" }}>Panel administracyjny</p>
+        <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".35em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"12px" }}>Panel administracyjny</p>
         <h1 style={{ fontFamily:"var(--font-cormorant)", fontSize:"clamp(28px,5vw,40px)", fontWeight:400, color:"var(--pearl)", lineHeight:1 }}>Kody rabatowe</h1>
       </div>
 
       {/* Create form */}
       <div style={{ background:"#fff", border:"1px solid rgba(154,107,32,.1)", padding:"24px 24px", marginBottom:"2px" }}>
-        <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"9px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"16px" }}>Nowy kod</p>
+        <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"16px" }}>Nowy kod</p>
         <form onSubmit={handleCreate} className="codes-form" style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"12px", alignItems:"end" }}>
           <div>
-            <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Kod</p>
+            <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Kod</p>
             <input {...{ style:{...inp,width:"100%"}, placeholder:"PROMO20", required:true, value:code, onChange:(e:React.ChangeEvent<HTMLInputElement>)=>setCode(e.target.value), onFocus, onBlur }}/>
           </div>
           <div>
-            <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Typ</p>
+            <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Typ</p>
             <select style={{ ...inp, width:"100%", appearance:"none" as "none" }} value={type} onChange={e => setType(e.target.value)} onFocus={onFocus} onBlur={onBlur}>
               <option value="percent">Procent (%)</option>
               <option value="fixed">Kwota stała (zł)</option>
@@ -100,12 +100,12 @@ export default function CodesPage() {
           </div>
           {type !== "free_shipping" && (
             <div>
-              <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>{type === "percent" ? "Wartość %" : "Kwota (zł)"}</p>
+              <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>{type === "percent" ? "Wartość %" : "Kwota (zł)"}</p>
               <input style={{ ...inp, width:"100%" }} type="number" min="0" placeholder={type==="percent"?"20":"100"} value={value} onChange={e => setValue(e.target.value)} onFocus={onFocus} onBlur={onBlur}/>
             </div>
           )}
           <div>
-            <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Dla klienta (opcjonalnie)</p>
+            <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Dla klienta (opcjonalnie)</p>
             <select style={{ ...inp, width:"100%", appearance:"none" as "none" }} value={clientId} onChange={e => setClientId(e.target.value)} onFocus={onFocus} onBlur={onBlur}>
               <option value="">Dla wszystkich</option>
               {clients.map(c => (
@@ -114,11 +114,11 @@ export default function CodesPage() {
             </select>
           </div>
           <div>
-            <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Limit użyć</p>
+            <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Limit użyć</p>
             <input style={{ ...inp, width:"100%" }} type="number" min="1" placeholder="bez limitu" value={maxUses} onChange={e => setMaxUses(e.target.value)} onFocus={onFocus} onBlur={onBlur}/>
           </div>
           <div>
-            <p style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)", marginBottom:"4px" }}>Wygasa</p>
+            <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)", marginBottom:"4px" }}>Wygasa</p>
             <input style={{ ...inp, width:"100%" }} type="date" value={expiry} onChange={e => setExpiry(e.target.value)} onFocus={onFocus} onBlur={onBlur}/>
           </div>
           <div className="codes-form-full">
@@ -130,7 +130,7 @@ export default function CodesPage() {
       {/* Codes list */}
       <div style={{ background:"#fff", border:"1px solid rgba(154,107,32,.1)" }} className="codes-table-wrap">
         <div style={{ padding:"16px 24px", borderBottom:"1px solid rgba(154,107,32,.08)" }}>
-          <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"9px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--gold)" }}>
+          <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--gold)" }}>
             Wszystkie kody ({codes.length})
           </p>
         </div>
@@ -143,7 +143,7 @@ export default function CodesPage() {
             <thead>
               <tr style={{ borderBottom:"1px solid rgba(154,107,32,.08)" }}>
                 {["Kod","Typ / wartość","Klient","Użycia","Wygasa","Status",""].map(h => (
-                  <th key={h} style={{ padding:"10px 20px", textAlign:"left", fontFamily:"var(--font-cinzel)", fontSize:"8px", letterSpacing:".25em", textTransform:"uppercase", color:"var(--text-muted)", fontWeight:400 }}>{h}</th>
+                  <th key={h} style={{ padding:"10px 20px", textAlign:"left", fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".25em", textTransform:"uppercase", color:"var(--text-muted)", fontWeight:400 }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -160,18 +160,18 @@ export default function CodesPage() {
                   <td style={{ padding:"12px 20px", fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--pearl)" }}>
                     {c.type === "percent" ? `${c.value}% zniżki` : c.type === "fixed" ? `${c.value} zł zniżki` : "Darmowa dostawa"}
                   </td>
-                  <td style={{ padding:"12px 20px", fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--text-muted)" }}>
+                  <td style={{ padding:"12px 20px", fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--text-muted)" }}>
                     {c.clientName ?? c.clientPhone ?? <span style={{ color:"rgba(154,107,32,.4)" }}>Wszyscy</span>}
                   </td>
-                  <td style={{ padding:"12px 20px", fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--text-muted)" }}>
+                  <td style={{ padding:"12px 20px", fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--text-muted)" }}>
                     {c.usedCount}{c.maxUses != null ? `/${c.maxUses}` : ""}
                   </td>
-                  <td style={{ padding:"12px 20px", fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--text-muted)" }}>
+                  <td style={{ padding:"12px 20px", fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--text-muted)" }}>
                     {c.expiresAt ? new Date(c.expiresAt).toLocaleDateString("pl-PL") : "—"}
                   </td>
                   <td style={{ padding:"12px 20px" }}>
                     <span style={{
-                      fontFamily:"var(--font-cinzel)", fontSize:"8px", letterSpacing:".2em", textTransform:"uppercase",
+                      fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".2em", textTransform:"uppercase",
                       padding:"3px 8px", border:"1px solid",
                       color: c.active ? "var(--gold)" : "var(--text-muted)",
                       borderColor: c.active ? "rgba(154,107,32,.3)" : "rgba(154,107,32,.1)",
@@ -179,10 +179,10 @@ export default function CodesPage() {
                   </td>
                   <td style={{ padding:"12px 20px", textAlign:"right" }}>
                     <div style={{ display:"flex", gap:"12px", justifyContent:"flex-end" }}>
-                      <button onClick={() => handleToggle(c.id, c.active)} style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--gold)", background:"none", border:"none", cursor:"pointer" }}>
+                      <button onClick={() => handleToggle(c.id, c.active)} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--gold)", background:"none", border:"none", cursor:"pointer" }}>
                         {c.active ? "Wyłącz" : "Włącz"}
                       </button>
-                      <button onClick={() => handleDelete(c.id)} style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"rgba(180,50,50,.6)", background:"none", border:"none", cursor:"pointer" }}>
+                      <button onClick={() => handleDelete(c.id)} style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"rgba(180,50,50,.6)", background:"none", border:"none", cursor:"pointer" }}>
                         Usuń
                       </button>
                     </div>

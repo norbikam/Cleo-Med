@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { clients, clientPhones } from "@/lib/db/schema";
-import { eq, or } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { normalizePhone } from "@/lib/utils/phone";
 import { checkRateLimit } from "@/lib/utils/rate-limit";
 import { createSession, setSessionCookie } from "@/lib/auth/session";

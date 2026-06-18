@@ -31,6 +31,7 @@ export default function OrdersPage() {
   const [loading,  setLoading]  = useState(true);
   const [syncing,  setSyncing]  = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [imgMap,   setImgMap]   = useState<Record<string, string>>({});
 
   async function loadOrders() {
     const res  = await fetch("/api/orders");
@@ -40,6 +41,19 @@ export default function OrdersPage() {
   }
 
   useEffect(() => { loadOrders(); }, []);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then(r => r.json())
+      .then(d => {
+        const map: Record<string, string> = {};
+        for (const p of (d.products ?? [])) {
+          if (p.id && p.images?.[0]) map[p.id] = p.images[0];
+        }
+        setImgMap(map);
+      })
+      .catch(() => {});
+  }, []);
 
   async function handleSync() {
     setSyncing(true);
@@ -67,7 +81,7 @@ export default function OrdersPage() {
         <div className="mob-stack mob-gap-sm mob-align-start" style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", marginBottom:"48px" }}>
           <div>
             <p style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"10px",
+              fontFamily:"var(--font-cinzel)", fontSize:"13px",
               letterSpacing:".5em", textTransform:"uppercase",
               color:"var(--gold)", marginBottom:"16px",
             }}>Moje konto</p>
@@ -81,7 +95,7 @@ export default function OrdersPage() {
             onClick={handleSync}
             disabled={syncing}
             style={{
-              fontFamily:"var(--font-jost)", fontSize:"10px",
+              fontFamily:"var(--font-jost)", fontSize:"13px",
               letterSpacing:".2em", textTransform:"uppercase",
               color: syncing ? "rgba(100,75,50,.35)" : "var(--gold)",
               background:"none", border:"1px solid rgba(201,149,106,.2)",
@@ -129,7 +143,7 @@ export default function OrdersPage() {
                     </span>
                     {o.statusName && (
                       <span style={{
-                        fontFamily:"var(--font-cinzel)", fontSize:"8px",
+                        fontFamily:"var(--font-cinzel)", fontSize:"11px",
                         letterSpacing:".2em", textTransform:"uppercase",
                         padding:"3px 8px",
                         border:"1px solid rgba(201,149,106,.25)",
@@ -146,7 +160,7 @@ export default function OrdersPage() {
                       </span>
                     )}
                     <span style={{
-                      fontFamily:"var(--font-jost)", fontSize:"12px",
+                      fontFamily:"var(--font-jost)", fontSize:"14px",
                       color:"var(--gold)",
                       transition:"transform .2s",
                       display:"inline-block",
@@ -167,7 +181,7 @@ export default function OrdersPage() {
                       <div>
                         {o.deliveryFullname && (
                           <p style={{
-                            fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+                            fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
                             color:"var(--text-muted)", letterSpacing:".03em", wordBreak:"break-word",
                           }}>
                             Dostawa: <strong style={{ color:"var(--pearl)", fontWeight:400 }}>{o.deliveryFullname}</strong>
@@ -189,7 +203,7 @@ export default function OrdersPage() {
                               href={trackingUrl(o.trackingNumber, o.deliveryMethod)}
                               target="_blank" rel="noopener noreferrer"
                               style={{
-                                fontFamily:"var(--font-jost)", fontSize:"11px", fontWeight:400,
+                                fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400,
                                 color:"var(--gold)", textDecoration:"underline",
                                 textDecorationColor:"rgba(201,149,106,.35)",
                                 letterSpacing:".03em",
@@ -207,7 +221,7 @@ export default function OrdersPage() {
                         style={{
                           flexShrink:0,
                           padding:"9px 20px",
-                          fontFamily:"var(--font-jost)", fontSize:"10px",
+                          fontFamily:"var(--font-jost)", fontSize:"13px",
                           fontWeight:500, letterSpacing:".18em", textTransform:"uppercase",
                           color:"var(--obsidian)", background:"var(--gold)",
                           border:"1px solid var(--gold)",
@@ -221,29 +235,48 @@ export default function OrdersPage() {
                     </div>
 
                     <div style={{ display:"flex", flexDirection:"column", gap:"0" }}>
-                      {o.products.map((p, i) => (
+                      {o.products.map((p, i) => {
+                        const thumb = imgMap[p.sku];
+                        return (
                         <div key={i} style={{
-                          display:"flex", justifyContent:"space-between", alignItems:"center",
+                          display:"flex", alignItems:"center",
                           padding:"12px 0",
                           borderBottom:"1px solid rgba(201,149,106,.06)",
-                          gap:"12px", flexWrap:"wrap",
+                          gap:"12px",
                         }}>
+                          <div style={{
+                            width:"48px", height:"48px", flexShrink:0,
+                            background:"linear-gradient(to bottom, #F5F1EC, #FFF)",
+                            border:"1px solid rgba(154,107,32,.1)",
+                            overflow:"hidden",
+                          }}>
+                            {thumb
+                              ? <img src={thumb} alt="" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
+                              : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                                  <svg width="16" height="16" viewBox="0 0 40 40" fill="none" style={{ opacity:.15 }}>
+                                    <rect x="4" y="4" width="32" height="32" stroke="var(--gold)" strokeWidth="1.5"/>
+                                    <path d="M4 27l9-9 7 7 5-5 11 11" stroke="var(--gold)" strokeWidth="1.5" strokeLinejoin="round"/>
+                                  </svg>
+                                </div>
+                            }
+                          </div>
                           <div style={{ flex:1, minWidth:0 }}>
                             <p style={{
                               fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
                               color:"var(--pearl)", marginBottom:"2px",
                             }}>{p.name}</p>
                             <p style={{
-                              fontFamily:"var(--font-jost)", fontSize:"11px", fontWeight:400,
+                              fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400,
                               color:"var(--text-muted)",
-                            }}>SKU: {p.sku} · szt. {p.qty}</p>
+                            }}>szt. {p.qty}</p>
                           </div>
                           <span style={{
                             fontFamily:"var(--font-cormorant)", fontSize:"17px", fontWeight:400,
                             color:"var(--gold-light)", flexShrink:0,
                           }}>{(p.price * p.qty).toFixed(2)} zł</span>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}

@@ -27,6 +27,10 @@ interface SuccessData {
   shippingToday: boolean;
 }
 
+interface PromoResult {
+  id: string; code: string; type: string; value: number | null;
+}
+
 function isShippingToday(): boolean {
   const now = new Date();
   const day = now.getDay();
@@ -52,6 +56,15 @@ export default function CartPage() {
   const [success,          setSuccess]         = useState<SuccessData | null>(null);
   const [error,            setError]           = useState<string | null>(null);
   const [shippingNow,      setShippingNow]     = useState(isShippingToday);
+  const [promoInput,       setPromoInput]       = useState("");
+  const [promo,            setPromo]            = useState<PromoResult | null>(null);
+  const [promoError,       setPromoError]       = useState<string | null>(null);
+  const [promoLoading,     setPromoLoading]     = useState(false);
+  const [confFile,         setConfFile]         = useState<File | null>(null);
+  const [confUploading,    setConfUploading]    = useState(false);
+  const [confDone,         setConfDone]         = useState(false);
+  const [confError,        setConfError]        = useState<string | null>(null);
+  const [clientFreeShipping, setClientFreeShipping] = useState(false);
   const searchTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dropdownRef  = useRef<HTMLDivElement>(null);
 
@@ -60,7 +73,17 @@ export default function CartPage() {
   const showWeekend   = isFriday && !!selectedAddr;
   const showLocker    = weekendDelivery && showWeekend;
   const weekendReady  = !weekendDelivery || !showWeekend || weekendLocker !== null;
-  const deliveryPrice = weekendDelivery && showWeekend ? 25 : 20;
+  const deliveryPrice    = weekendDelivery && showWeekend ? 25 : 20;
+  const freeShipping      = promo?.type === "free_shipping" || clientFreeShipping;
+  const effectiveDelivery = freeShipping ? 0 : deliveryPrice;
+
+  const discountAmount = promo
+    ? promo.type === "percent"
+      ? Math.round(total * (promo.value ?? 0) / 100 * 100) / 100
+      : promo.type === "fixed"
+        ? Math.min(promo.value ?? 0, total)
+        : 0
+    : 0;
 
   useEffect(() => {
     if (!weekendDelivery) { setWeekendLocker(null); setLockerQuery(""); setLockerResults([]); }
@@ -113,11 +136,29 @@ export default function CartPage() {
       .then(d => {
         const addrs: Address[] = d.addresses ?? [];
         setAddresses(addrs);
+        if (d.freeShipping) setClientFreeShipping(true);
         const def = addrs.find(a => a.isDefault);
         if (def) setSelectedAddress(def.id);
         else if (addrs.length > 0) setSelectedAddress(addrs[0].id);
       });
   }, []);
+
+  async function applyPromo() {
+    if (!promoInput.trim()) return;
+    setPromoLoading(true); setPromoError(null); setPromo(null);
+    try {
+      const res = await fetch("/api/discount", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoInput.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setPromoError(data.error ?? "Nieprawidłowy kod."); return; }
+      setPromo(data.discount);
+    } finally {
+      setPromoLoading(false);
+    }
+  }
 
   async function handleOrder() {
     if (items.length === 0) return;
@@ -125,6 +166,12 @@ export default function CartPage() {
     if (showLocker && !weekendLocker) { setError("Wybierz paczkomat dla dostawy InPost Weekend."); return; }
     setLoading(true); setError(null);
     try {
+      const discountNote = promo
+        ? freeShipping
+          ? `KOD: ${promo.code} (darmowa dostawa)`
+          : `KOD: ${promo.code} (-${discountAmount.toFixed(2)} zł)`
+        : null;
+      const comments = [discountNote, userComments.trim() || null].filter(Boolean).join(" | ");
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -132,20 +179,30 @@ export default function CartPage() {
           addressId: selectedAddress,
           items: items.map(i => ({ id: i.id, name: i.name, sku: i.sku, price: i.price, qty: i.qty })),
           paymentMethod,
-          userComments: userComments.trim() || undefined,
+          userComments: comments || undefined,
           weekendDelivery: weekendDelivery && showWeekend,
           weekendLocker: (weekendDelivery && showWeekend && weekendLocker) ? weekendLocker : undefined,
+          discountCode:   promo?.code,
+          discountAmount: discountAmount > 0 ? discountAmount : undefined,
+          freeShipping:   freeShipping || undefined,
         }),
       });
       const text = await res.text();
       const data = text ? JSON.parse(text) : {};
       if (!res.ok) { setError(data.error ?? `Błąd serwera (${res.status})`); return; }
+      if (promo) {
+        fetch("/api/discount", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: promo.id }),
+        }).catch(() => {});
+      }
       const addr = addresses.find(a => a.id === selectedAddress)!;
       const snapshot = items.map(i => ({ name: i.name, qty: i.qty, price: i.price }));
-      const snap_total = total;
+      const snap_total = total - discountAmount;
       const shippingTodaySnap = isShippingToday();
       clearCart();
-      setSuccess({ orderId: String(data.orderId), address: addr, paymentMethod, orderTotal: snap_total, deliveryPrice, items: snapshot, shippingToday: shippingTodaySnap });
+      setSuccess({ orderId: String(data.orderId), address: addr, paymentMethod, orderTotal: snap_total, deliveryPrice: effectiveDelivery, items: snapshot, shippingToday: shippingTodaySnap });
     } catch (err) { setError("Błąd połączenia: " + String(err)); }
     finally   { setLoading(false); }
   }
@@ -203,7 +260,7 @@ export default function CartPage() {
               </svg>
             </div>
             <p style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"10px",
+              fontFamily:"var(--font-cinzel)", fontSize:"13px",
               letterSpacing:".5em", textTransform:"uppercase",
               color:"var(--gold)", marginBottom:"16px",
             }}>Potwierdzenie</p>
@@ -212,7 +269,7 @@ export default function CartPage() {
               color:"var(--pearl)", marginBottom:"14px",
             }}>Zamówienie<br/><em style={{ fontStyle:"italic", color:"var(--gold)" }}>złożone</em></h1>
             <p style={{
-              fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+              fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
               color:"var(--text-muted)", letterSpacing:".05em",
             }}>
               Numer zamówienia:{" "}
@@ -222,7 +279,7 @@ export default function CartPage() {
             </p>
             <p style={{
               marginTop:"18px",
-              fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:500,
+              fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:500,
               color: success.shippingToday ? "var(--gold)" : "var(--text-muted)",
               letterSpacing:".04em",
             }}>
@@ -237,7 +294,7 @@ export default function CartPage() {
           {/* PRODUCTS */}
           <div style={{ marginBottom:"28px" }}>
             <p style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"9px",
+              fontFamily:"var(--font-cinzel)", fontSize:"11px",
               letterSpacing:".35em", textTransform:"uppercase",
               color:"var(--gold)", marginBottom:"16px",
             }}>Zamówione produkty</p>
@@ -254,7 +311,7 @@ export default function CartPage() {
                       color:"var(--pearl)",
                     }}>{item.name}</span>
                     <span style={{
-                      fontFamily:"var(--font-jost)", fontSize:"10px",
+                      fontFamily:"var(--font-jost)", fontSize:"13px",
                       color:"rgba(100,75,50,.45)", letterSpacing:".05em",
                     }}>× {item.qty}</span>
                   </div>
@@ -270,7 +327,7 @@ export default function CartPage() {
                 borderBottom:"1px solid rgba(154,107,32,.07)",
               }}>
                 <span style={{
-                  fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+                  fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
                   color:"var(--text-muted)",
                 }}>Koszt dostawy</span>
                 <span style={{
@@ -283,7 +340,7 @@ export default function CartPage() {
                 padding:"14px 0 0",
               }}>
                 <span style={{
-                  fontFamily:"var(--font-cinzel)", fontSize:"8px",
+                  fontFamily:"var(--font-cinzel)", fontSize:"11px",
                   letterSpacing:".3em", textTransform:"uppercase",
                   color:"var(--text-muted)",
                 }}>Łącznie z dostawą</span>
@@ -299,12 +356,12 @@ export default function CartPage() {
           <div className="mob-grid-1" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"2px", marginBottom:"36px" }}>
             <div style={{ padding:"20px", background:"var(--charcoal)", border:"1px solid rgba(154,107,32,.08)" }}>
               <p style={{
-                fontFamily:"var(--font-cinzel)", fontSize:"8px",
+                fontFamily:"var(--font-cinzel)", fontSize:"11px",
                 letterSpacing:".3em", textTransform:"uppercase",
                 color:"var(--gold)", marginBottom:"12px",
               }}>Adres dostawy</p>
               <p style={{
-                fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+                fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
                 color:"var(--text-muted)", lineHeight:1.75,
               }}>
                 <strong style={{ color:"var(--pearl)", fontWeight:500 }}>{success.address.fullname}</strong><br/>
@@ -314,21 +371,129 @@ export default function CartPage() {
             </div>
             <div style={{ padding:"20px", background:"var(--charcoal)", border:"1px solid rgba(154,107,32,.08)" }}>
               <p style={{
-                fontFamily:"var(--font-cinzel)", fontSize:"8px",
+                fontFamily:"var(--font-cinzel)", fontSize:"11px",
                 letterSpacing:".3em", textTransform:"uppercase",
                 color:"var(--gold)", marginBottom:"12px",
               }}>Płatność</p>
               <p style={{
-                fontFamily:"var(--font-cinzel)", fontSize:"9px",
+                fontFamily:"var(--font-cinzel)", fontSize:"11px",
                 letterSpacing:".2em", textTransform:"uppercase",
                 color:"var(--pearl)", marginBottom:"10px",
               }}>{pm.title}</p>
               <p style={{
-                fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+                fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
                 color:"var(--text-muted)", lineHeight:1.75,
               }}>{pm.content}</p>
             </div>
           </div>
+
+          {/* UPLOAD POTWIERDZENIA — tylko dla przelewu i BLIKa */}
+          {(success.paymentMethod === "transfer" || success.paymentMethod === "blik") && (
+            <div style={{
+              marginBottom:"32px",
+              padding:"24px 28px",
+              border:"1px solid rgba(154,107,32,.15)",
+              background:"rgba(154,107,32,.03)",
+            }}>
+              <p style={{
+                fontFamily:"var(--font-cinzel)", fontSize:"11px",
+                letterSpacing:".35em", textTransform:"uppercase",
+                color:"var(--gold)", marginBottom:"6px",
+              }}>Potwierdzenie płatności</p>
+              <p style={{
+                fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400,
+                color:"var(--text-muted)", marginBottom:"16px", lineHeight:1.6,
+              }}>
+                Przyspiesz realizację — prześlij zrzut ekranu lub zdjęcie potwierdzenia płatności.
+              </p>
+
+              {confDone ? (
+                <div style={{
+                  display:"flex", alignItems:"center", gap:"12px",
+                  padding:"12px 16px",
+                  background:"rgba(154,107,32,.07)",
+                  border:"1px solid rgba(154,107,32,.2)",
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink:0 }}>
+                    <circle cx="9" cy="9" r="8" stroke="var(--gold)" strokeWidth="1.2"/>
+                    <path d="M5 9l3 3 5-5" stroke="var(--gold)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span style={{ fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500, color:"var(--pearl)" }}>
+                    Potwierdzenie zostało przesłane. Dziękujemy!
+                  </span>
+                </div>
+              ) : (
+                <>
+                  {confFile ? (
+                    <div style={{ display:"flex", alignItems:"center", gap:"12px", marginBottom:"12px" }}>
+                      <img
+                        src={URL.createObjectURL(confFile)}
+                        alt=""
+                        style={{ width:"56px", height:"56px", objectFit:"cover", border:"1px solid rgba(154,107,32,.15)" }}
+                      />
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--pearl)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{confFile.name}</p>
+                        <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--text-muted)" }}>{(confFile.size / 1024).toFixed(0)} KB</p>
+                      </div>
+                      <button
+                        onClick={() => setConfFile(null)}
+                        style={{ background:"none", border:"none", cursor:"pointer", color:"var(--text-muted)", fontSize:"18px", flexShrink:0 }}>×</button>
+                    </div>
+                  ) : (
+                    <label style={{
+                      display:"flex", flexDirection:"column", alignItems:"center", gap:"8px",
+                      padding:"24px 20px",
+                      border:"1px dashed rgba(154,107,32,.3)",
+                      cursor:"pointer",
+                      marginBottom:"12px",
+                    }}>
+                      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                        <path d="M14 4v14M8 10l6-6 6 6" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M4 22h20" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
+                      <span style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--gold)", letterSpacing:".05em" }}>
+                        Wybierz zdjęcie lub zrzut ekranu
+                      </span>
+                      <span style={{ fontFamily:"var(--font-jost)", fontSize:"11px", color:"var(--text-muted)" }}>
+                        JPG, PNG, WEBP, HEIC — max 8 MB
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display:"none" }}
+                        onChange={e => { setConfFile(e.target.files?.[0] ?? null); setConfError(null); }}
+                      />
+                    </label>
+                  )}
+
+                  {confError && (
+                    <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"rgba(200,60,60,.8)", marginBottom:"10px" }}>{confError}</p>
+                  )}
+
+                  <button
+                    disabled={!confFile || confUploading}
+                    onClick={async () => {
+                      if (!confFile) return;
+                      setConfUploading(true); setConfError(null);
+                      try {
+                        const fd = new FormData();
+                        fd.append("file",    confFile);
+                        fd.append("orderId", success.orderId);
+                        const res  = await fetch("/api/orders/confirmation", { method:"POST", body: fd });
+                        const data = await res.json();
+                        if (!res.ok) { setConfError(data.error ?? "Błąd przesyłania."); return; }
+                        setConfDone(true);
+                      } catch { setConfError("Błąd połączenia."); }
+                      finally { setConfUploading(false); }
+                    }}
+                    className="btn-gold"
+                    style={{ opacity: (!confFile || confUploading) ? .45 : 1, padding:"14px 28px" }}>
+                    {confUploading ? "Przesyłanie..." : "Wyślij potwierdzenie"}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
 
           {/* ACTIONS */}
           <div style={{ display:"flex", gap:"12px", justifyContent:"center" }}>
@@ -364,7 +529,7 @@ export default function CartPage() {
       <div style={{ maxWidth:"800px", margin:"0 auto", padding:"60px 24px 100px" }}>
 
         <p style={{
-          fontFamily:"var(--font-cinzel)", fontSize:"10px",
+          fontFamily:"var(--font-cinzel)", fontSize:"13px",
           letterSpacing:".5em", textTransform:"uppercase",
           color:"var(--gold)", marginBottom:"20px",
         }}>Twój koszyk</p>
@@ -386,12 +551,29 @@ export default function CartPage() {
               borderBottom:"1px solid rgba(201,149,106,.08)",
               flexWrap:"wrap",
             }}>
-              <div style={{ flex:1 }}>
+              {/* THUMBNAIL */}
+              <div style={{
+                width:"56px", height:"56px", flexShrink:0,
+                background:"linear-gradient(to bottom, #F5F1EC, #FFF)",
+                border:"1px solid rgba(154,107,32,.12)",
+                overflow:"hidden",
+              }}>
+                {item.image
+                  ? <img src={item.image} alt="" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
+                  : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <svg width="18" height="18" viewBox="0 0 40 40" fill="none" style={{ opacity:.15 }}>
+                        <rect x="4" y="4" width="32" height="32" stroke="var(--gold)" strokeWidth="1.5"/>
+                        <path d="M4 27l9-9 7 7 5-5 11 11" stroke="var(--gold)" strokeWidth="1.5" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                }
+              </div>
+              <div style={{ flex:1, minWidth:0 }}>
                 <p style={{ fontFamily:"var(--font-cormorant)", fontSize:"18px", fontWeight:400, color:"var(--pearl)", marginBottom:"2px" }}>
                   {item.name}
                 </p>
                 {item.sku && (
-                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"10px", letterSpacing:".1em", color:"rgba(100,75,50,.45)" }}>
+                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".1em", color:"rgba(100,75,50,.45)" }}>
                     SKU: {item.sku}
                   </p>
                 )}
@@ -408,7 +590,7 @@ export default function CartPage() {
                   onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}>−</button>
                 <span style={{
                   width:"36px", height:"32px", display:"flex", alignItems:"center", justifyContent:"center",
-                  fontFamily:"var(--font-jost)", fontSize:"12px", color:"var(--pearl)",
+                  fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--pearl)",
                   borderLeft:"1px solid rgba(201,149,106,.15)", borderRight:"1px solid rgba(201,149,106,.15)",
                 }}>{item.qty}</span>
                 <button onClick={() => updateQty(item.id, item.qty + 1)}
@@ -429,7 +611,7 @@ export default function CartPage() {
 
               <button onClick={() => removeItem(item.id)}
                 style={{
-                  fontFamily:"var(--font-jost)", fontSize:"10px", letterSpacing:".1em",
+                  fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".1em",
                   color:"var(--text-muted)", background:"none", border:"none",
                   cursor:"pointer", transition:"color .2s",
                 }}
@@ -448,7 +630,7 @@ export default function CartPage() {
           marginBottom:"20px",
         }}>
           <p style={{
-            fontFamily:"var(--font-cinzel)", fontSize:"9px",
+            fontFamily:"var(--font-cinzel)", fontSize:"11px",
             letterSpacing:".3em", textTransform:"uppercase",
             color:"var(--gold)", marginBottom:"16px",
           }}>Adres dostawy</p>
@@ -502,7 +684,7 @@ export default function CartPage() {
                 }}>Dostawa w sobotę — InPost Weekend</span>
                 <span style={{
                   display:"block",
-                  fontFamily:"var(--font-jost)", fontSize:"11px", fontWeight:400,
+                  fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400,
                   color:"var(--text-muted)", marginTop:"2px",
                 }}>Zamów dziś, odbierz jutro w paczkomacie. Koszt dostawy: <strong style={{ color:"var(--gold)" }}>25 zł</strong></span>
               </div>
@@ -519,7 +701,7 @@ export default function CartPage() {
             background:"rgba(154,107,32,.02)",
           }}>
             <p style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"8px",
+              fontFamily:"var(--font-cinzel)", fontSize:"11px",
               letterSpacing:".3em", textTransform:"uppercase",
               color:"var(--text-muted)", marginBottom:"12px",
             }}>Wybierz paczkomat InPost Weekend</p>
@@ -533,11 +715,11 @@ export default function CartPage() {
               }}>
                 <div>
                   <p style={{
-                    fontFamily:"var(--font-cinzel)", fontSize:"9px",
+                    fontFamily:"var(--font-cinzel)", fontSize:"11px",
                     letterSpacing:".2em", textTransform:"uppercase",
                     color:"var(--gold)", marginBottom:"3px",
                   }}>{weekendLocker.code}</p>
-                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400, color:"var(--text-muted)" }}>
+                  <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400, color:"var(--text-muted)" }}>
                     {weekendLocker.street}, {weekendLocker.postcode} {weekendLocker.city}
                   </p>
                 </div>
@@ -545,7 +727,7 @@ export default function CartPage() {
                   type="button"
                   onClick={() => { setWeekendLocker(null); setLockerQuery(""); }}
                   style={{
-                    fontFamily:"var(--font-jost)", fontSize:"10px", letterSpacing:".1em",
+                    fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".1em",
                     color:"var(--text-muted)", background:"none", border:"none",
                     cursor:"pointer", transition:"color .2s",
                   }}
@@ -564,7 +746,7 @@ export default function CartPage() {
                   style={{
                     display:"flex", alignItems:"center", justifyContent:"center", gap:"10px",
                     padding:"13px 24px", width:"100%",
-                    fontFamily:"var(--font-jost)", fontSize:"11px",
+                    fontFamily:"var(--font-jost)", fontSize:"13px",
                     fontWeight:500, letterSpacing:".18em", textTransform:"uppercase",
                     color:"var(--pearl)",
                     background:"transparent",
@@ -583,7 +765,7 @@ export default function CartPage() {
                 {/* DIVIDER */}
                 <div style={{
                   display:"flex", alignItems:"center", gap:"10px",
-                  fontFamily:"var(--font-jost)", fontSize:"10px", letterSpacing:".1em",
+                  fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".1em",
                   color:"rgba(100,75,50,.45)",
                 }}>
                   <div style={{ flex:1, height:"1px", background:"rgba(154,107,32,.1)" }}/>
@@ -603,7 +785,7 @@ export default function CartPage() {
                   {lockerLoading && (
                     <span style={{
                       position:"absolute", right:"14px", top:"50%", transform:"translateY(-50%)",
-                      fontFamily:"var(--font-jost)", fontSize:"10px", color:"var(--text-muted)",
+                      fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--text-muted)",
                     }}>…</span>
                   )}
                 </div>
@@ -626,12 +808,12 @@ export default function CartPage() {
                         onMouseEnter={e => (e.currentTarget.style.background = "rgba(154,107,32,.05)")}
                         onMouseLeave={e => (e.currentTarget.style.background = "none")}>
                         <span style={{
-                          fontFamily:"var(--font-cinzel)", fontSize:"9px",
+                          fontFamily:"var(--font-cinzel)", fontSize:"11px",
                           letterSpacing:".2em", textTransform:"uppercase",
                           color:"var(--gold)", display:"block", marginBottom:"2px",
                         }}>{p.code}</span>
                         <span style={{
-                          fontFamily:"var(--font-jost)", fontSize:"11px", fontWeight:400,
+                          fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400,
                           color:"var(--text-muted)",
                         }}>{p.street}, {p.postcode} {p.city}</span>
                       </button>
@@ -643,7 +825,7 @@ export default function CartPage() {
                     position:"absolute", top:"calc(100% + 2px)", left:0, right:0, zIndex:100,
                     background:"var(--charcoal)", border:"1px solid rgba(154,107,32,.15)",
                     padding:"14px 16px",
-                    fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+                    fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
                     color:"var(--text-muted)",
                   }}>Brak wyników dla &ldquo;{lockerQuery}&rdquo;</div>
                 )}
@@ -660,7 +842,7 @@ export default function CartPage() {
           marginBottom:"20px",
         }}>
           <p style={{
-            fontFamily:"var(--font-cinzel)", fontSize:"9px",
+            fontFamily:"var(--font-cinzel)", fontSize:"11px",
             letterSpacing:".3em", textTransform:"uppercase",
             color:"var(--gold)", marginBottom:"12px",
           }}>Informacje dodatkowe</p>
@@ -683,6 +865,83 @@ export default function CartPage() {
           />
         </div>
 
+        {/* PROMO CODE */}
+        <div style={{
+          padding:"20px 28px",
+          border:"1px solid rgba(201,149,106,.1)",
+          marginBottom:"20px",
+        }}>
+          <p style={{
+            fontFamily:"var(--font-cinzel)", fontSize:"11px",
+            letterSpacing:".3em", textTransform:"uppercase",
+            color:"var(--gold)", marginBottom:"12px",
+          }}>Kod promocyjny</p>
+
+          {promo ? (
+            <div style={{
+              display:"flex", alignItems:"center", justifyContent:"space-between", gap:"12px",
+              padding:"12px 16px",
+              background:"rgba(154,107,32,.05)",
+              border:"1px solid rgba(154,107,32,.2)",
+            }}>
+              <div>
+                <span style={{
+                  fontFamily:"var(--font-cinzel)", fontSize:"11px",
+                  letterSpacing:".25em", textTransform:"uppercase",
+                  color:"var(--gold)",
+                }}>{promo.code}</span>
+                <span style={{
+                  marginLeft:"12px",
+                  fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
+                  color:"var(--pearl)",
+                }}>
+                  −{discountAmount.toFixed(2)} zł
+                  {promo.type === "percent" && promo.value != null && (
+                    <span style={{ color:"var(--text-muted)", fontWeight:400 }}> ({promo.value}%)</span>
+                  )}
+                </span>
+              </div>
+              <button
+                onClick={() => { setPromo(null); setPromoInput(""); setPromoError(null); }}
+                style={{
+                  fontFamily:"var(--font-jost)", fontSize:"12px", letterSpacing:".1em",
+                  color:"var(--text-muted)", background:"none", border:"none",
+                  cursor:"pointer", transition:"color .2s",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--pearl)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}>
+                Usuń
+              </button>
+            </div>
+          ) : (
+            <div style={{ display:"flex", gap:"8px" }}>
+              <input
+                value={promoInput}
+                onChange={e => { setPromoInput(e.target.value.toUpperCase()); setPromoError(null); }}
+                onKeyDown={e => e.key === "Enter" && applyPromo()}
+                placeholder="Wpisz kod..."
+                className="input"
+                style={{ flex:1, textTransform:"uppercase", letterSpacing:".08em" }}
+              />
+              <button
+                onClick={applyPromo}
+                disabled={promoLoading || !promoInput.trim()}
+                className="btn-gold"
+                style={{ opacity: promoLoading || !promoInput.trim() ? .5 : 1, padding:"14px 20px", whiteSpace:"nowrap" }}>
+                {promoLoading ? "..." : "Zastosuj"}
+              </button>
+            </div>
+          )}
+
+          {promoError && (
+            <p style={{
+              marginTop:"8px",
+              fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400,
+              color:"rgba(201,149,106,.8)", paddingLeft:"2px",
+            }}>{promoError}</p>
+          )}
+        </div>
+
         {/* PAYMENT METHOD */}
         <div style={{
           padding:"24px 28px",
@@ -691,7 +950,7 @@ export default function CartPage() {
           display:"flex", flexDirection:"column", gap:"16px",
         }}>
           <p style={{
-            fontFamily:"var(--font-cinzel)", fontSize:"9px",
+            fontFamily:"var(--font-cinzel)", fontSize:"11px",
             letterSpacing:".3em", textTransform:"uppercase",
             color:"var(--gold)",
           }}>Metoda płatności</p>
@@ -709,7 +968,7 @@ export default function CartPage() {
                   onClick={() => setPaymentMethod(opt.id)}
                   style={{
                     padding:"9px 20px",
-                    fontFamily:"var(--font-jost)", fontSize:"10px",
+                    fontFamily:"var(--font-jost)", fontSize:"13px",
                     fontWeight: active ? 500 : 300,
                     letterSpacing:".18em", textTransform:"uppercase",
                     color:      active ? "#F8F4EE"               : "var(--text-muted)",
@@ -728,7 +987,7 @@ export default function CartPage() {
           {/* COD info */}
           {paymentMethod === "cod" && (
             <p style={{
-              fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400,
+              fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400,
               color:"var(--text-muted)", lineHeight:1.6,
               borderLeft:"2px solid rgba(201,149,106,.25)", paddingLeft:"12px",
             }}>
@@ -745,11 +1004,11 @@ export default function CartPage() {
               display:"flex", flexDirection:"column", gap:"4px",
             }}>
               <p style={{
-                fontFamily:"var(--font-cinzel)", fontSize:"8px",
+                fontFamily:"var(--font-cinzel)", fontSize:"11px",
                 letterSpacing:".3em", textTransform:"uppercase",
                 color:"var(--gold)", marginBottom:"6px",
               }}>Dane do przelewu</p>
-              <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400, color:"var(--text-muted)", lineHeight:1.7 }}>
+              <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400, color:"var(--text-muted)", lineHeight:1.7 }}>
                 Odbiorca: <strong style={{ color:"var(--pearl)", fontWeight:500 }}>{pt(texts, "company_name", "Cleo Med Sp. z o.o.")}</strong><br/>
                 Numer konta: <strong style={{ color:"var(--pearl)", fontWeight:500 }}>{pt(texts, "bank_account_number", "XX XXXX XXXX XXXX XXXX XXXX XXXX")}</strong><br/>
                 Bank: <strong style={{ color:"var(--pearl)", fontWeight:500 }}>{pt(texts, "bank_name", "Nazwa banku")}</strong><br/>
@@ -757,7 +1016,7 @@ export default function CartPage() {
               </p>
               <p style={{
                 marginTop:"12px",
-                fontFamily:"var(--font-jost)", fontSize:"11px", fontWeight:500,
+                fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
                 color:"var(--gold)", letterSpacing:".04em",
               }}>⚠ Zamówienie zostanie zrealizowane po zaksięgowaniu wpłaty.</p>
             </div>
@@ -772,11 +1031,11 @@ export default function CartPage() {
               display:"flex", flexDirection:"column", gap:"4px",
             }}>
               <p style={{
-                fontFamily:"var(--font-cinzel)", fontSize:"8px",
+                fontFamily:"var(--font-cinzel)", fontSize:"11px",
                 letterSpacing:".3em", textTransform:"uppercase",
                 color:"var(--gold)", marginBottom:"6px",
               }}>BLIK na telefon</p>
-              <p style={{ fontFamily:"var(--font-jost)", fontSize:"12px", fontWeight:400, color:"var(--text-muted)", lineHeight:1.7 }}>
+              <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:400, color:"var(--text-muted)", lineHeight:1.7 }}>
                 Wyślij przelew BLIK na numer:<br/>
                 <strong style={{ fontFamily:"var(--font-cormorant)", fontSize:"22px", fontWeight:400, color:"var(--pearl)", letterSpacing:".05em" }}>
                   {pt(texts, "blik_phone", "+48 XXX XXX XXX")}
@@ -786,7 +1045,7 @@ export default function CartPage() {
               </p>
               <p style={{
                 marginTop:"12px",
-                fontFamily:"var(--font-jost)", fontSize:"11px", fontWeight:500,
+                fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
                 color:"var(--gold)", letterSpacing:".04em",
               }}>⚠ Zamówienie zostanie zrealizowane po zaksięgowaniu wpłaty.</p>
             </div>
@@ -794,51 +1053,64 @@ export default function CartPage() {
         </div>
 
         {/* TOTAL + SUBMIT */}
-        <div style={{
+        <div className="mob-stack" style={{
           display:"flex", alignItems:"center", justifyContent:"space-between",
+          gap:"20px",
           padding:"24px 28px",
           border:"1px solid rgba(201,149,106,.1)",
         }}>
-          <div>
-            <div style={{ display:"flex", flexDirection:"column", gap:"4px", marginBottom:"8px" }}>
-              <div style={{ display:"flex", justifyContent:"space-between", gap:"40px" }}>
+          <div className="mob-full">
+            <div style={{ display:"flex", flexDirection:"column", gap:"6px", marginBottom:"10px" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", gap:"16px" }}>
                 <span style={{
-                  fontFamily:"var(--font-cinzel)", fontSize:"8px",
-                  letterSpacing:".2em", textTransform:"uppercase",
+                  fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
                   color:"var(--text-muted)",
                 }}>Produkty</span>
                 <span style={{
-                  fontFamily:"var(--font-cormorant)", fontSize:"15px",
-                  color:"var(--text-muted)",
+                  fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
+                  color:"var(--pearl)",
                 }}>{total.toFixed(2)} zł</span>
               </div>
-              <div style={{ display:"flex", justifyContent:"space-between", gap:"40px" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", gap:"16px" }}>
                 <span style={{
-                  fontFamily:"var(--font-cinzel)", fontSize:"8px",
-                  letterSpacing:".2em", textTransform:"uppercase",
+                  fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
                   color:"var(--text-muted)",
                 }}>Dostawa</span>
                 <span style={{
-                  fontFamily:"var(--font-cormorant)", fontSize:"15px",
-                  color:"var(--text-muted)",
-                }}>{deliveryPrice.toFixed(2)} zł</span>
+                  fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
+                  color:"var(--pearl)",
+                }}>{freeShipping ? "Gratis" : `${deliveryPrice.toFixed(2)} zł`}</span>
               </div>
+              {promo && (discountAmount > 0 || freeShipping) && (
+                <div style={{ display:"flex", justifyContent:"space-between", gap:"16px" }}>
+                  <span style={{
+                    fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
+                    color:"var(--gold)",
+                  }}>Rabat ({promo.code})</span>
+                  <span style={{
+                    fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
+                    color:"var(--gold)",
+                  }}>{freeShipping ? "Darmowa dostawa" : `−${discountAmount.toFixed(2)} zł`}</span>
+                </div>
+              )}
             </div>
-            <p style={{
-              fontFamily:"var(--font-cinzel)", fontSize:"9px",
-              letterSpacing:".3em", textTransform:"uppercase",
-              color:"var(--text-muted)", marginBottom:"4px",
-            }}>Łącznie z dostawą</p>
-            <p style={{
-              fontFamily:"var(--font-cormorant)", fontSize:"36px", fontWeight:400, lineHeight:1,
-              color:"var(--gold-light)",
-            }}>{(total + deliveryPrice).toFixed(2)} <span style={{ fontSize:"18px", color:"var(--text-muted)" }}>zł</span></p>
+            <div style={{ height:"1px", background:"rgba(201,149,106,.15)", marginBottom:"10px" }}/>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", gap:"16px" }}>
+              <span style={{
+                fontFamily:"var(--font-jost)", fontSize:"14px", fontWeight:600,
+                color:"var(--pearl)",
+              }}>Łącznie z dostawą</span>
+              <span style={{
+                fontFamily:"var(--font-cormorant)", fontSize:"32px", fontWeight:400, lineHeight:1,
+                color:"var(--gold)",
+              }}>{(total - discountAmount + effectiveDelivery).toFixed(2)} <span style={{ fontSize:"16px", color:"var(--text-muted)" }}>zł</span></span>
+            </div>
           </div>
 
-          <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:"10px" }}>
+          <div className="mob-full" style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:"10px" }}>
             {error && (
               <p style={{
-                fontFamily:"var(--font-jost)", fontSize:"12px",
+                fontFamily:"var(--font-jost)", fontSize:"14px",
                 borderLeft:"2px solid rgba(201,149,106,.5)",
                 paddingLeft:"10px", color:"var(--gold)",
               }}>{error}</p>
@@ -846,12 +1118,16 @@ export default function CartPage() {
             <button
               onClick={handleOrder}
               disabled={loading || addresses.length === 0 || !weekendReady}
-              className="btn-gold"
-              style={{ opacity: (loading || addresses.length === 0 || !weekendReady) ? .5 : 1, cursor: (loading || addresses.length === 0 || !weekendReady) ? "not-allowed" : "pointer" }}>
+              className="btn-gold mob-full"
+              style={{
+                opacity: (loading || addresses.length === 0 || !weekendReady) ? .5 : 1,
+                cursor: (loading || addresses.length === 0 || !weekendReady) ? "not-allowed" : "pointer",
+                padding:"18px 32px", fontSize:"13px",
+              }}>
               {loading ? "Składanie..." : "Złóż zamówienie"}
             </button>
             <p style={{
-              fontFamily:"var(--font-jost)", fontSize:"11px", fontWeight:400,
+              fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:400,
               color: shippingNow ? "var(--gold)" : "rgba(248,244,238,.3)",
               textAlign:"right", lineHeight:1.4,
             }}>

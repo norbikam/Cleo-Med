@@ -1,4 +1,7 @@
 import { blRequest } from "./client";
+import { db } from "@/lib/db";
+import { blProductCache } from "@/lib/db/schema";
+import { sql } from "drizzle-orm";
 
 export interface BLProduct {
   id: string;
@@ -12,39 +15,37 @@ export interface BLProduct {
   categoryName?: string;
 }
 
-interface ProductsCache {
-  data: BLProduct[];
+interface ProductsResult {
+  products: BLProduct[];
   categories: Record<string, string>;
-  cachedAt: number;
 }
 
-const cache: ProductsCache = { data: [], categories: {}, cachedAt: 0 };
-const TTL_MS = 10 * 60 * 1000;
+// in-memory micro-cache to avoid repeated DB reads within the same instance
+let memCache: (ProductsResult & { at: number }) | null = null;
+const MEM_TTL_MS  = 30_000;   // 30s in-memory
+const DB_TTL_MIN  = 15;        // 15 min DB cache
+
+// prevent concurrent BL fetches
+let fetchingPromise: Promise<ProductsResult> | null = null;
 
 async function fetchCategories(inventoryId: number): Promise<Record<string, string>> {
   try {
     const data = await blRequest<{
-      categories: Record<string, { category_id: number; name: string; parent_id: number }>;
+      categories: Record<string, { category_id: number; name: string }>;
     }>("getInventoryCategories", { inventory_id: inventoryId });
     const map: Record<string, string> = {};
     for (const [, cat] of Object.entries(data.categories ?? {})) {
       map[String(cat.category_id)] = cat.name;
     }
-    console.log(`[categories] załadowano ${Object.keys(map).length} kategorii:`, map);
     return map;
-  } catch (err) {
-    console.error("[categories] błąd:", err instanceof Error ? err.message : err);
+  } catch {
     return {};
   }
 }
 
-export async function getProducts(): Promise<{ products: BLProduct[]; categories: Record<string, string> }> {
-  if (Date.now() - cache.cachedAt < TTL_MS && cache.data.length > 0) {
-    return { products: cache.data, categories: cache.categories };
-  }
-
+async function fetchFromBL(): Promise<ProductsResult> {
   const inventoryId = Number(process.env.BL_INVENTORY_ID ?? 26259);
-  const priceGroup = Number(process.env.BL_PRICE_GROUP ?? 23497);
+  const priceGroup  = Number(process.env.BL_PRICE_GROUP  ?? 23497);
 
   const [listData, categoryMap] = await Promise.all([
     blRequest<{ products: Record<string, string> }>(
@@ -66,10 +67,7 @@ export async function getProducts(): Promise<{ products: BLProduct[]; categories
       prices?: Record<string, number>;
       stock?: Record<string, number>;
     }>;
-  }>("getInventoryProductsData", {
-    inventory_id: inventoryId,
-    products: productIds,
-  });
+  }>("getInventoryProductsData", { inventory_id: inventoryId, products: productIds });
 
   const products: BLProduct[] = Object.entries(detailData.products ?? {})
     .map(([id, p]) => {
@@ -77,9 +75,8 @@ export async function getProducts(): Promise<{ products: BLProduct[]; categories
       const stock = Object.values(p.stock ?? {}).reduce((a, b) => a + b, 0);
       const categoryId = p.category_id ? String(p.category_id) : undefined;
       return {
-        id,
-        name,
-        sku: p.sku || undefined,
+        id, name,
+        sku: id,
         price: p.prices?.[String(priceGroup)] ?? 0,
         stock,
         description: p.text_fields?.description,
@@ -88,13 +85,61 @@ export async function getProducts(): Promise<{ products: BLProduct[]; categories
         categoryName: categoryId ? categoryMap[categoryId] : undefined,
       };
     })
-    .filter((p) => p.name && p.stock > 0);
+    .filter(p => p.name && p.stock > 0);
 
-  console.log(`[products] załadowano ${products.length} produktów (${Object.keys(categoryMap).length} kategorii)`);
+  // save to DB (upsert each product)
+  if (products.length > 0) {
+    const rows = products.map(p => ({ blProductId: p.id, data: p as unknown as Record<string, unknown> }));
+    await db.insert(blProductCache)
+      .values(rows)
+      .onConflictDoUpdate({
+        target: blProductCache.blProductId,
+        set: { data: sql`excluded.data`, cachedAt: sql`now()` },
+      });
+  }
 
-  cache.data = products;
-  cache.categories = categoryMap;
-  cache.cachedAt = Date.now();
-
+  console.log(`[products] BL fetch: ${products.length} produktów`);
   return { products, categories: categoryMap };
+}
+
+export async function getProducts(): Promise<ProductsResult> {
+  // 1. in-memory micro-cache
+  if (memCache && Date.now() - memCache.at < MEM_TTL_MS) {
+    return { products: memCache.products, categories: memCache.categories };
+  }
+
+  // 2. DB cache
+  const rows = await db.select().from(blProductCache);
+  if (rows.length > 0) {
+    const freshest = rows.reduce((a, b) => (a.cachedAt > b.cachedAt ? a : b));
+    const ageMin = (Date.now() - freshest.cachedAt.getTime()) / 60_000;
+
+    if (ageMin < DB_TTL_MIN) {
+      const products = rows.map(r => r.data as unknown as BLProduct);
+      const categories: Record<string, string> = {};
+      for (const p of products) {
+        if (p.categoryId && p.categoryName) categories[p.categoryId] = p.categoryName;
+      }
+      memCache = { products, categories, at: Date.now() };
+
+      // refresh in background if > 10 min old
+      if (ageMin > 10 && !fetchingPromise) {
+        fetchingPromise = fetchFromBL()
+          .then(r => { memCache = { ...r, at: Date.now() }; return r; })
+          .finally(() => { fetchingPromise = null; });
+      }
+
+      return { products, categories };
+    }
+  }
+
+  // 3. fetch from BL (deduplicated)
+  if (!fetchingPromise) {
+    fetchingPromise = fetchFromBL()
+      .then(r => { memCache = { ...r, at: Date.now() }; return r; })
+      .finally(() => { fetchingPromise = null; });
+  }
+
+  const result = await fetchingPromise;
+  return result;
 }

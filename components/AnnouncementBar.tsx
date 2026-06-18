@@ -51,7 +51,7 @@ export default function AnnouncementBar() {
   const parts = (line ?? "__Zamówienie zostanie wysłane w następny dzień roboczy__").split("__");
 
   return (
-    <div style={{
+    <div id="ann-bar" style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
       minHeight: "36px", background: "#0a0a0a",
       display: "flex", alignItems: "center", justifyContent: "center",
@@ -59,8 +59,8 @@ export default function AnnouncementBar() {
       padding: "6px 16px",
     }}>
       <p style={{
-        fontFamily: "var(--font-jost)", fontSize: "11px", fontWeight: 400,
-        letterSpacing: ".04em", color: "rgba(248,244,238,.9)",
+        fontFamily: "var(--font-jost)", fontSize: "13px", fontWeight: 500,
+        letterSpacing: ".04em", color: "#F8F4EE",
         textAlign: "center", margin: 0,
       }}>
         {parts.map((p, i) =>
