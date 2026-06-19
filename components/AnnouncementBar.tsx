@@ -37,12 +37,16 @@ export function shippingToday(): boolean {
 export default function AnnouncementBar() {
   const texts = usePageTexts();
   const [line, setLine] = useState<string | null>(null);
+  const [isFriday, setIsFriday] = useState(false);
 
   useEffect(() => {
     const before  = pt(texts, "announcement_before", "Zamów w ciągu");
     const after   = pt(texts, "announcement_after",  "a przesyłkę wyślemy jeszcze dzisiaj!");
     const nextDay = pt(texts, "announcement_next_day", "Zamówienie zostanie wysłane w następny dzień roboczy");
-    const tick = () => setLine(computeLine(before, after, nextDay));
+    const tick = () => {
+      setLine(computeLine(before, after, nextDay));
+      setIsFriday(new Date().getDay() === 5);
+    };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
@@ -54,9 +58,9 @@ export default function AnnouncementBar() {
     <div id="ann-bar" style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
       minHeight: "36px", background: "#0a0a0a",
-      display: "flex", alignItems: "center", justifyContent: "center",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       borderBottom: "1px solid rgba(201,149,106,.08)",
-      padding: "6px 16px",
+      padding: isFriday ? "8px 16px" : "6px 16px",
     }}>
       <p style={{
         fontFamily: "var(--font-jost)", fontSize: "13px", fontWeight: 500,
@@ -69,6 +73,15 @@ export default function AnnouncementBar() {
             : p
         )}
       </p>
+      {isFriday && (
+        <p style={{
+          fontFamily: "var(--font-jost)", fontSize: "13px", fontWeight: 500,
+          letterSpacing: ".04em", color: "#C9956A",
+          textAlign: "center", margin: "4px 0 0",
+        }}>
+          Wysyłka weekendowa InPost paczkomat 25 zł
+        </p>
+      )}
     </div>
   );
 }
