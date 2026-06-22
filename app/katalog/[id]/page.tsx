@@ -28,7 +28,7 @@ export default function KatalogProductPage() {
         const found = all.find(p => p.id === id) ?? null;
         setProduct(found);
         if (found?.categoryId) {
-          setRelated(all.filter(p => p.categoryId === found.categoryId && p.id !== id).slice(0, 4));
+          setRelated(all.filter(p => p.categoryId === found.categoryId && p.id !== id && p.stock > 0).slice(0, 4));
         }
       })
       .finally(() => setLoading(false));

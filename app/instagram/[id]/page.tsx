@@ -48,7 +48,7 @@ export default function InstagramProductPage() {
         const all: Product[] = d.products ?? [];
         const rel = all.filter(p => {
           const cat = (p.categoryName ?? "").toLowerCase();
-          return p.categoryId === product.categoryId && p.id !== id && !EXCLUDED.some(ex => cat.includes(ex));
+          return p.categoryId === product.categoryId && p.id !== id && p.stock > 0 && !EXCLUDED.some(ex => cat.includes(ex));
         });
         setRelated(rel.slice(0, 4));
       });

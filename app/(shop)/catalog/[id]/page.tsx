@@ -48,7 +48,7 @@ export default function ProductPage() {
       .then(r => r.json())
       .then(d => {
         const all: Product[] = d.products ?? [];
-        const rel = all.filter(p => p.categoryId === product.categoryId && p.id !== id);
+        const rel = all.filter(p => p.categoryId === product.categoryId && p.id !== id && p.stock > 0);
         setRelated(rel.slice(0, 4));
       });
   }, [product?.categoryId, id]);
