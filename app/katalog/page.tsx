@@ -27,7 +27,7 @@ export default function KatalogPage() {
   useEffect(() => {
     fetch("/api/products/public")
       .then(r => r.json())
-      .then(d => { setProducts(d.products ?? []); setCategories(d.categories ?? {}); })
+      .then(d => { setProducts((d.products ?? []).filter((p: Product) => p.stock > 0)); setCategories(d.categories ?? {}); })
       .finally(() => setLoading(false));
   }, []);
 
