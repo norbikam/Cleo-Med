@@ -4,6 +4,7 @@ import { clients, blOrderCache, clientAddresses } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { addOrder } from "@/lib/baselinker/orders";
+import { deductLocalStock } from "@/lib/baselinker/products";
 
 export async function GET() {
   const session = await getSession();
@@ -190,6 +191,8 @@ export async function POST(req: NextRequest) {
     target: blOrderCache.blOrderId,
     set: { syncedAt: new Date() },
   });
+
+  await deductLocalStock(items.map((i: { id: string; qty: number }) => ({ id: i.id, qty: i.qty })));
 
   return NextResponse.json({ ok: true, orderId });
   } catch (err) {

@@ -1,7 +1,7 @@
 import { blRequest } from "./client";
 import { db } from "@/lib/db";
 import { blProductCache } from "@/lib/db/schema";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export interface BLProduct {
   id: string;
@@ -108,6 +108,19 @@ async function fetchFromBL(): Promise<ProductsResult> {
 }
 
 export function clearProductCache() {
+  memCache = null;
+}
+
+export async function deductLocalStock(items: { id: string; qty: number }[]) {
+  for (const item of items) {
+    const [row] = await db.select().from(blProductCache).where(eq(blProductCache.blProductId, item.id)).limit(1);
+    if (!row) continue;
+    const data = row.data as unknown as BLProduct;
+    const newStock = Math.max(0, data.stock - item.qty);
+    await db.update(blProductCache)
+      .set({ data: { ...data, stock: newStock } as unknown as Record<string, unknown> })
+      .where(eq(blProductCache.blProductId, item.id));
+  }
   memCache = null;
 }
 
