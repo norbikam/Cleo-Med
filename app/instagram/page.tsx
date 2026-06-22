@@ -33,7 +33,7 @@ export default function InstagramPage() {
         const all: Product[] = d.products ?? [];
         const visible = all.filter(p => {
           const cat = (p.categoryName ?? "").toLowerCase();
-          return !EXCLUDED.some(ex => cat.includes(ex));
+          return p.stock > 0 && !EXCLUDED.some(ex => cat.includes(ex));
         });
         setProducts(visible);
         setCategories(d.categories ?? {});
