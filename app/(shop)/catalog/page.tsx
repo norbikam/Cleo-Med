@@ -21,9 +21,10 @@ export default function CatalogPage() {
   const [products,   setProducts]   = useState<Product[]>([]);
   const [categories, setCategories] = useState<Record<string, string>>({});
   const [active,     setActive]     = useState("all");
-  const [loading,    setLoading]    = useState(true);
-  const [error,      setError]      = useState<string | null>(null);
-  const [gridKey,    setGridKey]    = useState(0);
+  const [loading,          setLoading]          = useState(true);
+  const [error,            setError]            = useState<string | null>(null);
+  const [gridKey,          setGridKey]          = useState(0);
+  const [showUnavailable,  setShowUnavailable]  = useState(false);
   const revealRef = useRef<HTMLDivElement>(null);
   const gridRef   = useRef<HTMLDivElement>(null);
 
@@ -67,7 +68,7 @@ export default function CatalogPage() {
   products.forEach(p => { if (p.categoryId && !(p.categoryId in catOrder)) catOrder[p.categoryId] = Object.keys(catOrder).length; });
 
   const filtered = products
-    .filter(p => active === "all" || p.categoryId === active)
+    .filter(p => (active === "all" || p.categoryId === active) && (showUnavailable || p.stock > 0))
     .sort((a, b) => {
       if (active !== "all") return 0;
       return (catOrder[a.categoryId ?? ""] ?? 999) - (catOrder[b.categoryId ?? ""] ?? 999);
@@ -228,6 +229,30 @@ export default function CatalogPage() {
               pointerEvents:"none",
             }}/>
           </div>
+
+          {/* toggle niedostępne */}
+          <label style={{ display:"flex", alignItems:"center", gap:"8px", cursor:"pointer", flexShrink:0, paddingLeft:"12px", borderLeft:"1px solid rgba(154,107,32,.1)" }}>
+            <span style={{ fontFamily:"var(--font-jost)", fontSize:"12px", letterSpacing:".1em", textTransform:"uppercase", color:"var(--text-muted)", whiteSpace:"nowrap" }}>
+              Niedostępne
+            </span>
+            <button
+              role="switch"
+              aria-checked={showUnavailable}
+              onClick={() => { setShowUnavailable(v => !v); setGridKey(k => k + 1); }}
+              style={{
+                width:"36px", height:"20px", borderRadius:"10px", border:"none", cursor:"pointer",
+                background: showUnavailable ? "var(--gold)" : "rgba(154,107,32,.18)",
+                position:"relative", transition:"background .2s", flexShrink:0,
+              }}
+            >
+              <span style={{
+                position:"absolute", top:"3px",
+                left: showUnavailable ? "19px" : "3px",
+                width:"14px", height:"14px", borderRadius:"50%", background:"#fff",
+                transition:"left .2s",
+              }}/>
+            </button>
+          </label>
 
         </div>
       </div>
