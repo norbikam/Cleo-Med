@@ -61,14 +61,15 @@ export default function CatalogPage() {
     }, 50);
   }
 
-  const usedCats = Array.from(new Set(products.map(p => p.categoryId).filter(Boolean))) as string[];
+  const visibleProducts = products.filter(p => showUnavailable || p.stock > 0);
+  const usedCats = Array.from(new Set(visibleProducts.map(p => p.categoryId).filter(Boolean))) as string[];
 
   // category order = order of first appearance in the API response (matches BL ordering)
   const catOrder: Record<string, number> = {};
   products.forEach(p => { if (p.categoryId && !(p.categoryId in catOrder)) catOrder[p.categoryId] = Object.keys(catOrder).length; });
 
-  const filtered = products
-    .filter(p => (active === "all" || p.categoryId === active) && (showUnavailable || p.stock > 0))
+  const filtered = visibleProducts
+    .filter(p => active === "all" || p.categoryId === active)
     .sort((a, b) => {
       if (active !== "all") return 0;
       return (catOrder[a.categoryId ?? ""] ?? 999) - (catOrder[b.categoryId ?? ""] ?? 999);
@@ -183,77 +184,67 @@ export default function CatalogPage() {
         background:"rgba(245,241,236,.97)", backdropFilter:"blur(14px)",
         borderBottom:"1px solid rgba(154,107,32,.1)",
       }}>
-        <div className="mob-pad" style={{
-          maxWidth:"1600px", margin:"0 auto", padding:"0 60px",
-          display:"flex", alignItems:"center", justifyContent:"space-between",
-          gap:"8px",
-        }}>
-          <div style={{ position:"relative", flex:1, minWidth:0 }}>
-            <div style={{ display:"flex", overflowX:"auto", scrollbarWidth:"none", flex:1, minWidth:0 }}>
-            {[
-              { id:"all", label:"Wszystkie", count: products.length },
-              ...usedCats.map(id => ({ id, label: shortName(categories[id] ?? id), count: products.filter(p => p.categoryId === id).length })),
-            ].map(tab => {
-              const isActive = active === tab.id;
-              return (
-                <button key={tab.id}
-                  onClick={() => changeCategory(tab.id)}
-                  style={{
-                    flexShrink:0,
-                    padding:"16px 12px",
-                    fontFamily:"var(--font-jost)", fontSize:"13px",
-                    fontWeight: isActive ? 600 : 400,
-                    letterSpacing:".12em", textTransform:"uppercase",
-                    color: isActive ? "var(--gold-light)" : "var(--text-muted)",
-                    background:"none", border:"none",
-                    borderBottom: isActive ? "2px solid var(--gold)" : "2px solid transparent",
-                    cursor:"pointer", whiteSpace:"nowrap",
-                    transition:"color .3s, border-color .3s",
-                  }}
-                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = "var(--pearl)"; }}
-                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}>
-                  {tab.label}
-                  {isActive && (
-                    <span style={{ marginLeft:"6px", fontSize:"13px", color:"var(--text-muted)", fontWeight:400 }}>
-                      {tab.count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+        {/* row 1: category tabs */}
+        <div className="mob-pad" style={{ maxWidth:"1600px", margin:"0 auto", padding:"0 60px" }}>
+          <div style={{ position:"relative" }}>
+            <div style={{ display:"flex", overflowX:"auto", scrollbarWidth:"none" }}>
+              {[
+                { id:"all", label:"Wszystkie", count: visibleProducts.length },
+                ...usedCats.map(id => ({ id, label: shortName(categories[id] ?? id), count: visibleProducts.filter(p => p.categoryId === id).length })),
+              ].map(tab => {
+                const isActive = active === tab.id;
+                return (
+                  <button key={tab.id}
+                    onClick={() => changeCategory(tab.id)}
+                    style={{
+                      flexShrink:0, padding:"16px 12px",
+                      fontFamily:"var(--font-jost)", fontSize:"13px",
+                      fontWeight: isActive ? 600 : 400,
+                      letterSpacing:".12em", textTransform:"uppercase",
+                      color: isActive ? "var(--gold-light)" : "var(--text-muted)",
+                      background:"none", border:"none",
+                      borderBottom: isActive ? "2px solid var(--gold)" : "2px solid transparent",
+                      cursor:"pointer", whiteSpace:"nowrap",
+                      transition:"color .3s, border-color .3s",
+                    }}
+                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = "var(--pearl)"; }}
+                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}>
+                    {tab.label}
+                    {isActive && (
+                      <span style={{ marginLeft:"6px", fontSize:"13px", color:"var(--text-muted)", fontWeight:400 }}>
+                        {tab.count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
-            {/* fade indicator — more tabs on the right */}
-            <div style={{
-              position:"absolute", top:0, right:0, bottom:0, width:"40px",
-              background:"linear-gradient(to right, transparent, rgba(245,241,236,.97))",
-              pointerEvents:"none",
-            }}/>
+            <div style={{ position:"absolute", top:0, right:0, bottom:0, width:"40px", background:"linear-gradient(to right, transparent, rgba(245,241,236,.97))", pointerEvents:"none" }}/>
           </div>
+        </div>
 
-          {/* toggle niedostępne */}
-          <label style={{ display:"flex", alignItems:"center", gap:"8px", cursor:"pointer", flexShrink:0, paddingLeft:"12px", borderLeft:"1px solid rgba(154,107,32,.1)" }}>
-            <span style={{ fontFamily:"var(--font-jost)", fontSize:"12px", letterSpacing:".1em", textTransform:"uppercase", color:"var(--text-muted)", whiteSpace:"nowrap" }}>
-              Niedostępne
-            </span>
-            <button
-              role="switch"
-              aria-checked={showUnavailable}
-              onClick={() => { setShowUnavailable(v => !v); setGridKey(k => k + 1); }}
-              style={{
-                width:"36px", height:"20px", borderRadius:"10px", border:"none", cursor:"pointer",
-                background: showUnavailable ? "var(--gold)" : "rgba(154,107,32,.18)",
-                position:"relative", transition:"background .2s", flexShrink:0,
-              }}
-            >
-              <span style={{
-                position:"absolute", top:"3px",
-                left: showUnavailable ? "19px" : "3px",
-                width:"14px", height:"14px", borderRadius:"50%", background:"#fff",
-                transition:"left .2s",
-              }}/>
-            </button>
-          </label>
-
+        {/* row 2: availability toggle */}
+        <div className="mob-pad" style={{ maxWidth:"1600px", margin:"0 auto", padding:"6px 60px", borderTop:"1px solid rgba(154,107,32,.06)", display:"flex", alignItems:"center", gap:"10px" }}>
+          <span style={{ fontFamily:"var(--font-jost)", fontSize:"12px", letterSpacing:".08em", color:"var(--text-muted)" }}>
+            Pokaż niedostępne
+          </span>
+          <button
+            role="switch"
+            aria-checked={showUnavailable}
+            onClick={() => { setShowUnavailable(v => !v); setGridKey(k => k + 1); }}
+            style={{
+              width:"36px", height:"20px", borderRadius:"10px", border:"none", cursor:"pointer",
+              background: showUnavailable ? "var(--gold)" : "rgba(154,107,32,.18)",
+              position:"relative", transition:"background .2s", flexShrink:0,
+            }}
+          >
+            <span style={{
+              position:"absolute", top:"3px",
+              left: showUnavailable ? "19px" : "3px",
+              width:"14px", height:"14px", borderRadius:"50%", background:"#fff",
+              transition:"left .2s",
+            }}/>
+          </button>
         </div>
       </div>
 
