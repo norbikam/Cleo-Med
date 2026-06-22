@@ -5,7 +5,7 @@ import { jwtVerify } from "jose";
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 
 const SHOP_PREFIXES = ["/catalog", "/cart", "/orders", "/account"];
-const SKIP_GATE    = ["/gate", "/admin", "/landing", "/_next", "/favicon.ico"];
+const SKIP_GATE    = ["/gate", "/admin", "/landing", "/instagram", "/_next", "/favicon.ico"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

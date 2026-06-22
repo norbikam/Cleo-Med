@@ -121,6 +121,14 @@ export default function AdminClientPage() {
   async function handleFreeShipping() { await patch({ freeShipping: !client!.freeShipping }, "Zmieniono dostawę."); }
   async function handleSaveInfo()     { await patch({ name, email }, "Zapisano dane."); }
 
+  async function handleResetPassword() {
+    if (!confirm("Resetować hasło tego klienta? Będzie musiał ustawić nowe hasło.")) return;
+    setSaving(true); setSaveMsg("");
+    const res = await fetch(`/api/admin/clients/${id}/reset-password`, { method: "POST" });
+    setSaving(false);
+    setSaveMsg(res.ok ? "Hasło zresetowane — klient musi ustawić nowe." : "Błąd resetu hasła.");
+  }
+
   async function handleAddPhone(e: React.FormEvent) {
     e.preventDefault();
     await fetch(`/api/admin/clients/${id}/phones`, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ phone:newPhone, label:newLabel }) });
@@ -297,6 +305,9 @@ export default function AdminClientPage() {
               </button>
               <button onClick={handleSync} disabled={syncing} style={{ ...gbtn, background:"rgba(154,107,32,.08)", color:"var(--pearl)", border:"1px solid rgba(154,107,32,.2)" }}>
                 {syncing ? "Sync..." : "Sync BL"}
+              </button>
+              <button onClick={handleResetPassword} disabled={saving} style={{ ...gbtn, background:"rgba(180,50,50,.1)", color:"rgb(160,40,40)", border:"1px solid rgba(180,50,50,.2)" }}>
+                Resetuj hasło
               </button>
             </div>
             {syncMsg && <p style={{ fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--gold)", marginTop:"10px" }}>{syncMsg}</p>}
