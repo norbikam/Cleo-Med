@@ -21,10 +21,9 @@ export default function CatalogPage() {
   const [products,   setProducts]   = useState<Product[]>([]);
   const [categories, setCategories] = useState<Record<string, string>>({});
   const [active,     setActive]     = useState("all");
-  const [loading,          setLoading]          = useState(true);
-  const [error,            setError]            = useState<string | null>(null);
-  const [gridKey,          setGridKey]          = useState(0);
-  const [showUnavailable,  setShowUnavailable]  = useState(false);
+  const [loading,  setLoading]  = useState(true);
+  const [error,    setError]    = useState<string | null>(null);
+  const [gridKey,  setGridKey]  = useState(0);
   const revealRef = useRef<HTMLDivElement>(null);
   const gridRef   = useRef<HTMLDivElement>(null);
 
@@ -61,7 +60,7 @@ export default function CatalogPage() {
     }, 50);
   }
 
-  const visibleProducts = products.filter(p => showUnavailable || p.stock > 0);
+  const visibleProducts = products.filter(p => p.stock > 0);
   const usedCats = Array.from(new Set(visibleProducts.map(p => p.categoryId).filter(Boolean))) as string[];
 
   // category order = order of first appearance in the API response (matches BL ordering)
@@ -223,29 +222,6 @@ export default function CatalogPage() {
           </div>
         </div>
 
-        {/* row 2: availability toggle */}
-        <div className="mob-pad" style={{ maxWidth:"1600px", margin:"0 auto", padding:"6px 60px", borderTop:"1px solid rgba(154,107,32,.06)", display:"flex", alignItems:"center", gap:"10px" }}>
-          <span style={{ fontFamily:"var(--font-jost)", fontSize:"12px", letterSpacing:".08em", color:"var(--text-muted)" }}>
-            Pokaż niedostępne
-          </span>
-          <button
-            role="switch"
-            aria-checked={showUnavailable}
-            onClick={() => { setShowUnavailable(v => !v); setGridKey(k => k + 1); }}
-            style={{
-              width:"36px", height:"20px", borderRadius:"10px", border:"none", cursor:"pointer",
-              background: showUnavailable ? "var(--gold)" : "rgba(154,107,32,.18)",
-              position:"relative", transition:"background .2s", flexShrink:0,
-            }}
-          >
-            <span style={{
-              position:"absolute", top:"3px",
-              left: showUnavailable ? "19px" : "3px",
-              width:"14px", height:"14px", borderRadius:"50%", background:"#fff",
-              transition:"left .2s",
-            }}/>
-          </button>
-        </div>
       </div>
 
       {/* ── GRID ── */}
