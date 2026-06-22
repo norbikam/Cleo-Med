@@ -35,6 +35,8 @@ export default function AdminPage() {
   const [importing,    setImporting]    = useState(false);
   const [importResult, setImportResult] = useState<ImportResult|null>(null);
   const [importLogs,   setImportLogs]   = useState<string[]>([]);
+  const [syncing,      setSyncing]      = useState(false);
+  const [syncMsg,      setSyncMsg]      = useState("");
   const logsRef = useRef<HTMLDivElement>(null);
 
   const [createOpen,    setCreateOpen]    = useState(false);
@@ -58,6 +60,14 @@ export default function AdminPage() {
   useEffect(() => {
     if (logsRef.current) logsRef.current.scrollTop = logsRef.current.scrollHeight;
   }, [importLogs]);
+
+  async function handleSyncProducts() {
+    setSyncing(true); setSyncMsg("");
+    const res  = await fetch("/api/admin/sync-products", { method:"POST" });
+    const data = await res.json();
+    setSyncing(false);
+    setSyncMsg(res.ok ? `Zsynchronizowano ${data.count} produktów.` : (data.error ?? "Błąd synchronizacji."));
+  }
 
   async function handleImport() {
     if (!confirm("Import pobierze WSZYSTKIE zamówienia z BaseLinker i stworzy klientów dla każdego numeru telefonu.\n\nMoże to potrwać kilka minut. Kontynuować?")) return;
@@ -162,8 +172,18 @@ export default function AdminPage() {
         ))}
       </div>
 
-      {/* Import */}
+      {/* Sync + Import */}
       <div style={{ marginBottom:"28px" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:"12px", flexWrap:"wrap", marginBottom:"12px" }}>
+          <button onClick={handleSyncProducts} disabled={syncing} style={{
+            padding:"10px 24px", fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,
+            letterSpacing:".2em", textTransform:"uppercase", border:"1px solid rgba(154,107,32,.3)", cursor: syncing ? "wait" : "pointer",
+            color:"var(--pearl)", background: syncing ? "rgba(154,107,32,.08)" : "rgba(154,107,32,.08)",
+          }}>
+            {syncing ? "Synchronizuję..." : "Aktualizuj stany magazynowe"}
+          </button>
+          {syncMsg && <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", color:"var(--gold)" }}>{syncMsg}</p>}
+        </div>
         <div className="adm-import-row" style={{ display:"flex", alignItems:"center", gap:"12px", flexWrap:"wrap", marginBottom: (importing || importResult || importLogs.length > 0) ? "10px" : "0" }}>
           <button onClick={handleImport} disabled={importing} style={{
             padding:"10px 24px", fontFamily:"var(--font-jost)", fontSize:"13px", fontWeight:500,

@@ -85,9 +85,9 @@ async function fetchFromBL(): Promise<ProductsResult> {
         categoryName: categoryId ? categoryMap[categoryId] : undefined,
       };
     })
-    .filter(p => p.name && p.stock > 0);
+    .filter(p => p.name);
 
-  // save to DB (upsert each product)
+  // upsert all products (including stock=0) and remove stale entries no longer in BL
   if (products.length > 0) {
     const rows = products.map(p => ({ blProductId: p.id, data: p as unknown as Record<string, unknown> }));
     await db.insert(blProductCache)
@@ -96,10 +96,19 @@ async function fetchFromBL(): Promise<ProductsResult> {
         target: blProductCache.blProductId,
         set: { data: sql`excluded.data`, cachedAt: sql`now()` },
       });
+
+    // remove products that no longer exist in BL
+    const ids = products.map(p => p.id);
+    await db.delete(blProductCache)
+      .where(sql`bl_product_id NOT IN (${sql.join(ids.map(id => sql`${id}`), sql`, `)})`);
   }
 
   console.log(`[products] BL fetch: ${products.length} produktów`);
   return { products, categories: categoryMap };
+}
+
+export function clearProductCache() {
+  memCache = null;
 }
 
 export async function getProducts(): Promise<ProductsResult> {
