@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Jost, Cinzel } from "next/font/google";
 import "./globals.css";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { Analytics } from "@vercel/analytics/next";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin", "latin-ext"],
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <WhatsAppButton />
+        <Analytics/>
       </body>
     </html>
   );
