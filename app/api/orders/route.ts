@@ -92,11 +92,12 @@ export async function POST(req: NextRequest) {
     delivery.city     = weekendLocker.city;
   }
 
-  const blProducts = items.map((item: { id: string; name: string; sku: string; price: number; qty: number }) => ({
+  type OrderItem = { id: string; name: string; sku: string; price: number; qty: number; variantId?: string };
+  const blProducts = items.map((item: OrderItem) => ({
     storage: "db",
     storage_id: 0,
     product_id: item.id,
-    variant_id: 0,
+    variant_id: item.variantId ? Number(item.variantId) : 0,
     name: item.name,
     sku: item.sku,
     price_brutto: item.price,
@@ -192,7 +193,7 @@ export async function POST(req: NextRequest) {
     set: { syncedAt: new Date() },
   });
 
-  await deductLocalStock(items.map((i: { id: string; qty: number }) => ({ id: i.id, qty: i.qty })));
+  await deductLocalStock(items.map((i: OrderItem) => ({ id: i.id, qty: i.qty, variantId: i.variantId })));
 
   return NextResponse.json({ ok: true, orderId });
   } catch (err) {

@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart/context";
 
+interface Variant { id: string; name: string; stock: number; price: number; }
 interface Product {
   id: string; name: string; sku?: string;
   price: number; stock: number;
   description?: string; images?: string[];
   categoryId?: string; categoryName?: string;
+  variants?: Variant[];
 }
 
 export default function ProductPage() {
@@ -22,8 +24,9 @@ export default function ProductPage() {
   const [imgIdx,  setImgIdx]  = useState(0);
   const [imgDir,  setImgDir]  = useState<1|-1>(1);
   const [imgErrs, setImgErrs] = useState<Record<number, boolean>>({});
-  const [added,   setAdded]   = useState(false);
-  const [qty,     setQty]     = useState(1);
+  const [added,        setAdded]        = useState(false);
+  const [qty,          setQty]          = useState(1);
+  const [selectedVar,  setSelectedVar]  = useState<Variant | null>(null);
   const [lightbox, setLightbox] = useState(false);
   const [touchX,   setTouchX]   = useState<number | null>(null);
 
@@ -53,9 +56,23 @@ export default function ProductPage() {
       });
   }, [product?.categoryId, id]);
 
+  const hasVariants = (product?.variants?.length ?? 0) > 0;
+  const effectiveVariant = hasVariants ? selectedVar : null;
+  const effectiveStock   = effectiveVariant ? effectiveVariant.stock : (product?.stock ?? 0);
+  const effectivePrice   = effectiveVariant ? effectiveVariant.price : (product?.price ?? 0);
+  const canAdd = !hasVariants || selectedVar !== null;
+
   function handleAdd() {
-    if (!product) return;
-    for (let i = 0; i < qty; i++) addItem({ id: product.id, name: product.name, sku: product.sku ?? "", price: product.price, image: product.images?.[0] });
+    if (!product || !canAdd) return;
+    const itemName = effectiveVariant ? `${product.name} — ${effectiveVariant.name}` : product.name;
+    for (let i = 0; i < qty; i++) addItem({
+      id: product.id,
+      name: itemName,
+      sku: product.sku ?? "",
+      price: effectivePrice,
+      image: product.images?.[0],
+      ...(effectiveVariant ? { variantId: effectiveVariant.id } : {}),
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 2500);
   }
@@ -286,29 +303,63 @@ export default function ProductPage() {
                     fontFamily:"var(--font-cormorant)",
                     fontSize:"56px", fontWeight:400, lineHeight:1,
                     color:"var(--gold)", letterSpacing:"-.02em",
-                  }}>{product.price.toFixed(2)}</span>
+                  }}>{effectivePrice.toFixed(2)}</span>
                   <span style={{
                     fontFamily:"var(--font-cormorant)",
                     fontSize:"20px", color:"var(--text-muted)",
                   }}>zł</span>
                 </div>
                 <div style={{ textAlign:"right" }}>
-                  {product.stock <= 0 ? (
+                  {effectiveStock <= 0 ? (
                     <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".06em", color:"var(--text-muted)" }}>
                       Niedostępny
                     </p>
-                  ) : product.stock <= 5 ? (
+                  ) : effectiveStock <= 5 ? (
                     <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".06em", color:"var(--gold)" }}>
-                      Ostatnie {product.stock} szt.
+                      Ostatnie {effectiveStock} szt.
                     </p>
                   ) : (
                     <p style={{ fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".06em", color:"var(--text-muted)" }}>
-                      W magazynie ({product.stock} szt.)
+                      W magazynie ({effectiveStock} szt.)
                     </p>
                   )}
                 </div>
               </div>
             </div>
+
+            {/* VARIANTS */}
+            {hasVariants && (
+              <div style={{ marginBottom:"24px" }}>
+                <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"12px" }}>
+                  Wariant {!selectedVar && <span style={{ color:"rgba(201,149,106,.5)" }}>— wybierz</span>}
+                </p>
+                <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
+                  {product.variants!.map(v => {
+                    const isSelected = selectedVar?.id === v.id;
+                    const outOfStock = v.stock <= 0;
+                    return (
+                      <button key={v.id}
+                        onClick={() => !outOfStock && setSelectedVar(isSelected ? null : v)}
+                        disabled={outOfStock}
+                        style={{
+                          padding:"8px 18px",
+                          fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".06em",
+                          background: isSelected ? "var(--gold)" : "transparent",
+                          color: isSelected ? "#fff" : outOfStock ? "rgba(154,107,32,.25)" : "var(--pearl)",
+                          border: isSelected ? "1px solid var(--gold)" : "1px solid rgba(154,107,32,.25)",
+                          cursor: outOfStock ? "not-allowed" : "pointer",
+                          transition:"all .2s",
+                          textDecoration: outOfStock ? "line-through" : "none",
+                        }}
+                        onMouseEnter={e => { if (!isSelected && !outOfStock) { e.currentTarget.style.borderColor = "var(--gold)"; e.currentTarget.style.color = "var(--gold)"; }}}
+                        onMouseLeave={e => { if (!isSelected && !outOfStock) { e.currentTarget.style.borderColor = "rgba(154,107,32,.25)"; e.currentTarget.style.color = "var(--pearl)"; }}}>
+                        {v.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* QTY + ADD */}
             <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
@@ -328,7 +379,7 @@ export default function ProductPage() {
                   color:"var(--pearl)",
                   borderLeft:"1px solid rgba(154,107,32,.15)", borderRight:"1px solid rgba(154,107,32,.15)",
                 }}>{qty}</span>
-                <button onClick={() => setQty(q => Math.min(q + 1, product.stock))}
+                <button onClick={() => setQty(q => Math.min(q + 1, effectiveStock))}
                   style={{
                     width:"48px", height:"48px", display:"flex", alignItems:"center", justifyContent:"center",
                     fontFamily:"var(--font-jost)", fontSize:"18px", fontWeight:400,
@@ -341,19 +392,19 @@ export default function ProductPage() {
 
               <button
                 onClick={handleAdd}
-                disabled={product.stock <= 0}
+                disabled={effectiveStock <= 0 || !canAdd}
                 style={{
                   flex:1, height:"48px",
                   fontFamily:"var(--font-jost)", fontSize:"13px",
                   fontWeight:500, letterSpacing:".25em", textTransform:"uppercase",
-                  color: product.stock <= 0 ? "var(--text-muted)" : "#F8F4EE",
-                  background: added ? "#4ade80" : product.stock <= 0 ? "rgba(0,0,0,.07)" : "var(--gold)",
-                  border:"none", cursor: product.stock <= 0 ? "not-allowed" : "pointer",
+                  color: (effectiveStock <= 0 || !canAdd) ? "var(--text-muted)" : "#F8F4EE",
+                  background: added ? "#4ade80" : (effectiveStock <= 0 || !canAdd) ? "rgba(0,0,0,.07)" : "var(--gold)",
+                  border:"none", cursor: (effectiveStock <= 0 || !canAdd) ? "not-allowed" : "pointer",
                   transition:"background .3s",
                 }}
-                onMouseEnter={e => { if (!added && product.stock > 0) (e.currentTarget.style.background = "var(--gold-light)"); }}
-                onMouseLeave={e => { if (!added && product.stock > 0) (e.currentTarget.style.background = "var(--gold)"); }}>
-                {added ? "✓ Dodano do koszyka" : product.stock <= 0 ? "Brak w magazynie" : "Dodaj do koszyka"}
+                onMouseEnter={e => { if (!added && effectiveStock > 0 && canAdd) (e.currentTarget.style.background = "var(--gold-light)"); }}
+                onMouseLeave={e => { if (!added && effectiveStock > 0 && canAdd) (e.currentTarget.style.background = "var(--gold)"); }}>
+                {added ? "✓ Dodano do koszyka" : effectiveStock <= 0 ? "Brak w magazynie" : !canAdd ? "Wybierz wariant" : "Dodaj do koszyka"}
               </button>
             </div>
           </div>

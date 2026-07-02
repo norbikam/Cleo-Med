@@ -580,7 +580,7 @@ export default function CartPage() {
               </div>
 
               <div style={{ display:"flex", alignItems:"center", gap:"0", border:"1px solid rgba(201,149,106,.15)" }}>
-                <button onClick={() => updateQty(item.id, item.qty - 1)}
+                <button onClick={() => updateQty(item.variantId ? `${item.id}__${item.variantId}` : item.id, item.qty - 1)}
                   style={{
                     width:"32px", height:"32px", display:"flex", alignItems:"center", justifyContent:"center",
                     fontFamily:"var(--font-jost)", fontSize:"15px", color:"var(--text-muted)",
@@ -593,7 +593,7 @@ export default function CartPage() {
                   fontFamily:"var(--font-jost)", fontSize:"14px", color:"var(--pearl)",
                   borderLeft:"1px solid rgba(201,149,106,.15)", borderRight:"1px solid rgba(201,149,106,.15)",
                 }}>{item.qty}</span>
-                <button onClick={() => updateQty(item.id, item.qty + 1)}
+                <button onClick={() => updateQty(item.variantId ? `${item.id}__${item.variantId}` : item.id, item.qty + 1)}
                   style={{
                     width:"32px", height:"32px", display:"flex", alignItems:"center", justifyContent:"center",
                     fontFamily:"var(--font-jost)", fontSize:"15px", color:"var(--text-muted)",
@@ -609,7 +609,7 @@ export default function CartPage() {
                 </p>
               </div>
 
-              <button onClick={() => removeItem(item.id)}
+              <button onClick={() => removeItem(item.variantId ? `${item.id}__${item.variantId}` : item.id)}
                 style={{
                   fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".1em",
                   color:"var(--text-muted)", background:"none", border:"none",

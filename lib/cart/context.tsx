@@ -9,15 +9,20 @@ export interface CartItem {
   price: number;
   qty: number;
   image?: string;
+  variantId?: string;
 }
 
 interface CartCtx {
   items: CartItem[];
   addItem: (item: Omit<CartItem, "qty">) => void;
-  removeItem: (id: string) => void;
-  updateQty: (id: string, qty: number) => void;
+  removeItem: (key: string) => void;
+  updateQty: (key: string, qty: number) => void;
   clearCart: () => void;
   total: number;
+}
+
+function cartKey(item: Pick<CartItem, "id" | "variantId">) {
+  return item.variantId ? `${item.id}__${item.variantId}` : item.id;
 }
 
 const CartContext = createContext<CartCtx | null>(null);
@@ -45,24 +50,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, hydrated]);
 
   const addItem = useCallback((item: Omit<CartItem, "qty">) => {
+    const key = cartKey(item);
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
+      const existing = prev.find((i) => cartKey(i) === key);
       if (existing) {
-        return prev.map((i) => i.id === item.id ? { ...i, qty: i.qty + 1 } : i);
+        return prev.map((i) => cartKey(i) === key ? { ...i, qty: i.qty + 1 } : i);
       }
       return [...prev, { ...item, qty: 1 }];
     });
   }, []);
 
-  const removeItem = useCallback((id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
+  const removeItem = useCallback((key: string) => {
+    setItems((prev) => prev.filter((i) => cartKey(i) !== key));
   }, []);
 
-  const updateQty = useCallback((id: string, qty: number) => {
+  const updateQty = useCallback((key: string, qty: number) => {
     if (qty <= 0) {
-      setItems((prev) => prev.filter((i) => i.id !== id));
+      setItems((prev) => prev.filter((i) => cartKey(i) !== key));
     } else {
-      setItems((prev) => prev.map((i) => i.id === id ? { ...i, qty } : i));
+      setItems((prev) => prev.map((i) => cartKey(i) === key ? { ...i, qty } : i));
     }
   }, []);
 

@@ -3,6 +3,13 @@ import { db } from "@/lib/db";
 import { blProductCache } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 
+export interface BLVariant {
+  id: string;
+  name: string;
+  stock: number;
+  price: number;
+}
+
 export interface BLProduct {
   id: string;
   name: string;
@@ -13,6 +20,7 @@ export interface BLProduct {
   images?: string[];
   categoryId?: string;
   categoryName?: string;
+  variants?: BLVariant[];
 }
 
 interface ProductsResult {
@@ -66,23 +74,44 @@ async function fetchFromBL(): Promise<ProductsResult> {
       images?: Record<string, string>;
       prices?: Record<string, number>;
       stock?: Record<string, number>;
+      variants?: Record<string, {
+        name?: string;
+        stock?: Record<string, number>;
+        prices?: Record<string, number>;
+      }>;
     }>;
   }>("getInventoryProductsData", { inventory_id: inventoryId, products: productIds });
 
   const products: BLProduct[] = Object.entries(detailData.products ?? {})
     .map(([id, p]) => {
       const name = p.text_fields?.name ?? listData.products[id] ?? "";
-      const stock = Object.values(p.stock ?? {}).reduce((a, b) => a + b, 0);
+      const priceGroupKey = String(priceGroup);
+      const basePrice = p.prices?.[priceGroupKey] ?? 0;
       const categoryId = p.category_id ? String(p.category_id) : undefined;
+
+      const variants: BLVariant[] = Object.entries(p.variants ?? {})
+        .map(([varId, v]) => ({
+          id: varId,
+          name: v.name ?? varId,
+          stock: Object.values(v.stock ?? {}).reduce((a, b) => a + b, 0),
+          price: v.prices?.[priceGroupKey] ?? basePrice,
+        }))
+        .filter(v => v.name);
+
+      const stock = variants.length > 0
+        ? variants.reduce((sum, v) => sum + v.stock, 0)
+        : Object.values(p.stock ?? {}).reduce((a, b) => a + b, 0);
+
       return {
         id, name,
         sku: id,
-        price: p.prices?.[String(priceGroup)] ?? 0,
+        price: basePrice,
         stock,
         description: p.text_fields?.description,
         images: Object.values(p.images ?? {}).filter(Boolean),
         categoryId,
         categoryName: categoryId ? categoryMap[categoryId] : undefined,
+        ...(variants.length > 0 ? { variants } : {}),
       };
     })
     .filter(p => p.name);
@@ -111,14 +140,23 @@ export function clearProductCache() {
   memCache = null;
 }
 
-export async function deductLocalStock(items: { id: string; qty: number }[]) {
+export async function deductLocalStock(items: { id: string; qty: number; variantId?: string }[]) {
   for (const item of items) {
     const [row] = await db.select().from(blProductCache).where(eq(blProductCache.blProductId, item.id)).limit(1);
     if (!row) continue;
     const data = row.data as unknown as BLProduct;
-    const newStock = Math.max(0, data.stock - item.qty);
+    let updated: BLProduct;
+    if (item.variantId && data.variants?.length) {
+      const variants = data.variants.map(v =>
+        v.id === item.variantId ? { ...v, stock: Math.max(0, v.stock - item.qty) } : v
+      );
+      const stock = variants.reduce((sum, v) => sum + v.stock, 0);
+      updated = { ...data, variants, stock };
+    } else {
+      updated = { ...data, stock: Math.max(0, data.stock - item.qty) };
+    }
     await db.update(blProductCache)
-      .set({ data: { ...data, stock: newStock } as unknown as Record<string, unknown> })
+      .set({ data: updated as unknown as Record<string, unknown> })
       .where(eq(blProductCache.blProductId, item.id));
   }
   memCache = null;

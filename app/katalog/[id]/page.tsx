@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
+interface Variant { id: string; name: string; stock: number; price: number; }
 interface Product {
   id: string; name: string; sku?: string;
   price: number; stock: number;
   description?: string; images?: string[];
   categoryId?: string; categoryName?: string;
+  variants?: Variant[];
 }
 
 export default function KatalogProductPage() {
@@ -224,6 +226,24 @@ export default function KatalogProductPage() {
                 </div>
               </div>
             </div>
+
+            {/* VARIANTS */}
+            {(product.variants?.length ?? 0) > 0 && (
+              <div style={{ marginBottom:"24px" }}>
+                <p style={{ fontFamily:"var(--font-cinzel)", fontSize:"11px", letterSpacing:".3em", textTransform:"uppercase", color:"var(--gold)", marginBottom:"12px" }}>Warianty</p>
+                <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
+                  {product.variants!.map(v => (
+                    <span key={v.id} style={{
+                      padding:"8px 18px",
+                      fontFamily:"var(--font-jost)", fontSize:"13px", letterSpacing:".06em",
+                      color: v.stock <= 0 ? "rgba(154,107,32,.3)" : "var(--pearl)",
+                      border:"1px solid rgba(154,107,32,.25)",
+                      textDecoration: v.stock <= 0 ? "line-through" : "none",
+                    }}>{v.name}</span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* ORDER BUTTON */}
             <a href="/login" style={{
