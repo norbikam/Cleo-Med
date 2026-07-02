@@ -94,7 +94,7 @@ async function fetchFromBL(): Promise<ProductsResult> {
           id: varId,
           name: v.name ?? varId,
           stock: Object.values(v.stock ?? {}).reduce((a, b) => a + b, 0),
-          price: v.prices?.[priceGroupKey] ?? basePrice,
+          price: parseFloat(String(v.prices?.[priceGroupKey] ?? basePrice)),
         }))
         .filter(v => v.name);
 
