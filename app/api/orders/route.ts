@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
     fullname: string; company: string | null;
     address: string; city: string; postcode: string;
     phone: string; email: string | null; courierType: string | null;
+    lockerCode: string | null; lockerName: string | null;
   };
 
   if (addressId) {
@@ -69,6 +70,8 @@ export async function POST(req: NextRequest) {
       phone:       addr.phone ?? client.phone,
       email:       addr.email ?? client.email,
       courierType: addr.courierType,
+      lockerCode:  addr.lockerCode  ?? null,
+      lockerName:  addr.lockerName  ?? null,
     };
   } else if (newAddress) {
     delivery = {
@@ -80,6 +83,8 @@ export async function POST(req: NextRequest) {
       phone:       newAddress.phone ?? client.phone,
       email:       newAddress.email ?? client.email,
       courierType: newAddress.courierType ?? null,
+      lockerCode:  newAddress.lockerCode  ?? null,
+      lockerName:  newAddress.lockerName  ?? null,
     };
   } else {
     return NextResponse.json({ error: "Podaj adres dostawy." }, { status: 400 });
@@ -171,6 +176,12 @@ export async function POST(req: NextRequest) {
       delivery_point_address:  weekendLocker.street,
       delivery_point_postcode: weekendLocker.postcode,
       delivery_point_city:     weekendLocker.city,
+    } : (delivery.lockerCode && (delivery.courierType === "Paczkomat" || delivery.courierType === "DPDPunkt")) ? {
+      delivery_point_id:       delivery.lockerCode,
+      delivery_point_name:     delivery.lockerName ?? delivery.lockerCode,
+      delivery_point_address:  delivery.address,
+      delivery_point_postcode: delivery.postcode,
+      delivery_point_city:     delivery.city,
     } : {}),
     products:           allProducts,
   });
