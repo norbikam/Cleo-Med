@@ -65,6 +65,7 @@ export async function addOrder(order: {
   extra_field_1?: string;
   extra_field_2?: string;
   invoice_nip?: string;
+  delivery_point_id?: string;
   products: Array<{ storage: string; storage_id: number; product_id: string; variant_id: number; name: string; sku: string; price_brutto: number; quantity: number }>;
   custom_extra_fields?: Record<string, string>;
 }): Promise<string> {
