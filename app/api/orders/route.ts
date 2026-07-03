@@ -171,9 +171,17 @@ export async function POST(req: NextRequest) {
     payment_method_cod: isCod ? 1 : 0,
     ...(userComments ? { user_comments: userComments, extra_field_1: userComments } : {}),
     ...(weekendDelivery && weekendLocker ? {
-      delivery_point_id: weekendLocker.code,
+      delivery_point_id:       weekendLocker.code,
+      delivery_point_name:     weekendLocker.label,
+      delivery_point_address:  weekendLocker.street,
+      delivery_point_postcode: weekendLocker.postcode,
+      delivery_point_city:     weekendLocker.city,
     } : (delivery.lockerCode && (delivery.courierType === "Paczkomat" || delivery.courierType === "DPDPunkt")) ? {
-      delivery_point_id: delivery.lockerCode,
+      delivery_point_id:       delivery.lockerCode,
+      delivery_point_name:     delivery.lockerName ?? delivery.lockerCode,
+      delivery_point_address:  delivery.address,
+      delivery_point_postcode: delivery.postcode,
+      delivery_point_city:     delivery.city,
     } : {}),
     products:           allProducts,
   });
