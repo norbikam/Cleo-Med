@@ -86,7 +86,6 @@ export async function POST(req: NextRequest) {
   }
 
   // Override delivery address with weekend locker if provided
-  const lockerPointId = (weekendDelivery && weekendLocker?.code) ? weekendLocker.code : undefined;
   if (weekendDelivery && weekendLocker) {
     delivery.address  = weekendLocker.street;
     delivery.postcode = weekendLocker.postcode;
@@ -166,7 +165,13 @@ export async function POST(req: NextRequest) {
     payment_method:     methodLabel,
     payment_method_cod: isCod ? 1 : 0,
     ...(userComments ? { user_comments: userComments, extra_field_1: userComments } : {}),
-    ...(lockerPointId ? { delivery_point_id: lockerPointId } : {}),
+    ...(weekendDelivery && weekendLocker ? {
+      delivery_point_id:       weekendLocker.code,
+      delivery_point_name:     weekendLocker.label,
+      delivery_point_address:  weekendLocker.street,
+      delivery_point_postcode: weekendLocker.postcode,
+      delivery_point_city:     weekendLocker.city,
+    } : {}),
     products:           allProducts,
   });
 
