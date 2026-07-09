@@ -35,8 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pl" className={`${cormorant.variable} ${jost.variable} ${cinzel.variable}`}>
       <body>
-        {children}
-        <WhatsAppButton />
+
         <Analytics/>
       </body>
     </html>
